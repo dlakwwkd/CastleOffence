@@ -89,7 +89,7 @@ public class CameraMove : MonoBehaviour
 
     IEnumerator SmoothMove(Vector2 pos)
     {
-        Vector3 deltaPos = pos * (camera.orthographicSize / 3.0f);
+        Vector3 deltaPos = pos * (camera.orthographicSize / 3);
 
         while(deltaPos.magnitude > 0.001f)
         {
