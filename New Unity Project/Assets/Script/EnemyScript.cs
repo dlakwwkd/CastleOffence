@@ -27,6 +27,7 @@ public class EnemyScript : MonoBehaviour
 
     public GameObject explosionParticle = null;
     public GameObject deadObject = null;
+    public AudioClip clip = null;
 
     public int score = 10;
 
@@ -155,6 +156,8 @@ public class EnemyScript : MonoBehaviour
 
         if (healthPoint <= 0)
             enemyState = ENEMYSTATE.DEAD;
+
+        AudioManager.instance.PlaySfx(clip);
     }
 
     void Dead()

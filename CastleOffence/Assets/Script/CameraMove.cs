@@ -3,20 +3,20 @@ using System.Collections;
 
 public class CameraMove : MonoBehaviour
 {
+    Vector2 _prevPos    = new Vector2();
+    Camera  _camera     = null;
+
     public float minSize = 2.0f;
     public float maxSize = 8.0f;
 
-    public float leftSide = -25.0f;
-    public float rightSide = 25.0f;
-    public float topSide = 14.0f;
+    public float leftSide   = -25.0f;
+    public float rightSide  = 25.0f;
+    public float topSide    = 14.0f;
     public float bottomSide = -2.0f;
-
-    Vector2 prevPos;
-    Camera camera = null;
 
     void Start ()
     {
-        camera = GetComponent<Camera>();
+        _camera = GetComponent<Camera>();
     }
 
 	void Update ()
@@ -29,16 +29,15 @@ public class CameraMove : MonoBehaviour
             switch(touch.phase)
             {
                 case TouchPhase.Began:
-                    //StopAllCoroutines();
-                    prevPos = Vector2.zero;
+                    _prevPos = Vector2.zero;
                     break;
                 case TouchPhase.Moved:
-                    prevPos = touch.deltaPosition;
-                    Vector3 deltaPos = prevPos * Time.deltaTime;
-                    transform.position -= deltaPos * (camera.orthographicSize / 3);
+                    _prevPos = touch.deltaPosition;
+                    Vector3 deltaPos = _prevPos * Time.deltaTime;
+                    transform.position -= deltaPos * (_camera.orthographicSize / 3);
                     break;
                 case TouchPhase.Ended:
-                    StartCoroutine("SmoothMove", prevPos);
+                    StartCoroutine("SmoothMove", _prevPos);
                     break;
             }
         }
@@ -55,7 +54,7 @@ public class CameraMove : MonoBehaviour
                 Vector2 prePos = nowPos - (touch2.deltaPosition - touch1.deltaPosition);
 
                 float dist = (nowPos.magnitude - prePos.magnitude) * Time.deltaTime;
-                camera.orthographicSize -= dist;
+                _camera.orthographicSize -= dist;
                 ZoomBoundary();
             }
         }
@@ -64,18 +63,18 @@ public class CameraMove : MonoBehaviour
 
     void ZoomBoundary()
     {
-        if (camera.orthographicSize < minSize)
-            camera.orthographicSize = minSize;
-        else if (camera.orthographicSize > maxSize)
-            camera.orthographicSize = maxSize;
+        if (_camera.orthographicSize < minSize)
+            _camera.orthographicSize = minSize;
+        else if (_camera.orthographicSize > maxSize)
+            _camera.orthographicSize = maxSize;
     }
 
     void MoveBoundary()
     {
-        float left = transform.position.x - (camera.orthographicSize * camera.aspect);
-        float right = transform.position.x + (camera.orthographicSize * camera.aspect);
-        float top = transform.position.y + (camera.orthographicSize);
-        float bottom = transform.position.y - (camera.orthographicSize);
+        float left = transform.position.x - (_camera.orthographicSize * _camera.aspect);
+        float right = transform.position.x + (_camera.orthographicSize * _camera.aspect);
+        float top = transform.position.y + (_camera.orthographicSize);
+        float bottom = transform.position.y - (_camera.orthographicSize);
 
         if (left < leftSide)
             transform.position += new Vector3(leftSide - left, 0.0f, 0.0f);
@@ -89,7 +88,7 @@ public class CameraMove : MonoBehaviour
 
     IEnumerator SmoothMove(Vector2 pos)
     {
-        Vector3 deltaPos = pos * (camera.orthographicSize / 3);
+        Vector3 deltaPos = pos * (_camera.orthographicSize / 3);
 
         while(deltaPos.magnitude > 0.001f)
         {
