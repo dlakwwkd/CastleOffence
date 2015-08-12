@@ -5,9 +5,11 @@ public class Temp : MonoBehaviour
 {
     public GameObject a;
     public GameObject b;
+    public GameObject c;
 
     public List<GameObject> aa;
     public List<GameObject> bb;
+    public List<GameObject> cc;
 
     void Update ()
     {
@@ -36,6 +38,23 @@ public class Temp : MonoBehaviour
                 ObjectManager.instance.Free(asd);
             }
             bb.Clear();
+        }
+
+        if (Input.touchCount == 0)
+            return;
+        else if (Input.touchCount == 1)
+        {
+            Touch touch = Input.GetTouch(0);
+            switch (touch.phase)
+            {
+                case TouchPhase.Began:
+                    cc.Add(ObjectManager.instance.Assign(c.name));
+                    break;
+                case TouchPhase.Moved:
+                    break;
+                case TouchPhase.Ended:
+                    break;
+            }
         }
     }
 }

@@ -8,7 +8,7 @@ public class ObjectManager : MonoBehaviour
 
     Dictionary<string, ObjectPool> _poolList = new Dictionary<string, ObjectPool>();
 
-    public List<GameObject> ObjectList;
+    public List<GameObject> ObjectList = new List<GameObject>();
 
     void Start()
     {
