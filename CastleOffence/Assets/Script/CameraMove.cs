@@ -3,26 +3,25 @@ using System.Collections;
 
 public class CameraMove : MonoBehaviour
 {
+    public float easeValue  = 3.0f;
+
+    public float minSize    = 1.0f;
+    public float maxSize    = 8.0f;
+
+    public float leftSide   = -25.0f;
+    public float rightSide  = +25.0f;
+    public float topSide    = +14.0f;
+    public float bottomSide = -2.0f;
+
     Vector3 _deltaPos   = new Vector3();
     Vector2 _prevPos    = new Vector2();
     Camera  _camera     = null;
 
-    public float smoothSize = 3.0f;
-
-    public float minSize = 1.0f;
-    public float maxSize = 8.0f;
-
-    public float leftSide   = -25.0f;
-    public float rightSide  = 25.0f;
-    public float topSide    = 14.0f;
-    public float bottomSide = -2.0f;
-
-    void Start ()
+    void        Start()
     {
         _camera = GetComponent<Camera>();
     }
-
-    void Update ()
+    void        Update()
     {
         if (Input.touchCount == 0)
             return;
@@ -33,7 +32,7 @@ public class CameraMove : MonoBehaviour
         MoveBoundaryCheck();
 	}
 
-    void Move()
+    void        Move()
     {
         Touch touch = Input.GetTouch(0);
         switch (touch.phase)
@@ -52,8 +51,7 @@ public class CameraMove : MonoBehaviour
                 break;
         }
     }
-
-    void Zoom()
+    void        Zoom()
     {
         Touch touch1 = Input.GetTouch(0);
         Touch touch2 = Input.GetTouch(1);
@@ -71,7 +69,7 @@ public class CameraMove : MonoBehaviour
         }
     }
 
-    void MoveBoundaryCheck()
+    void        MoveBoundaryCheck()
     {
         float left = transform.position.x - (_camera.orthographicSize * _camera.aspect);
         float right = transform.position.x + (_camera.orthographicSize * _camera.aspect);
@@ -87,8 +85,7 @@ public class CameraMove : MonoBehaviour
         else if (bottom < bottomSide)
             transform.position += new Vector3(0.0f, bottomSide - bottom, 0.0f);
     }
-
-    void ZoomBoundaryCheck()
+    void        ZoomBoundaryCheck()
     {
         if (_camera.orthographicSize < minSize)
             _camera.orthographicSize = minSize;
@@ -98,7 +95,7 @@ public class CameraMove : MonoBehaviour
 
     IEnumerator SmoothMove(Vector3 force)
     {
-        Vector3 deltaPos = force * (smoothSize * 10);
+        Vector3 deltaPos = force * (easeValue * 10);
 
         while(deltaPos.magnitude > 0.001f)
         {

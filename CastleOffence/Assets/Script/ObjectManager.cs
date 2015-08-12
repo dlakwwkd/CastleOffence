@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 public class ObjectManager : MonoBehaviour
 {
-    static public ObjectManager _instance = null;
-    public static ObjectManager instance { get { return _instance; } }
+    static public ObjectManager     _instance = null;
+    public static ObjectManager     instance { get { return _instance; } }
 
-    Dictionary<string, ObjectPool> _poolList = new Dictionary<string, ObjectPool>();
+    public List<GameObject>         ObjectList = new List<GameObject>();
 
-    public List<GameObject> ObjectList = new List<GameObject>();
+    Dictionary<string, ObjectPool>  _poolList = new Dictionary<string, ObjectPool>();
 
-    void Start()
+    void                Start()
     {
         if (_instance == null)
             _instance = this;
@@ -24,12 +24,11 @@ public class ObjectManager : MonoBehaviour
         }
     }
 
-    public GameObject Assign(string objName)
+    public GameObject   Assign(string objName)
     {
         return _poolList[objName].Assign();
     }
-
-    public void Free(GameObject obj)
+    public void         Free(GameObject obj)
     {
         int idx = obj.name.IndexOf('_');
         var key = obj.name.Remove(idx);
@@ -42,15 +41,15 @@ public class ObjectPool : MonoBehaviour
     GameObject          _objectType     = null;
     List<GameObject>    _objectList     = new List<GameObject>();
     Queue<int>          _freeList       = new Queue<int>();
-    int                 _allocInterval  = 5;
+    int                 _allocInterval  = 10;
 
-    public void Init(GameObject obj)
+    public void         Init(GameObject obj)
     {
         _objectType = obj;
         Alloc();
     }
 
-    public GameObject Assign()
+    public GameObject   Assign()
     {
         if (_freeList.Count < 1)
             Alloc();
@@ -60,8 +59,7 @@ public class ObjectPool : MonoBehaviour
         obj.SetActive(true);
         return obj;
     }
-
-    public void Free(GameObject obj)
+    public void         Free(GameObject obj)
     {
         obj.SetActive(false);
 
@@ -70,7 +68,7 @@ public class ObjectPool : MonoBehaviour
         _freeList.Enqueue(int.Parse(key));
     }
 
-    void Alloc()
+    void                Alloc()
     {
         for (int i = 0; i < _allocInterval; ++i)
         {
