@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class DragDropSurface : MonoBehaviour
 {
-	public bool rotatePlacedObject = false;
-
 	//void OnDrop (GameObject go)
 	//{
 	//    ExampleDragDropItem ddo = go.GetComponent<ExampleDragDropItem>();

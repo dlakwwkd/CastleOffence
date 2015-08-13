@@ -17,11 +17,6 @@ public class DragDropItem : UIDragDropItem
 
 				Transform trans = child.transform;
 				trans.position = UICamera.lastWorldPosition;
-
-				if (dds.rotatePlacedObject)
-				{
-					trans.rotation = Quaternion.LookRotation(UICamera.lastHit.normal) * Quaternion.Euler(90f, 0f, 0f);
-				}
 				
 				// Destroy this icon as it's no longer needed
 				NGUITools.Destroy(gameObject);

@@ -188,7 +188,6 @@
      <Compile Include="Assets\Script\DragDropSurface.cs" />
      <Compile Include="Assets\Script\ObjectManager.cs" />
      <Compile Include="Assets\Script\Temp.cs" />
-     <Compile Include="Assets\Script\UIListener.cs" />
      <None Include="Assets\NGUI\Examples\Shaders\Unlit - Depth Cutout.shader" />
      <None Include="Assets\NGUI\ReadMe - 3.9.1.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Masked 1.shader" />

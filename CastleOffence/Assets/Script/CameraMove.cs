@@ -3,19 +3,23 @@ using System.Collections;
 
 public class CameraMove : MonoBehaviour
 {
-    public float easeValue  = 3.0f;
+    public bool     isLocked    = false;
+    public float    easeValue   = 3.0f;
 
-    public float minSize    = 1.0f;
-    public float maxSize    = 8.0f;
+    public float    minSize     = 1.0f;
+    public float    maxSize     = 8.0f;
 
-    float _leftSide     = -25.0f;
-    float _rightSide    = +25.0f;
-    float _topSide      = +14.0f;
-    float _bottomSide   = -2.0f;
+    float   _leftSide   = -25.0f;
+    float   _rightSide  = +25.0f;
+    float   _topSide    = +14.0f;
+    float   _bottomSide = -2.0f;
 
     Vector3 _deltaPos   = new Vector3();
     Vector2 _prevPos    = new Vector2();
     Camera  _camera     = null;
+
+    public void Lock() { isLocked = true; _deltaPos = Vector3.zero; }
+    public void UnLock() { isLocked = false; }
 
     void        Start()
     {
@@ -23,6 +27,8 @@ public class CameraMove : MonoBehaviour
     }
     void        Update()
     {
+        if (isLocked)
+            return;
 #if UNITY_EDITOR
         MoveInEditor();
         ZoomInEditor();
