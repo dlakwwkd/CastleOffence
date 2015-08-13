@@ -23,6 +23,10 @@ public class CameraMove : MonoBehaviour
     }
     void        Update()
     {
+#if UNITY_EDITOR
+        MoveInEditor();
+        ZoomInEditor();
+#elif UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8
         if (Input.touchCount == 0)
             return;
         else if(Input.touchCount == 1)
@@ -30,7 +34,44 @@ public class CameraMove : MonoBehaviour
         else if(Input.touchCount == 2)
             Zoom();
         MoveBoundaryCheck();
+#endif
 	}
+
+    void        MoveInEditor()
+    {
+        if (Input.GetButtonDown("Fire1"))
+        {
+            _deltaPos = Vector3.zero;
+            _prevPos = Input.mousePosition;
+        }
+        if (Input.GetButton("Fire1"))
+        {
+            _deltaPos = (Input.mousePosition - new Vector3(_prevPos.x, _prevPos.y)) * (_camera.orthographicSize * 2 / _camera.pixelHeight);
+            transform.position -= _deltaPos;
+            _prevPos = Input.mousePosition;
+            MoveBoundaryCheck();
+        }
+        if (Input.GetButtonUp("Fire1"))
+        {
+            StartCoroutine("SmoothMove", _deltaPos);
+        }
+    }
+    void        ZoomInEditor()
+    {
+        float value = 20.0f;
+        if (Input.GetAxis("Mouse ScrollWheel") < 0.0f)
+        {
+            _camera.orthographicSize += Time.deltaTime * value;
+            ZoomBoundaryCheck();
+            MoveBoundaryCheck();
+        }
+        else if (Input.GetAxis("Mouse ScrollWheel") > 0.0f)
+        {
+            _camera.orthographicSize -= Time.deltaTime * value;
+            ZoomBoundaryCheck();
+            MoveBoundaryCheck();
+        }
+    }
 
     void        Move()
     {

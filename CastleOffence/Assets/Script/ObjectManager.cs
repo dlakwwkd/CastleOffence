@@ -79,5 +79,6 @@ public class ObjectPool
             _freeList.Enqueue(_objectList.Count);
             _objectList.Add(obj);
         }
+        _allocInterval *= 2;
     }
 }
