@@ -108,6 +108,10 @@ public class CameraMove : MonoBehaviour
             _camera.orthographicSize -= dist;
             ZoomBoundaryCheck();
         }
+        if (touch1.phase == TouchPhase.Ended)
+            _prevPos = touch2.position;
+        else if (touch2.phase == TouchPhase.Ended)
+            _prevPos = touch1.position;
     }
 
     void        MoveBoundaryCheck()
