@@ -49,6 +49,7 @@
      <Compile Include="Assets\Script\CameraMove.cs" />
      <Compile Include="Assets\Script\ObjectManager.cs" />
      <Compile Include="Assets\Script\Temp.cs" />
+     <Compile Include="Assets\Script\UIListener.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

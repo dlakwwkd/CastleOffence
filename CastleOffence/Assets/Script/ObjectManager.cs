@@ -17,7 +17,7 @@ public class ObjectManager : MonoBehaviour
 
         foreach (var obj in ObjectList)
         {
-            var pool = gameObject.AddComponent<ObjectPool>();
+            var pool = new ObjectPool();
             pool.Init(obj);
 
             _poolList.Add(obj.name, pool);
@@ -36,7 +36,7 @@ public class ObjectManager : MonoBehaviour
     }
 }
 
-public class ObjectPool : MonoBehaviour
+public class ObjectPool
 {
     GameObject          _objectType     = null;
     List<GameObject>    _objectList     = new List<GameObject>();
@@ -72,7 +72,7 @@ public class ObjectPool : MonoBehaviour
     {
         for (int i = 0; i < _allocInterval; ++i)
         {
-            var obj = Instantiate(_objectType) as GameObject;
+            var obj = GameObject.Instantiate(_objectType) as GameObject;
             obj.name = _objectType.name + "_" + _objectList.Count;
             obj.SetActive(false);
 

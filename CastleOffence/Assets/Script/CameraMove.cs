@@ -8,10 +8,10 @@ public class CameraMove : MonoBehaviour
     public float minSize    = 1.0f;
     public float maxSize    = 8.0f;
 
-    public float leftSide   = -25.0f;
-    public float rightSide  = +25.0f;
-    public float topSide    = +14.0f;
-    public float bottomSide = -2.0f;
+    float _leftSide     = -25.0f;
+    float _rightSide    = +25.0f;
+    float _topSide      = +14.0f;
+    float _bottomSide   = -2.0f;
 
     Vector3 _deltaPos   = new Vector3();
     Vector2 _prevPos    = new Vector2();
@@ -76,14 +76,14 @@ public class CameraMove : MonoBehaviour
         float top = transform.position.y + (_camera.orthographicSize);
         float bottom = transform.position.y - (_camera.orthographicSize);
 
-        if (left < leftSide)
-            transform.position += new Vector3(leftSide - left, 0.0f, 0.0f);
-        else if (right > rightSide)
-            transform.position += new Vector3(rightSide - right, 0.0f, 0.0f);
-        if (top > topSide)
-            transform.position += new Vector3(0.0f, topSide - top, 0.0f);
-        else if (bottom < bottomSide)
-            transform.position += new Vector3(0.0f, bottomSide - bottom, 0.0f);
+        if (left < _leftSide)
+            transform.position += new Vector3(_leftSide - left, 0.0f, 0.0f);
+        else if (right > _rightSide)
+            transform.position += new Vector3(_rightSide - right, 0.0f, 0.0f);
+        if (top > _topSide)
+            transform.position += new Vector3(0.0f, _topSide - top, 0.0f);
+        else if (bottom < _bottomSide)
+            transform.position += new Vector3(0.0f, _bottomSide - bottom, 0.0f);
     }
     void        ZoomBoundaryCheck()
     {

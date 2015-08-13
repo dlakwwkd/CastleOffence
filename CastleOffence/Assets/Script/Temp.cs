@@ -39,6 +39,14 @@ public class Temp : MonoBehaviour
             }
             bb.Clear();
         }
+        if (Input.GetKeyDown("5"))
+        {
+            foreach (var asd in cc)
+            {
+                ObjectManager.instance.Free(asd);
+            }
+            cc.Clear();
+        }
 
         if (Input.touchCount == 0)
             return;
