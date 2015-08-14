@@ -30,9 +30,16 @@ public class ObjectManager : MonoBehaviour
     }
     public void         Free(GameObject obj)
     {
+        if (!obj.activeSelf) return;
+
         int idx = obj.name.IndexOf('_');
         var key = obj.name.Remove(idx);
         _poolList[key].Free(obj);
+    }
+    public void         FreeAll()
+    {
+        foreach (var pool in _poolList)
+            pool.Value.FreeAll();
     }
 }
 
@@ -66,6 +73,14 @@ public class ObjectPool
         int idx = obj.name.IndexOf('_');
         var key = obj.name.Substring(idx + 1);
         _freeList.Enqueue(int.Parse(key));
+    }
+    public void         FreeAll()
+    {
+        foreach(var obj in _objectList)
+        {
+            if (!obj.activeSelf) continue;
+            Free(obj);
+        }
     }
 
     void                Alloc()
