@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class DragDropItem : UIDragDropItem
 {
-	public GameObject prefab = null;
+	public GameObject   prefab  = null;
+    public float        xSize   = 1.0f;
+    public float        ySize   = 1.0f;
 
     GameObject _obj = null;
 
@@ -14,6 +16,7 @@ public class DragDropItem : UIDragDropItem
         mRoot = NGUITools.FindInParents<UIRoot>(mTrans.parent);
 
         _obj = ObjectManager.instance.Assign(prefab.name);
+        _obj.transform.localScale = new Vector3(xSize, ySize, 1.0f);
         var body = _obj.GetComponent<Rigidbody2D>();
         body.simulated = false;
     }
