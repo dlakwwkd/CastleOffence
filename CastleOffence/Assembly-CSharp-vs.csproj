@@ -188,6 +188,8 @@
      <Compile Include="Assets\Script\DestroyZone.cs" />
      <Compile Include="Assets\Script\DragDropItem.cs" />
      <Compile Include="Assets\Script\ObjectManager.cs" />
+     <Compile Include="Assets\Script\ObjectStatus.cs" />
+     <Compile Include="Assets\Script\PlayerStatus.cs" />
      <Compile Include="Assets\Script\Temp.cs" />
      <None Include="Assets\NGUI\Examples\Shaders\Unlit - Depth Cutout.shader" />
      <None Include="Assets\NGUI\ReadMe - 3.9.1.txt" />

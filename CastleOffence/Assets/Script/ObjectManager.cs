@@ -3,11 +3,10 @@ using System.Collections.Generic;
 
 public class ObjectManager : MonoBehaviour
 {
-    static public ObjectManager     _instance = null;
+    static ObjectManager            _instance = null;
     public static ObjectManager     instance { get { return _instance; } }
 
     public List<GameObject>         objectList = new List<GameObject>();
-
     Dictionary<string, ObjectPool>  _poolList = new Dictionary<string, ObjectPool>();
 
     void                Start()
