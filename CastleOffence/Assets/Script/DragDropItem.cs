@@ -17,8 +17,7 @@ public class DragDropItem : UIDragDropItem
 
         _obj = ObjectManager.instance.Assign(prefab.name);
         _obj.transform.localScale = new Vector3(xSize, ySize, 1.0f);
-        var body = _obj.GetComponent<Rigidbody2D>();
-        body.simulated = false;
+        _obj.GetComponent<Rigidbody2D>().simulated = false;
     }
 
     protected override void OnDragDropMove(Vector2 delta)
@@ -33,8 +32,7 @@ public class DragDropItem : UIDragDropItem
         if (mDragScrollView != null)
             StartCoroutine(EnableDragScrollView());
 
-        var body = _obj.GetComponent<Rigidbody2D>();
-        body.simulated = true;
+        _obj.GetComponent<Rigidbody2D>().simulated = true;
         _obj = null;
     }
 }

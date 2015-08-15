@@ -6,7 +6,7 @@ public class ObjectManager : MonoBehaviour
     static public ObjectManager     _instance = null;
     public static ObjectManager     instance { get { return _instance; } }
 
-    public List<GameObject>         ObjectList = new List<GameObject>();
+    public List<GameObject>         objectList = new List<GameObject>();
 
     Dictionary<string, ObjectPool>  _poolList = new Dictionary<string, ObjectPool>();
 
@@ -15,7 +15,7 @@ public class ObjectManager : MonoBehaviour
         if (_instance == null)
             _instance = this;
 
-        foreach (var obj in ObjectList)
+        foreach (var obj in objectList)
         {
             var pool = new ObjectPool();
             pool.Init(obj);
@@ -47,7 +47,7 @@ public class ObjectPool
 {
     GameObject          _objectType     = null;
     List<GameObject>    _objectList     = new List<GameObject>();
-    Queue<int>          _freeList       = new Queue<int>();
+    Stack<int>          _freeList       = new Stack<int>();
     int                 _allocInterval  = 10;
 
     public void         Init(GameObject obj)
@@ -61,7 +61,7 @@ public class ObjectPool
         if (_freeList.Count < 1)
             Alloc();
 
-        int idx = _freeList.Dequeue();
+        int idx = _freeList.Pop();
         var obj = _objectList[idx];
         obj.SetActive(true);
         return obj;
@@ -72,7 +72,7 @@ public class ObjectPool
 
         int idx = obj.name.IndexOf('_');
         var key = obj.name.Substring(idx + 1);
-        _freeList.Enqueue(int.Parse(key));
+        _freeList.Push(int.Parse(key));
     }
     public void         FreeAll()
     {
@@ -91,7 +91,7 @@ public class ObjectPool
             obj.name = _objectType.name + "_" + _objectList.Count;
             obj.SetActive(false);
 
-            _freeList.Enqueue(_objectList.Count);
+            _freeList.Push(_objectList.Count);
             _objectList.Add(obj);
         }
         _allocInterval *= 2;
