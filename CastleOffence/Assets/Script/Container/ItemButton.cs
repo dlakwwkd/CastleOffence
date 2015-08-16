@@ -17,4 +17,13 @@ public class ItemButton : UIButton
         _item.Purchase();
         base.OnClick();
     }
+
+    protected override void OnPress(bool isDown)
+    {
+        if (isDown)
+            Camera.main.GetComponent<CameraMove>().Lock();
+        else
+            Camera.main.GetComponent<CameraMove>().UnLock();
+        base.OnPress(isDown);
+    }
 }
