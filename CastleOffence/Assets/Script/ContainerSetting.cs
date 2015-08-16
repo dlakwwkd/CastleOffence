@@ -1,8 +1,20 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
-public class ContainerOnOff : MonoBehaviour
+[System.Serializable]
+public struct ItemInfo
 {
+    public GameObject   item;
+    public GameObject   icon;
+    public int          amount;
+    public float        xSize;
+    public float        ySize;
+}
+
+public class ContainerSetting : MonoBehaviour
+{
+    public List<ItemInfo> itemList = new List<ItemInfo>();
+
     UIWidget    _widget = null;
     bool        _isOn   = false;
 
@@ -12,7 +24,7 @@ public class ContainerOnOff : MonoBehaviour
         _widget.alpha = 0.0f;
     }
 
-    public void Click()
+    public void OnOff()
     {
         if(_isOn)
         {

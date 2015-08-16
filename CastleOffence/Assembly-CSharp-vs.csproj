@@ -184,7 +184,7 @@
      <Compile Include="Assets\NGUI\Scripts\UI\UITooltip.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UIViewport.cs" />
      <Compile Include="Assets\Script\CameraMove.cs" />
-     <Compile Include="Assets\Script\ContainerOnOff.cs" />
+     <Compile Include="Assets\Script\ContainerSetting.cs" />
      <Compile Include="Assets\Script\DestroyZone.cs" />
      <Compile Include="Assets\Script\DragDropItem.cs" />
      <Compile Include="Assets\Script\ObjectManager.cs" />
