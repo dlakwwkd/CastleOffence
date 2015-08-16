@@ -43,13 +43,17 @@ public class DragDropItem : UIDragDropItem
     protected override void OnDragDropRelease(GameObject surface)
 	{
         if (amount < 1) return;
-        --amount;
 
         if (mDragScrollView != null)
             StartCoroutine(EnableDragScrollView());
 
-        _obj.GetComponent<Rigidbody2D>().simulated = true;
+        if (NGUITools.FindInParents<UIDragDropContainer>(surface))
+            ObjectManager.instance.Free(_obj);
+        else
+        {
+            _label.text = (--amount).ToString();
+            _obj.GetComponent<Rigidbody2D>().simulated = true;
+        }
         _obj = null;
-        _label.text = amount.ToString();
     }
 }
