@@ -41,7 +41,13 @@ public class DragDropItem : UIDragDropItem
     {
         if (amount < 1) return;
 
-        var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 pos;
+#if UNITY_EDITOR
+        pos = Input.mousePosition;
+#elif UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8
+        pos = Input.GetTouch(0).position;
+#endif
+        pos = Camera.main.ScreenToWorldPoint(pos);
         pos.z = 0.0f;
         _obj.transform.position = pos;
     }

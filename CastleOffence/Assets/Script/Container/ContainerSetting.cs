@@ -67,6 +67,16 @@ public class ContainerSetting : MonoBehaviour
             icon.transform.localPosition = Vector3.zero;
             icon.transform.localRotation = Quaternion.identity;
             icon.transform.localScale = Vector3.one;
+
+            var sprite = icon.GetComponent<UISprite>();
+            var aspect = itemInfo.xSize / itemInfo.ySize;
+            var w = sprite.width;
+            var h = sprite.height;
+            if (aspect > 1)
+                h = (int)(sprite.height / aspect);
+            else
+                w = (int)(sprite.width * aspect);
+            sprite.SetDimensions(w, h);
         }
     }
 }
