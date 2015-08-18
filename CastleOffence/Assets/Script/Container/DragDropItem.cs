@@ -7,8 +7,8 @@ public class DragDropItem : UIDragDropItem
     public float        ySize   = 1.0f;
     public int          amount  = 1;
 
-    GameObject  _obj    = null;
-    UILabel     _label  = null;
+    GameObject  _obj        = null;
+    UILabel     _label      = null;
 
     public void Purchase()
     {
@@ -18,6 +18,10 @@ public class DragDropItem : UIDragDropItem
     protected override void Start()
     {
         base.Start();
+        mRoot = NGUITools.FindInParents<UIRoot>(mTrans.parent);
+		mGrid = NGUITools.FindInParents<UIGrid>(mTrans.parent);
+		if (mGrid != null) mGrid.repositionNow = true;
+
         _label = GetComponentInChildren<UILabel>();
         _label.text = amount.ToString();
         _label.depth = 2;
@@ -29,8 +33,6 @@ public class DragDropItem : UIDragDropItem
 
         if (mDragScrollView != null)
             mDragScrollView.enabled = false;
-
-        mRoot = NGUITools.FindInParents<UIRoot>(mTrans.parent);
 
         _obj = ObjectManager.instance.Assign(prefab.name);
         _obj.transform.localScale = new Vector3(xSize, ySize, 1.0f);
