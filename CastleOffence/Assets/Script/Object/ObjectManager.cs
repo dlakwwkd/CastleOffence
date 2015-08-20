@@ -1,12 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
+[System.Serializable]
+public struct ObjInfo
+{
+    public GameObject   prefab;
+    public int          size;
+}
+
 public class ObjectManager : MonoBehaviour
 {
     static ObjectManager            _instance = null;
     public static ObjectManager     instance { get { return _instance; } }
 
-    public List<GameObject>         objectList = new List<GameObject>();
+    public List<ObjInfo>            objectList = new List<ObjInfo>();
     Dictionary<string, ObjectPool>  _poolList = new Dictionary<string, ObjectPool>();
 
     void                Start()
@@ -17,9 +24,9 @@ public class ObjectManager : MonoBehaviour
         foreach (var obj in objectList)
         {
             var pool = new ObjectPool();
-            pool.Init(obj);
+            pool.Init(obj.prefab, obj.size);
 
-            _poolList.Add(obj.name, pool);
+            _poolList.Add(obj.prefab.name, pool);
         }
     }
 
@@ -47,11 +54,12 @@ public class ObjectPool
     GameObject          _objectType     = null;
     List<GameObject>    _objectList     = new List<GameObject>();
     Stack<int>          _freeList       = new Stack<int>();
-    int                 _allocInterval  = 10;
+    int                 _allocInterval  = 0;
 
-    public void         Init(GameObject obj)
+    public void         Init(GameObject obj, int size)
     {
         _objectType = obj;
+        _allocInterval = size;
         Alloc();
     }
 
@@ -75,8 +83,9 @@ public class ObjectPool
     }
     public void         FreeAll()
     {
-        foreach(var obj in _objectList)
+        for(int i = 0; i < _objectList.Count; ++i)
         {
+            var obj = _objectList[i];
             if (!obj.activeSelf) continue;
             Free(obj);
         }
@@ -93,6 +102,5 @@ public class ObjectPool
             _freeList.Push(_objectList.Count);
             _objectList.Add(obj);
         }
-        _allocInterval *= 2;
     }
 }
