@@ -11,13 +11,11 @@ public class ItemButton : UIButton
         tweenTarget = gameObject;
         base.OnInit();
     }
-
     protected override void OnClick()
     {
         _item.Purchase();
         base.OnClick();
     }
-
     protected override void OnPress(bool isDown)
     {
         if (isDown)

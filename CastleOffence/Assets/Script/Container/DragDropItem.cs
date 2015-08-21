@@ -10,7 +10,7 @@ public class DragDropItem : UIDragDropItem
     GameObject  _obj        = null;
     UILabel     _label      = null;
 
-    public void Purchase()
+    public void             Purchase()
     {
         _label.text = (++amount).ToString();
     }
@@ -38,7 +38,6 @@ public class DragDropItem : UIDragDropItem
         _obj.transform.localScale = new Vector3(xSize, ySize, 1.0f);
         _obj.GetComponent<Rigidbody2D>().simulated = false;
     }
-
     protected override void OnDragDropMove(Vector2 delta)
     {
         if (amount < 1) return;
@@ -53,7 +52,6 @@ public class DragDropItem : UIDragDropItem
         pos.z = 0.0f;
         _obj.transform.position = pos;
     }
-
     protected override void OnDragDropRelease(GameObject surface)
 	{
         if (amount < 1) return;

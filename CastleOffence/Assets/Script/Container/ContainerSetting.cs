@@ -14,19 +14,17 @@ public struct ItemInfo
 public class ContainerSetting : MonoBehaviour
 {
     public GameObject       itemType = null;
-    public List<ItemInfo>   itemList = new List<ItemInfo>();
 
     GameObject  _grid   = null;
     UIWidget    _widget = null;
     bool        _isOn   = false;
 
-    void Start()
+    void        Start()
     {
         _widget = GetComponent<UIWidget>();
         _widget.alpha = 0.0f;
 
         _grid = transform.FindChild("Scroll View").FindChild("Grid").gameObject;
-        SettingItems();
     }
 
     public void OnOff()
@@ -42,8 +40,7 @@ public class ContainerSetting : MonoBehaviour
             _isOn = true;
         }
     }
-
-    void SettingItems()
+    public void SettingItems(List<ItemInfo> itemList)
     {
         for(int i = 0; i < itemList.Count; ++i)
         {
