@@ -191,6 +191,7 @@
      <Compile Include="Assets\Script\Object\ObjectManager.cs" />
      <Compile Include="Assets\Script\Object\ObjectStatus.cs" />
      <Compile Include="Assets\Script\Player\PlayerStatus.cs" />
+     <Compile Include="Assets\Script\SceneChange.cs" />
      <Compile Include="Assets\Script\Temp.cs" />
      <None Include="Assets\NGUI\Examples\Shaders\Unlit - Depth Cutout.shader" />
      <None Include="Assets\NGUI\ReadMe - 3.9.1.txt" />
