@@ -1,19 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-[System.Serializable]
-public struct ObjInfo
-{
-    public GameObject   prefab;
-    public int          size;
-}
-
 public class ObjectManager : MonoBehaviour
 {
     static ObjectManager            _instance = null;
     public static ObjectManager     instance { get { return _instance; } }
 
-    public List<ObjInfo>            objectList = new List<ObjInfo>();
+    public List<GameObject>         objectList  = new List<GameObject>();
+    public List<int>                sizeList    = new List<int>();
+
     Dictionary<string, ObjectPool>  _poolList = new Dictionary<string, ObjectPool>();
 
     void                Start()
@@ -21,12 +16,14 @@ public class ObjectManager : MonoBehaviour
         if (_instance == null)
             _instance = this;
 
-        foreach (var obj in objectList)
+        if (objectList.Count != sizeList.Count)
+            Debug.LogError("ObjectPool size is invalied!");
+
+        for (int i = 0; i < objectList.Count; ++i)
         {
             var pool = new ObjectPool();
-            pool.Init(obj.prefab, obj.size);
-
-            _poolList.Add(obj.prefab.name, pool);
+            pool.Init(objectList[i], sizeList[i]);
+            _poolList.Add(objectList[i].name, pool);
         }
     }
 

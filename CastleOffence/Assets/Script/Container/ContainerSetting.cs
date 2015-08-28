@@ -1,19 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-[System.Serializable]
-public struct ItemInfo
-{
-    public GameObject   item;
-    public GameObject   icon;
-    public int          amount;
-    public float        xSize;
-    public float        ySize;
-}
-
 public class ContainerSetting : MonoBehaviour
 {
-    public GameObject       itemType = null;
+    public GameObject itemType = null;
 
     GameObject  _grid   = null;
     UIWidget    _widget = null;

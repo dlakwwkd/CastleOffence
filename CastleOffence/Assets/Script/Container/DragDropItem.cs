@@ -7,8 +7,8 @@ public class DragDropItem : UIDragDropItem
     public float        ySize   = 1.0f;
     public int          amount  = 1;
 
-    GameObject  _obj        = null;
-    UILabel     _label      = null;
+    GameObject  _obj    = null;
+    UILabel     _label  = null;
 
     public void             Purchase()
     {
