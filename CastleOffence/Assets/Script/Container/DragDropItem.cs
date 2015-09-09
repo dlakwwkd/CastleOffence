@@ -64,6 +64,7 @@ public class DragDropItem : UIDragDropItem
         else
         {
             _label.text = (--amount).ToString();
+            _obj.GetComponent<ObjectStatus>().owner = PlayerType.PLAYER;
             _obj.GetComponent<Rigidbody2D>().simulated = true;
         }
         _obj = null;
