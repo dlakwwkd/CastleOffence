@@ -6,14 +6,16 @@ public class UnitItemInfo : MonoBehaviour
     public GameObject prefab = null;
     public GameObject coolTimeBox = null;
 
-    ObjectStatus    _status     = null;
+    ObjectStatus    _unitInfo     = null;
+    Vector2         _createPos  = Vector2.zero;
     float           _coolTime   = 0.0f;
     bool            _isOn       = true;
 
     void Start()
     {
-        _status = prefab.GetComponent<ObjectStatus>();
-        _coolTime = _status.createTime;
+        _unitInfo = prefab.GetComponent<ObjectStatus>();
+        _createPos = GameManager.instance.playerCastlePos;
+        _coolTime = _unitInfo.createTime;
 
         UIEventListener.Get(gameObject).onClick += onClick;
         UIEventListener.Get(gameObject).onPress += onPress;
@@ -40,7 +42,10 @@ public class UnitItemInfo : MonoBehaviour
     void ProduceUnit()
     {
         var unit = ObjectManager.instance.Assign(prefab.name);
-        unit.transform.position = new Vector3(0.0f, 5.0f);
+        unit.transform.position = _createPos;
+
+        var status = unit.GetComponent<ObjectStatus>();
+        status.owner = PlayerType.PLAYER;
     }
 
     IEnumerator CoolTimeProcess()
@@ -55,13 +60,13 @@ public class UnitItemInfo : MonoBehaviour
         texture.alpha = 0.8f;
         texture.depth = 10;
 
-        while (_coolTime > 0.01f)
+        while (_coolTime > 0.1f)
         {
-            _coolTime -= 0.01f;
-            texture.fillAmount = _coolTime / _status.createTime;
-            yield return new WaitForSeconds(0.01f);
+            _coolTime -= Time.deltaTime;
+            texture.fillAmount = _coolTime / _unitInfo.createTime;
+            yield return new WaitForEndOfFrame();
         }
-        _coolTime = _status.createTime;
+        _coolTime = _unitInfo.createTime;
         _isOn = true;
         Destroy(box);
         yield return null;

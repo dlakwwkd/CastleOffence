@@ -11,10 +11,16 @@ public class GameManager : MonoBehaviour
     GameObject _player      = null;
     GameObject _enemy       = null;
 
-    public GameObject       castle      = null;
-    public List<ItemInfo>   barrierList = new List<ItemInfo>();
-    public List<ItemInfo>   towerList = new List<ItemInfo>();
-    public List<UnitInfo>   unitList = new List<UnitInfo>();
+    public GameObject       player { get { return _player; } }
+    public GameObject       enemy { get { return _enemy; } }
+
+    public GameObject       castle          = null;
+    public Vector2          playerCastlePos = Vector2.zero;
+    public Vector2          enemyCastlePos  = Vector2.zero;
+
+    public List<ItemInfo>   barrierList     = new List<ItemInfo>();
+    public List<ItemInfo>   towerList       = new List<ItemInfo>();
+    public List<UnitInfo>   unitList        = new List<UnitInfo>();
 
     void Start()
     {
@@ -40,15 +46,18 @@ public class GameManager : MonoBehaviour
         _player.GetComponent<PlayerStatus>().type = PlayerType.PLAYER;
         _enemy.GetComponent<PlayerStatus>().type = PlayerType.ENEMY;
 
+        playerCastlePos = new Vector2(_cameraInfo.leftSide + 5.0f, 2.5f);
+        enemyCastlePos = new Vector2(_cameraInfo.rightSide - 5.0f, 2.5f);
+
         var castleA = Instantiate(castle) as GameObject;
         castleA.transform.SetParent(_player.transform);
-        castleA.transform.localPosition = new Vector3(_cameraInfo.leftSide + 5.0f, 2.5f);
+        castleA.transform.localPosition = playerCastlePos;
         castleA.name = "PlayerCastle";
         castleA.GetComponent<ObjectStatus>().owner = PlayerType.PLAYER;
 
         var castleB = Instantiate(castle) as GameObject;
         castleB.transform.SetParent(_enemy.transform);
-        castleB.transform.localPosition = new Vector3(_cameraInfo.rightSide - 5.0f, 2.5f);
+        castleB.transform.localPosition = enemyCastlePos;
         castleB.name = "EnemyCastle";
         castleB.GetComponent<ObjectStatus>().owner = PlayerType.ENEMY;
 
