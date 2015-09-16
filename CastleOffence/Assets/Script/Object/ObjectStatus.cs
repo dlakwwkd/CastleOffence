@@ -23,11 +23,43 @@ public class ObjectStatus : MonoBehaviour
     public float        moveSpeed   = 0.0f;
     public float        createTime  = 0.0f;
 
-    int     curHp   = 0;
+    int     _curHp  = 0;
+    bool    _isDead = true;
 
-    void Start()
+    void OnEnable()
     {
-        curHp = maxHp;
+        _curHp = maxHp;
+        _isDead = false;
     }
 
+    public bool IsDead()
+    {
+        return _isDead;
+    }
+
+    public void Damaged(int dam)
+    {
+        _curHp -= dam;
+        if(_curHp <= 0)
+        {
+            _isDead = true;
+            Destroy();
+        }
+    }
+
+    public void Destroy()
+    {
+        if (owner == PlayerType.PLAYER)
+            GameManager.instance.playerObjList.Remove(gameObject);
+        else
+            GameManager.instance.enemyObjList.Remove(gameObject);
+
+        if(type == ObjectType.CASTLE)
+        {
+            gameObject.SetActive(false);
+        }
+
+        owner = PlayerType.NONE;
+        ObjectManager.instance.Free(gameObject);
+    }
 }

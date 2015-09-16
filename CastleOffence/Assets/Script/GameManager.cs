@@ -18,15 +18,20 @@ public class GameManager : MonoBehaviour
     public Vector2          playerCastlePos = Vector2.zero;
     public Vector2          enemyCastlePos  = Vector2.zero;
 
+    public List<GameObject> playerObjList   = new List<GameObject>();
+    public List<GameObject> enemyObjList    = new List<GameObject>();
+
     public List<ItemInfo>   barrierList     = new List<ItemInfo>();
     public List<ItemInfo>   towerList       = new List<ItemInfo>();
     public List<UnitInfo>   unitList        = new List<UnitInfo>();
 
-    void Start()
+    void Awake()
     {
         if (_instance == null)
             _instance = this;
-
+    }
+    void Start()
+    {
         InitGame();
         StartGame();
     }
@@ -60,6 +65,9 @@ public class GameManager : MonoBehaviour
         castleB.transform.localPosition = enemyCastlePos;
         castleB.name = "EnemyCastle";
         castleB.GetComponent<ObjectStatus>().owner = PlayerType.ENEMY;
+
+        playerObjList.Add(castleA);
+        enemyObjList.Add(castleB);
 
         var uiRoot = GameObject.FindGameObjectWithTag("UIRoot");
         var barrier = uiRoot.transform.FindChild("BarrierButton").FindChild("Container");

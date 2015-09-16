@@ -210,12 +210,13 @@
     <Compile Include="Assets\Script\Container\ContainerSetting.cs" />
     <Compile Include="Assets\Script\Container\DragDropItem.cs" />
     <Compile Include="Assets\Script\Container\ItemButton.cs" />
+    <Compile Include="Assets\Script\Container\UnitItemInfo.cs" />
+    <Compile Include="Assets\Script\Container\UnitSetting.cs" />
     <Compile Include="Assets\Script\DestroyZone.cs" />
     <Compile Include="Assets\Script\GameManager.cs" />
     <Compile Include="Assets\Script\Object\ObjectManager.cs" />
     <Compile Include="Assets\Script\Object\ObjectStatus.cs" />
-    <Compile Include="Assets\Script\Object\Unit\UnitItemInfo.cs" />
-    <Compile Include="Assets\Script\Object\Unit\UnitSetting.cs" />
+    <Compile Include="Assets\Script\Object\Unit\UnitAI.cs" />
     <Compile Include="Assets\Script\Player\PlayerStatus.cs" />
     <Compile Include="Assets\Script\SceneChange.cs" />
     <Compile Include="Assets\Script\Temp.cs" />

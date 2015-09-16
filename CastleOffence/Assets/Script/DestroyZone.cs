@@ -5,6 +5,6 @@ public class DestroyZone : MonoBehaviour
 {
     void OnTriggerEnter2D(Collider2D other)
     {
-        ObjectManager.instance.Free(other.gameObject);
+        other.gameObject.GetComponent<ObjectStatus>().Destroy();
     }
 }

@@ -46,6 +46,8 @@ public class UnitItemInfo : MonoBehaviour
 
         var status = unit.GetComponent<ObjectStatus>();
         status.owner = PlayerType.PLAYER;
+
+        GameManager.instance.playerObjList.Add(unit);
     }
 
     IEnumerator CoolTimeProcess()
