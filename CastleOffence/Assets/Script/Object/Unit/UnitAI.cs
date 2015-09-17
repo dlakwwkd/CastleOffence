@@ -173,4 +173,10 @@ public class UnitAI : MonoBehaviour
     {
         _body.velocity = new Vector2(-2.0f * (float)_unitInfo.dir, _body.velocity.y);
     }
+
+    public void Death()
+    {
+        state = UnitFSM.DEAD;
+        _anim.SetTrigger("death");
+    }
 }

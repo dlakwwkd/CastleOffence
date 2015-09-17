@@ -39,7 +39,8 @@ public class ObjectStatus : MonoBehaviour
 
     void Awake()
     {
-        var unitSize = GetComponent<BoxCollider2D>().size / 2 + GetComponent<BoxCollider2D>().offset;
+        var collider = GetComponent<BoxCollider2D>();
+        var unitSize = collider.size / 2 + collider.offset;
 
         _hpBar = Instantiate(hpBar) as GameObject;
         _hpBar.transform.SetParent(transform);
@@ -58,9 +59,6 @@ public class ObjectStatus : MonoBehaviour
     }
     void OnDisable()
     {
-        _hpGauge.localScale = Vector3.one;
-        _hpBar.transform.localRotation = Quaternion.identity;
-        _hpBar.SetActive(false);
     }
 
     public bool IsDead()
@@ -77,12 +75,27 @@ public class ObjectStatus : MonoBehaviour
         if(_curHp <= 0)
         {
             _isDead = true;
-            Destroy();
+            if (type == ObjectType.UNIT)
+            {
+                GetComponent<UnitAI>().Death();
+            }
+            StartCoroutine("Destroy");
         }
     }
 
-    public void Destroy()
+    public void Death()
     {
+        StartCoroutine("Destroy");
+    }
+
+    IEnumerator Destroy()
+    {
+        _hpGauge.localScale = Vector3.one;
+        _hpBar.transform.localRotation = Quaternion.identity;
+        _hpBar.SetActive(false);
+
+        yield return new WaitForSeconds(1.5f);
+
         if (owner == PlayerType.PLAYER)
             GameManager.instance.playerObjList.Remove(gameObject);
         else
@@ -92,7 +105,6 @@ public class ObjectStatus : MonoBehaviour
         {
             gameObject.SetActive(false);
         }
-
         owner = PlayerType.NONE;
         ObjectManager.instance.Free(gameObject);
     }

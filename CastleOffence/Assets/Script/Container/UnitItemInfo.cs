@@ -43,7 +43,13 @@ public class UnitItemInfo : MonoBehaviour
     {
         var unit = ObjectManager.instance.Assign(prefab.name);
         unit.transform.position = _createPos;
-        unit.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
+        unit.transform.localRotation = Quaternion.identity;
+
+        for (int i = 0; i < unit.transform.childCount; ++i)
+        {
+            var child = unit.transform.GetChild(i);
+            child.localRotation = Quaternion.identity;
+        }
 
         var status = unit.GetComponent<ObjectStatus>();
         status.owner = PlayerType.PLAYER;
