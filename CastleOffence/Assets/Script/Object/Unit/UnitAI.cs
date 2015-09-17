@@ -15,22 +15,17 @@ public class UnitAI : MonoBehaviour
         HIT,
         DEAD,
     }
-    public enum Direction
-    {
-        LEFT = -1,
-        RIGHT = 1,
-    }
 
-    public UnitFSM  state       = UnitFSM.IDLE;
-    public float    stateTime   = 0.0f;
+    public UnitFSM      state       = UnitFSM.IDLE;
+    public float        stateTime   = 0.0f;
 
     Dictionary<UnitFSM, Action> _dicState   = new Dictionary<UnitFSM, Action>();
     ObjectStatus                _unitInfo   = null;
     Rigidbody2D                 _body       = null;
     Animator                    _anim       = null;
     GameObject                  _target     = null;
-    Direction                   _dir        = Direction.LEFT;
-    float                       _hitDelay   = 0.5f;
+    float                       _hitDelay   = 0.3f;
+    float                       _idleTime   = 0.3f;
 
 
     void Start()
@@ -38,9 +33,7 @@ public class UnitAI : MonoBehaviour
         _unitInfo = GetComponent<ObjectStatus>();
         _body = GetComponent<Rigidbody2D>();
         _anim = GetComponent<Animator>();
-        if (_unitInfo.owner == PlayerType.PLAYER)
-            _dir = Direction.RIGHT;
-
+        
         _dicState[UnitFSM.IDLE]     = Idle;
         _dicState[UnitFSM.MOVE]     = Move;
         _dicState[UnitFSM.ATTACK]   = Attack;
@@ -65,41 +58,36 @@ public class UnitAI : MonoBehaviour
 
     void Idle()
     {
-        state = UnitFSM.MOVE;
-        _anim.SetBool("move", true);
+        stateTime += Time.deltaTime;
+        if (stateTime > _idleTime)
+        {
+            stateTime = 0.0f;
+            state = UnitFSM.MOVE;
+            _anim.SetTrigger("move");
+        }
     }
     void Move()
     {
-        float speed = _unitInfo.moveSpeed * (float)_dir * Time.deltaTime;
-        _body.velocity = new Vector2(speed, _body.velocity.y);
-
-        if (_target)
+        if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
         {
-            if(_target.GetComponent<ObjectStatus>().IsDead())
-            {
-                _target = null;
-                return;
-            }
-
             float dist = Math.Abs(_target.transform.localPosition.x - transform.localPosition.x);
             if (dist < _unitInfo.attackRange)
             {
                 state = UnitFSM.ATTACK;
-                _anim.SetBool("move", false);
                 _anim.SetTrigger("attack");
+                return;
             }
         }
+        else
+            _target = null;
+
+        float speed = _unitInfo.moveSpeed * (float)_unitInfo.dir * Time.deltaTime;
+        _body.velocity = new Vector2(speed, _body.velocity.y);
     }
     void Attack()
     {
-        if(_target)
+        if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
         {
-            if (_target.GetComponent<ObjectStatus>().IsDead())
-            {
-                _target = null;
-                return;
-            }
-
             stateTime += Time.deltaTime;
             if (stateTime > _unitInfo.attackSpeed)
             {
@@ -111,11 +99,14 @@ public class UnitAI : MonoBehaviour
             if (dist > _unitInfo.attackRange)
             {
                 state = UnitFSM.IDLE;
+                stateTime = 0.0f;
             }
         }
         else
         {
+            _target = null;
             state = UnitFSM.IDLE;
+            stateTime = 0.0f;
         }
     }
     void Hit()
@@ -125,7 +116,6 @@ public class UnitAI : MonoBehaviour
         {
             stateTime = 0.0f;
             state = UnitFSM.IDLE;
-            _anim.SetBool("move", false);
         }
     }
     void Dead()
@@ -136,7 +126,7 @@ public class UnitAI : MonoBehaviour
     {
         while(true)
         {
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSeconds(0.5f);
 
             var enemyList = GameManager.instance.enemyObjList;
             if (_unitInfo.owner == PlayerType.ENEMY)
@@ -168,12 +158,19 @@ public class UnitAI : MonoBehaviour
     {
         var targetInfo = _target.GetComponent<ObjectStatus>();
 
-        if (targetInfo.type == ObjectType.UNIT)
+        if (targetInfo.type == ObjectStatus.ObjectType.UNIT)
         {
-            _target.GetComponent<UnitAI>().state = UnitFSM.HIT;
-            _target.GetComponent<UnitAI>().stateTime = 0.0f;
+            var ai = _target.GetComponent<UnitAI>();
+            ai.state = UnitFSM.HIT;
+            ai.stateTime = 0.0f;
+            ai.KnockBack();
             _target.GetComponent<Animator>().SetTrigger("hit");
         }
         targetInfo.Damaged(_unitInfo.damage);
+    }
+
+    public void KnockBack()
+    {
+        _body.velocity = new Vector2(-2.0f * (float)_unitInfo.dir, _body.velocity.y);
     }
 }

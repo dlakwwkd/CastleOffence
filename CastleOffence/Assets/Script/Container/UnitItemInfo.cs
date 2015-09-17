@@ -43,9 +43,11 @@ public class UnitItemInfo : MonoBehaviour
     {
         var unit = ObjectManager.instance.Assign(prefab.name);
         unit.transform.position = _createPos;
+        unit.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
 
         var status = unit.GetComponent<ObjectStatus>();
         status.owner = PlayerType.PLAYER;
+        status.dir = ObjectStatus.Direction.RIGHT;
 
         GameManager.instance.playerObjList.Add(unit);
     }
@@ -71,6 +73,5 @@ public class UnitItemInfo : MonoBehaviour
         _coolTime = _unitInfo.createTime;
         _isOn = true;
         Destroy(box);
-        yield return null;
     }
 }

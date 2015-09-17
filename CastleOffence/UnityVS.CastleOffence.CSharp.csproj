@@ -217,6 +217,7 @@
     <Compile Include="Assets\Script\Object\ObjectManager.cs" />
     <Compile Include="Assets\Script\Object\ObjectStatus.cs" />
     <Compile Include="Assets\Script\Object\Unit\UnitAI.cs" />
+    <Compile Include="Assets\Script\Player\EnemyAI.cs" />
     <Compile Include="Assets\Script\Player\PlayerStatus.cs" />
     <Compile Include="Assets\Script\SceneChange.cs" />
     <Compile Include="Assets\Script\Temp.cs" />

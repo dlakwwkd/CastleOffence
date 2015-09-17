@@ -1,19 +1,23 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2008
 
-
+Project("{95CA20B5-D5A9-9092-AA65-2D6BB491EC57}") = "ShaderPractice", "Assembly-CSharp-Editor.csproj", "{753EB8B0-2044-1C98-02DD-E35AA214D7C8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-
+		{753EB8B0-2044-1C98-02DD-E35AA214D7C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{753EB8B0-2044-1C98-02DD-E35AA214D7C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{753EB8B0-2044-1C98-02DD-E35AA214D7C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{753EB8B0-2044-1C98-02DD-E35AA214D7C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-										GlobalSection(MonoDevelopProperties) = preSolution
+														GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1

@@ -36,6 +36,7 @@ public class DragDropItem : UIDragDropItem
 
         _obj = ObjectManager.instance.Assign(prefab.name);
         _obj.transform.localScale = new Vector3(xSize, ySize, 1.0f);
+        _obj.transform.localRotation = Quaternion.identity;
         _obj.GetComponent<Rigidbody2D>().simulated = false;
     }
     protected override void OnDragDropMove(Vector2 delta)

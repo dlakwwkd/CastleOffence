@@ -25,6 +25,9 @@ public class GameManager : MonoBehaviour
     public List<ItemInfo>   towerList       = new List<ItemInfo>();
     public List<UnitInfo>   unitList        = new List<UnitInfo>();
 
+    public List<GameObject> enemyUnitList   = new List<GameObject>();
+
+
     void Awake()
     {
         if (_instance == null)
@@ -50,6 +53,9 @@ public class GameManager : MonoBehaviour
 
         _player.GetComponent<PlayerStatus>().type = PlayerType.PLAYER;
         _enemy.GetComponent<PlayerStatus>().type = PlayerType.ENEMY;
+
+        _enemy.AddComponent<EnemyAI>();
+        _enemy.GetComponent<EnemyAI>().unitList = enemyUnitList;
 
         playerCastlePos = new Vector2(_cameraInfo.leftSide + 5.0f, 2.5f);
         enemyCastlePos = new Vector2(_cameraInfo.rightSide - 5.0f, 2.5f);
