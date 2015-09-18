@@ -45,15 +45,9 @@ public class UnitItemInfo : MonoBehaviour
         unit.transform.position = _createPos;
         unit.transform.localRotation = Quaternion.identity;
 
-        for (int i = 0; i < unit.transform.childCount; ++i)
-        {
-            var child = unit.transform.GetChild(i);
-            child.localRotation = Quaternion.identity;
-        }
-
         var status = unit.GetComponent<ObjectStatus>();
         status.owner = PlayerType.PLAYER;
-        status.dir = ObjectStatus.Direction.RIGHT;
+        status.ChangeDir(ObjectStatus.Direction.RIGHT);
 
         GameManager.instance.playerObjList.Add(unit);
     }

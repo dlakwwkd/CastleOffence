@@ -33,17 +33,9 @@ public class EnemyAI : MonoBehaviour
             var unit = ObjectManager.instance.Assign(obj.name);
             unit.transform.position = _createPos;
 
-            for (int i = 0; i < unit.transform.childCount; ++i)
-            {
-                var child = unit.transform.GetChild(i);
-                child.localRotation = Quaternion.identity;
-            }
-
             var status = unit.GetComponent<ObjectStatus>();
             status.owner = PlayerType.ENEMY;
-            status.dir = ObjectStatus.Direction.LEFT;
-            unit.transform.localRotation = Quaternion.Euler(new Vector3(0, 180.0f, 0));
-            unit.transform.FindChild("HpBar").localRotation = unit.transform.localRotation;
+            status.ChangeDir(ObjectStatus.Direction.LEFT);
 
             GameManager.instance.enemyObjList.Add(unit);
         }

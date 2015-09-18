@@ -19,17 +19,18 @@ public class ObjectStatus : MonoBehaviour
         RIGHT = 1,
     }
 
-    public PlayerType   owner       = PlayerType.NONE;
-    public ObjectType   type        = ObjectType.NONE;
-    public Direction    dir         = Direction.RIGHT;
-    public GameObject   hpBar       = null;
-    public int          cost        = 0;
-    public int          maxHp       = 0;
-    public int          damage      = 0;
-    public float        attackRange = 0.0f;
-    public float        attackSpeed = 0.0f;
-    public float        moveSpeed   = 0.0f;
-    public float        createTime  = 0.0f;
+    public PlayerType   owner               = PlayerType.NONE;
+    public ObjectType   type                = ObjectType.NONE;
+    public Direction    dir                 = Direction.RIGHT;
+    public GameObject   hpBar               = null;
+    public int          cost                = 0;
+    public int          maxHp               = 0;
+    public int          damage              = 0;
+    public float        attackRange         = 0.0f;
+    public float        attackFrontDelay    = 0.0f;
+    public float        attackBackDelay     = 0.0f;
+    public float        moveSpeed           = 0.0f;
+    public float        createTime          = 0.0f;
 
     GameObject  _hpBar      = null;
     Transform   _hpGauge    = null;
@@ -66,6 +67,20 @@ public class ObjectStatus : MonoBehaviour
         return _isDead;
     }
 
+    public void ChangeDir(Direction d)
+    {
+        if(dir != d)
+        {
+            dir = d;
+            if (dir == Direction.LEFT)
+                transform.localRotation = Quaternion.Euler(new Vector3(0, 180.0f, 0));
+            else
+                transform.localRotation = Quaternion.identity;
+
+            _hpBar.transform.localRotation = transform.localRotation;
+        }
+    }
+
     public void Damaged(int dam)
     {
         _curHp -= dam;
@@ -85,21 +100,24 @@ public class ObjectStatus : MonoBehaviour
 
     public void Death()
     {
-        StartCoroutine("Destroy");
+        if (!_isDead)
+        {
+            _isDead = true;
+            StartCoroutine("Destroy");
+        }
     }
 
     IEnumerator Destroy()
     {
         _hpGauge.localScale = Vector3.one;
-        _hpBar.transform.localRotation = Quaternion.identity;
         _hpBar.SetActive(false);
-
-        yield return new WaitForSeconds(1.5f);
 
         if (owner == PlayerType.PLAYER)
             GameManager.instance.playerObjList.Remove(gameObject);
         else
             GameManager.instance.enemyObjList.Remove(gameObject);
+
+        yield return new WaitForSeconds(1.5f);
 
         if(type == ObjectType.CASTLE)
         {

@@ -24,8 +24,7 @@ public class UnitAI : MonoBehaviour
     Rigidbody2D                 _body       = null;
     Animator                    _anim       = null;
     GameObject                  _target     = null;
-    float                       _hitDelay   = 0.3f;
-    float                       _idleTime   = 0.3f;
+    float                       _hitDelay   = 0.5f;
 
 
     void Start()
@@ -53,26 +52,30 @@ public class UnitAI : MonoBehaviour
         state = UnitFSM.IDLE;
         GameManager.instance.playerObjList.Remove(gameObject);
 
-        StopCoroutine("SearchEnemy");
+        StopAllCoroutines();
     }
+
 
     void Idle()
     {
-        stateTime += Time.deltaTime;
-        if (stateTime > _idleTime)
+        if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
         {
-            stateTime = 0.0f;
+            LookEnemyAndCalcPos();
+
             state = UnitFSM.MOVE;
             _anim.SetTrigger("move");
         }
+        else
+            _target = null;
     }
     void Move()
     {
         if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
         {
-            float dist = Math.Abs(_target.transform.localPosition.x - transform.localPosition.x);
+            var dist = Math.Abs(LookEnemyAndCalcPos());
             if (dist < _unitInfo.attackRange)
             {
+                stateTime = 0.0f;
                 state = UnitFSM.ATTACK;
                 _anim.SetTrigger("attack");
                 return;
@@ -88,25 +91,25 @@ public class UnitAI : MonoBehaviour
     {
         if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
         {
-            stateTime += Time.deltaTime;
-            if (stateTime > _unitInfo.attackSpeed)
-            {
-                stateTime = 0.0f;
-                _anim.SetTrigger("attack");
-                AttackProcess();
-            }
-            float dist = Math.Abs(_target.transform.localPosition.x - transform.localPosition.x);
+            var dist = Math.Abs(LookEnemyAndCalcPos());
             if (dist > _unitInfo.attackRange)
             {
                 state = UnitFSM.IDLE;
-                stateTime = 0.0f;
+                return;
+            }
+
+            stateTime += Time.deltaTime;
+            if (stateTime > _unitInfo.attackFrontDelay)
+            {
+                AttackProcess();
+                StartCoroutine("AttackDelay");
+                stateTime = -(_unitInfo.attackBackDelay);
             }
         }
         else
         {
-            _target = null;
             state = UnitFSM.IDLE;
-            stateTime = 0.0f;
+            _target = null;
         }
     }
     void Hit()
@@ -122,23 +125,32 @@ public class UnitAI : MonoBehaviour
     {
     }
 
+
+
+    IEnumerator AttackDelay()
+    {
+        yield return new WaitForSeconds(_unitInfo.attackBackDelay);
+
+        if (state == UnitFSM.ATTACK)
+            _anim.SetTrigger("attack");
+    }
     IEnumerator SearchEnemy()
     {
         while(true)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.1f);
 
             var enemyList = GameManager.instance.enemyObjList;
             if (_unitInfo.owner == PlayerType.ENEMY)
                 enemyList = GameManager.instance.playerObjList;
 
-            float unitPos = transform.localPosition.x;
-            float closeEnemyDist = float.MaxValue;
+            var unitPos = transform.localPosition.x;
+            var closeEnemyDist = float.MaxValue;
 
             for (int i = 0; i < enemyList.Count; ++i)
             {
-                float dist = Math.Abs(enemyList[i].transform.localPosition.x - unitPos);
-                if (closeEnemyDist > dist)
+                var dist = Math.Abs(enemyList[i].transform.localPosition.x - unitPos);
+                if (dist < closeEnemyDist)
                 {
                     closeEnemyDist = dist;
                     _target = enemyList[i];
@@ -154,6 +166,17 @@ public class UnitAI : MonoBehaviour
         }
     }
 
+
+    float LookEnemyAndCalcPos()
+    {
+        var dir = ObjectStatus.Direction.RIGHT;
+        var displacement = _target.transform.localPosition.x - transform.localPosition.x;
+        if (displacement < 0)
+            dir = ObjectStatus.Direction.LEFT;
+
+        _unitInfo.ChangeDir(dir);
+        return displacement;
+    }
     void AttackProcess()
     {
         var targetInfo = _target.GetComponent<ObjectStatus>();
@@ -161,8 +184,8 @@ public class UnitAI : MonoBehaviour
         if (targetInfo.type == ObjectStatus.ObjectType.UNIT)
         {
             var ai = _target.GetComponent<UnitAI>();
-            ai.state = UnitFSM.HIT;
             ai.stateTime = 0.0f;
+            ai.state = UnitFSM.HIT;
             ai.KnockBack();
             _target.GetComponent<Animator>().SetTrigger("hit");
         }
