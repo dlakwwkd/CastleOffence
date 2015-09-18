@@ -115,11 +115,13 @@ public class ObjectStatus : MonoBehaviour
         _hpGauge.GetComponent<SpriteRenderer>().color = Color.green;
         _hpBar.SetActive(false);
 
-        if (owner == PlayerType.PLAYER)
-            GameManager.instance.playerObjList.Remove(gameObject);
-        else
-            GameManager.instance.enemyObjList.Remove(gameObject);
-
+        if (type != ObjectType.MISSILE)
+        {
+            if (owner == PlayerType.PLAYER)
+                GameManager.instance.playerObjList.Remove(gameObject);
+            else
+                GameManager.instance.enemyObjList.Remove(gameObject);
+        }
         yield return new WaitForSeconds(1.5f);
 
         if(type == ObjectType.CASTLE)

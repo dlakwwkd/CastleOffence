@@ -38,6 +38,9 @@ public class DragDropItem : UIDragDropItem
         _obj.transform.localScale = new Vector3(xSize, ySize, 1.0f);
         _obj.transform.localRotation = Quaternion.identity;
         _obj.GetComponent<Rigidbody2D>().simulated = false;
+
+        if (_obj.GetComponent<ObjectStatus>().type == ObjectStatus.ObjectType.TOWER)
+            _obj.GetComponent<TowerAI>().state = TowerAI.TowerFSM.DEAD;
     }
     protected override void OnDragDropMove(Vector2 delta)
     {
@@ -67,6 +70,9 @@ public class DragDropItem : UIDragDropItem
             _label.text = (--amount).ToString();
             _obj.GetComponent<ObjectStatus>().owner = PlayerType.PLAYER;
             _obj.GetComponent<Rigidbody2D>().simulated = true;
+
+            if (_obj.GetComponent<ObjectStatus>().type == ObjectStatus.ObjectType.TOWER)
+                _obj.GetComponent<TowerAI>().state = TowerAI.TowerFSM.IDLE;
 
             GameManager.instance.playerObjList.Add(_obj);
         }
