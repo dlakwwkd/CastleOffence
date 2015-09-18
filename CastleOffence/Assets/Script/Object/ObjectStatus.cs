@@ -85,7 +85,9 @@ public class ObjectStatus : MonoBehaviour
     {
         _curHp -= dam;
 
-        _hpGauge.localScale = new Vector3((float)_curHp / maxHp, 1.0f, 1.0f);
+        var hpRatio = (float)_curHp / maxHp;
+        _hpGauge.localScale = new Vector3(hpRatio, 1.0f, 1.0f);
+        _hpGauge.GetComponent<SpriteRenderer>().color = new Color(1.0f - hpRatio, hpRatio, 0);
 
         if(_curHp <= 0)
         {
@@ -110,6 +112,7 @@ public class ObjectStatus : MonoBehaviour
     IEnumerator Destroy()
     {
         _hpGauge.localScale = Vector3.one;
+        _hpGauge.GetComponent<SpriteRenderer>().color = Color.green;
         _hpBar.SetActive(false);
 
         if (owner == PlayerType.PLAYER)
