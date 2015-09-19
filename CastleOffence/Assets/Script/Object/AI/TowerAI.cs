@@ -142,7 +142,7 @@ public class TowerAI : MonoBehaviour
         m.transform.localPosition = transform.localPosition + Vector3.up * GetComponent<BoxCollider2D>().size.y;
 
         var displacement = _target.transform.localPosition - transform.localPosition;
-        var fireForce = new Vector2(displacement.x * 25.0f, displacement.x * 15.0f + displacement.y * 15.0f + 350.0f);
+        var fireForce = new Vector2(displacement.x * 25.0f, displacement.y * 25.0f + 500.0f);
         m.GetComponent<Rigidbody2D>().AddForce(fireForce);
     }
 

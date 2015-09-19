@@ -11,7 +11,7 @@ public class MissileAI : MonoBehaviour
         _objInfo = GetComponent<ObjectStatus>();
         _body = GetComponent<Rigidbody2D>();
     }
-    void FixedUpdate()
+    void Update()
     {
         var dirVector = _body.velocity.normalized;
         var angle = Vector2.Angle(Vector2.right, dirVector);
