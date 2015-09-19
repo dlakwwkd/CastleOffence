@@ -79,9 +79,9 @@ public class GameManager : MonoBehaviour
         var barrier = uiRoot.transform.FindChild("BarrierButton").FindChild("Container");
         var tower = uiRoot.transform.FindChild("TowerButton").FindChild("Container");
         var unit = uiRoot.transform.FindChild("UnitContainer");
-        barrier.GetComponent<ContainerSetting>().SettingItems(barrierList);
-        tower.GetComponent<ContainerSetting>().SettingItems(towerList);
-        unit.GetComponent<UnitSetting>().SettingItems(unitList);
+        barrier.GetComponent<ContainerSetting>().SettingBrriers(barrierList);
+        tower.GetComponent<ContainerSetting>().SettingTowers(towerList);
+        unit.GetComponent<UnitSetting>().SettingUnits(unitList);
     }
     public void StartGame()
     {

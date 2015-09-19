@@ -40,7 +40,7 @@ public class ContainerSetting : MonoBehaviour
             _isOn = true;
         }
     }
-    public void SettingItems(List<ItemInfo> itemList)
+    public void SettingBrriers(List<ItemInfo> itemList)
     {
         for(int i = 0; i < itemList.Count; ++i)
         {
@@ -74,6 +74,32 @@ public class ContainerSetting : MonoBehaviour
             else
                 w = (int)(sprite.width * aspect);
             sprite.SetDimensions(w, h);
+        }
+    }
+    public void SettingTowers(List<ItemInfo> itemList)
+    {
+        for (int i = 0; i < itemList.Count; ++i)
+        {
+            var itemInfo = itemList[i];
+
+            var newItem = Instantiate(itemType) as GameObject;
+            newItem.transform.SetParent(_grid.transform);
+            newItem.transform.localPosition = Vector3.zero;
+            newItem.transform.localRotation = Quaternion.identity;
+            newItem.transform.localScale = Vector3.one;
+            newItem.name = itemType.name + "_" + i;
+
+            var dragDrop = newItem.GetComponent<DragDropItem>();
+            dragDrop.prefab = itemInfo.item;
+            dragDrop.amount = itemInfo.amount;
+            dragDrop.xSize = itemInfo.xSize;
+            dragDrop.ySize = itemInfo.ySize;
+
+            var icon = Instantiate(itemInfo.icon) as GameObject;
+            icon.transform.SetParent(newItem.transform);
+            icon.transform.localPosition = Vector3.zero;
+            icon.transform.localRotation = Quaternion.identity;
+            icon.transform.localScale = Vector3.one;
         }
     }
 }

@@ -19,7 +19,7 @@ public class UnitSetting : MonoBehaviour
         _grid = transform.FindChild("Grid").gameObject;
     }
 
-    public void SettingItems(List<UnitInfo> itemList)
+    public void SettingUnits(List<UnitInfo> itemList)
     {
         for (int i = 0; i < itemList.Count; ++i)
         {

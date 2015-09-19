@@ -18,7 +18,7 @@ public class CannonAI : MonoBehaviour
     }
     void OnEnable()
     {
-        _body.AddTorque(-500.0f);
+        _body.AddTorque(-1000.0f);
     }
 
     void OnTriggerEnter2D(Collider2D collider)

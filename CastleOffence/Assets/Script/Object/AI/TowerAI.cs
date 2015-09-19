@@ -18,7 +18,6 @@ public class TowerAI : MonoBehaviour
 
     Dictionary<TowerFSM, Action>    _dicState   = new Dictionary<TowerFSM, Action>();
     ObjectStatus                    _objInfo    = null;
-    Animator                        _anim       = null;
     GameObject                      _target     = null;
 
 
@@ -35,7 +34,6 @@ public class TowerAI : MonoBehaviour
     void Start()
     {
         _objInfo = GetComponent<ObjectStatus>();
-        _anim = GetComponent<Animator>();
 
         _dicState[TowerFSM.IDLE]    = Idle;
         _dicState[TowerFSM.ATTACK]  = Attack;
@@ -56,7 +54,6 @@ public class TowerAI : MonoBehaviour
             {
                 stateTime = 0.0f;
                 state = TowerFSM.ATTACK;
-                //_anim.SetTrigger("attack");
             }
         }
         else
@@ -76,7 +73,6 @@ public class TowerAI : MonoBehaviour
             if (stateTime > _objInfo.attackFrontDelay)
             {
                 AttackProcess();
-                StartCoroutine("AttackDelay");
                 stateTime = -(_objInfo.attackBackDelay);
             }
         }
@@ -91,14 +87,6 @@ public class TowerAI : MonoBehaviour
     }
 
 
-
-    IEnumerator AttackDelay()
-    {
-        yield return new WaitForSeconds(_objInfo.attackBackDelay);
-
-        if (state == TowerFSM.ATTACK) ;
-            //_anim.SetTrigger("attack");
-    }
     IEnumerator SearchEnemy()
     {
         while (true)
@@ -138,7 +126,7 @@ public class TowerAI : MonoBehaviour
     void AttackProcess()
     {
         var missile = ObjectManager.instance.Assign(missileObj.name);
-        missile.transform.localPosition = transform.localPosition + Vector3.up * GetComponent<BoxCollider2D>().size.y;
+        missile.transform.localPosition = transform.localPosition + Vector3.up;
 
         var info = missile.GetComponent<ObjectStatus>();
         info.owner = _objInfo.owner;
@@ -153,6 +141,5 @@ public class TowerAI : MonoBehaviour
     public void Death()
     {
         state = TowerFSM.DEAD;
-        //_anim.SetTrigger("death");
     }
 }
