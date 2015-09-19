@@ -74,6 +74,7 @@ public class ObjectStatus : MonoBehaviour
             _sprites[i].color = new Color(color.r, color.g, color.b, 1.0f);
         }
         _hpBar.SetActive(true);
+        _body.simulated = true;
         _body.gravityScale = 1.0f;
     }
     void OnDisable()
@@ -134,8 +135,7 @@ public class ObjectStatus : MonoBehaviour
     {
         if (type == ObjectType.MISSILE)
         {
-            _body.velocity *= 0.1f;
-            _body.gravityScale = 0;
+            _body.simulated = false;
         }
         else
         {
