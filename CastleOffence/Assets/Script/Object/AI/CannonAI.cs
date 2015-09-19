@@ -68,7 +68,7 @@ public class CannonAI : MonoBehaviour
         var effect = ObjectManager.instance.Assign(effectObj.name);
         effect.transform.position = transform.position;
         effect.GetComponent<ParticleSystem>().Play();
-        yield return new WaitForSeconds(1.5f);
-        ObjectManager.instance.Free(effect);
+        ObjectManager.instance.FreeAfter(effect, 1.5f);
+        yield return null;
     }
 }

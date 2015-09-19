@@ -59,7 +59,7 @@ public class UnitAI : MonoBehaviour
     {
         if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
         {
-            LookEnemyAndCalcPos();
+            LookEnemy();
             state = UnitFSM.MOVE;
             _anim.SetTrigger("move");
         }
@@ -70,7 +70,8 @@ public class UnitAI : MonoBehaviour
     {
         if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
         {
-            var dist = Math.Abs(LookEnemyAndCalcPos());
+            LookEnemy();
+            var dist = Vector2.Distance(_target.transform.position, transform.position);
             if (dist < _objInfo.attackRange)
             {
                 stateTime = 0.0f;
@@ -89,7 +90,7 @@ public class UnitAI : MonoBehaviour
     {
         if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
         {
-            var dist = Math.Abs(LookEnemyAndCalcPos());
+            var dist = Vector2.Distance(_target.transform.position, transform.position);
             if (dist > _objInfo.attackRange)
             {
                 state = UnitFSM.IDLE;
@@ -98,6 +99,7 @@ public class UnitAI : MonoBehaviour
             stateTime += Time.deltaTime;
             if (stateTime > _objInfo.attackFrontDelay)
             {
+                LookEnemy();
                 AttackProcess();
                 StartCoroutine("AttackDelay");
                 stateTime = -(_objInfo.attackBackDelay);
@@ -141,16 +143,15 @@ public class UnitAI : MonoBehaviour
             if (_objInfo.owner == PlayerType.ENEMY)
                 enemyList = GameManager.instance.playerObjList;
 
-            var unitPos = transform.localPosition.x;
             var closeEnemyDist = float.MaxValue;
-
             for (int i = 0; i < enemyList.Count; ++i)
             {
-                var dist = Math.Abs(enemyList[i].transform.localPosition.x - unitPos);
+                var enemy = enemyList[i];
+                var dist = Vector2.Distance(enemy.transform.position, transform.position);
                 if (dist < closeEnemyDist)
                 {
                     closeEnemyDist = dist;
-                    _target = enemyList[i];
+                    _target = enemy;
                 }
             }
 //             var q = enemyList
@@ -164,15 +165,14 @@ public class UnitAI : MonoBehaviour
     }
 
 
-    float LookEnemyAndCalcPos()
+    void LookEnemy()
     {
         var dir = ObjectStatus.Direction.RIGHT;
-        var displacement = _target.transform.localPosition.x - transform.localPosition.x;
+        var displacement = _target.transform.position.x - transform.position.x;
         if (displacement < 0)
             dir = ObjectStatus.Direction.LEFT;
 
         _objInfo.ChangeDir(dir);
-        return displacement;
     }
     void AttackProcess()
     {

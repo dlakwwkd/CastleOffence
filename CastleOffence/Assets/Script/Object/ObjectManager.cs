@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class ObjectManager : MonoBehaviour
@@ -43,6 +44,16 @@ public class ObjectManager : MonoBehaviour
     {
         foreach (var pool in _poolList)
             pool.Value.FreeAll();
+    }
+    public void         FreeAfter(GameObject obj, float after)
+    {
+        StartCoroutine(After(obj, after));
+    }
+
+    IEnumerator         After(GameObject obj, float after)
+    {
+        yield return new WaitForSeconds(after);
+        Free(obj);
     }
 }
 
