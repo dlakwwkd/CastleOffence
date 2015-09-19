@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ObjectStatus : MonoBehaviour
 {
@@ -31,18 +32,30 @@ public class ObjectStatus : MonoBehaviour
     public float        attackBackDelay     = 0.0f;
     public float        moveSpeed           = 0.0f;
     public float        createTime          = 0.0f;
+    public float        deathTime           = 0.0f;
 
-    GameObject  _hpBar      = null;
-    Transform   _hpGauge    = null;
-    int         _curHp      = 0;
-    bool        _isDead     = true;
+    List<SpriteRenderer>    _sprites    = new List<SpriteRenderer>();
+    Rigidbody2D             _body       = null;
+    GameObject              _hpBar      = null;
+    Transform               _hpGauge    = null;
+    int                     _curHp      = 0;
+    bool                    _isDead     = true;
 
 
     void Awake()
     {
+        var sprite = GetComponent<SpriteRenderer>();
+        if (sprite)
+            _sprites.Add(sprite);
+
+        var sprites = GetComponentsInChildren<SpriteRenderer>();
+        for (int i = 0; i < sprites.Length; ++i)
+            _sprites.Add(sprites[i]);
+
+        _body = GetComponent<Rigidbody2D>();
+
         var collider = GetComponent<BoxCollider2D>();
         var unitSize = collider.size / 2 + collider.offset;
-
         _hpBar = Instantiate(hpBar) as GameObject;
         _hpBar.transform.SetParent(transform);
         _hpBar.transform.localPosition = new Vector3(0, unitSize.y + 0.5f, 0);
@@ -55,8 +68,13 @@ public class ObjectStatus : MonoBehaviour
     {
         _curHp = maxHp;
         _isDead = false;
-
+        for (int i = 0; i < _sprites.Count; ++i)
+        {
+            var color = _sprites[i].color;
+            _sprites[i].color = new Color(color.r, color.g, color.b, 1.0f);
+        }
         _hpBar.SetActive(true);
+        _body.gravityScale = 1.0f;
     }
     void OnDisable()
     {
@@ -86,9 +104,12 @@ public class ObjectStatus : MonoBehaviour
         _curHp -= dam;
 
         var hpRatio = (float)_curHp / maxHp;
-        _hpGauge.localScale = new Vector3(hpRatio, 1.0f, 1.0f);
-        _hpGauge.GetComponent<SpriteRenderer>().color = new Color(1.0f - hpRatio, hpRatio, 0);
-
+        if (type != ObjectType.MISSILE)
+        {
+            _hpGauge.localScale = new Vector3(hpRatio, 1.0f, 1.0f);
+            var sprite = _hpGauge.GetComponent<SpriteRenderer>();
+            sprite.color = new Color(1.0f - hpRatio, hpRatio, 0, sprite.color.a);
+        }
         if(_curHp <= 0)
         {
             _isDead = true;
@@ -111,18 +132,36 @@ public class ObjectStatus : MonoBehaviour
 
     IEnumerator Destroy()
     {
-        _hpGauge.localScale = Vector3.one;
-        _hpGauge.GetComponent<SpriteRenderer>().color = Color.green;
-        _hpBar.SetActive(false);
-
-        if (type != ObjectType.MISSILE)
+        if (type == ObjectType.MISSILE)
         {
+            _body.velocity *= 0.1f;
+            _body.gravityScale = 0;
+        }
+        else
+        {
+            var sprite = _hpGauge.GetComponent<SpriteRenderer>();
+            sprite.color = new Color(0, 1.0f, 0, sprite.color.a);
+            _hpGauge.localScale = Vector3.one;
+            _hpBar.SetActive(false);
+
             if (owner == PlayerType.PLAYER)
                 GameManager.instance.playerObjList.Remove(gameObject);
             else
                 GameManager.instance.enemyObjList.Remove(gameObject);
         }
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(deathTime);
+
+        float time = 0.5f;
+        while(time > 0)
+        {
+            time -= Time.deltaTime;
+            for (int i = 0; i < _sprites.Count; ++i)
+            {
+                var color = _sprites[i].color;
+                _sprites[i].color = new Color(color.r, color.g, color.b, time * 2);
+            }
+            yield return new WaitForEndOfFrame();
+        }
 
         if(type == ObjectType.CASTLE)
         {

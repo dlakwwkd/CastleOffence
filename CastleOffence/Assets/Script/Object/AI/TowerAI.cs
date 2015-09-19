@@ -18,7 +18,6 @@ public class TowerAI : MonoBehaviour
 
     Dictionary<TowerFSM, Action>    _dicState   = new Dictionary<TowerFSM, Action>();
     ObjectStatus                    _objInfo    = null;
-    Rigidbody2D                     _body       = null;
     Animator                        _anim       = null;
     GameObject                      _target     = null;
 
@@ -36,7 +35,6 @@ public class TowerAI : MonoBehaviour
     void Start()
     {
         _objInfo = GetComponent<ObjectStatus>();
-        _body = GetComponent<Rigidbody2D>();
         _anim = GetComponent<Animator>();
 
         _dicState[TowerFSM.IDLE]    = Idle;
@@ -141,7 +139,7 @@ public class TowerAI : MonoBehaviour
     {
         var m = ObjectManager.instance.Assign(missile.name);
         m.GetComponent<ObjectStatus>().owner = _objInfo.owner;
-        m.transform.localPosition = transform.localPosition;
+        m.transform.localPosition = transform.localPosition + Vector3.up * GetComponent<BoxCollider2D>().size.y;
 
         var displacement = _target.transform.localPosition - transform.localPosition;
         var fireForce = new Vector2(displacement.x * 25.0f, displacement.x * 15.0f + displacement.y * 15.0f + 350.0f);

@@ -23,14 +23,15 @@ public class MissileAI : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collider)
     {
+        if (_objInfo.IsDead())
+            return;
+
         var other = collider.gameObject;
-
-//         if(other.gameObject.name == "Ground")
-//         {
-//             ObjectManager.instance.Free(gameObject);
-//             return;
-//         }
-
+        if(other.gameObject.name == "Ground")
+        {
+            _objInfo.Death();
+            return;
+        }
         var otherObjInfo = other.GetComponent<ObjectStatus>();
         if (otherObjInfo != null && otherObjInfo.owner != _objInfo.owner)
         {
@@ -44,7 +45,7 @@ public class MissileAI : MonoBehaviour
             other.GetComponent<Rigidbody2D>().AddForce(_body.velocity * 10.0f);
             otherObjInfo.Damaged(_objInfo.damage);
 
-            ObjectManager.instance.Free(gameObject);
+            _objInfo.Death();
         }
     }
 }
