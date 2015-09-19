@@ -180,10 +180,8 @@ public class UnitAI : MonoBehaviour
         if (targetInfo.type == ObjectStatus.ObjectType.UNIT)
         {
             var ai = _target.GetComponent<UnitAI>();
-            ai.stateTime = 0.0f;
-            ai.state = UnitFSM.HIT;
+            ai.Attacked();
             ai.KnockBack();
-            _target.GetComponent<Animator>().SetTrigger("hit");
         }
         targetInfo.Damaged(_objInfo.damage);
     }
@@ -193,6 +191,13 @@ public class UnitAI : MonoBehaviour
         _body.velocity = new Vector2(-2.0f * (float)_objInfo.dir, _body.velocity.y);
     }
 
+    public void Attacked()
+    {
+        _body.velocity = Vector2.zero;
+        stateTime = 0.0f;
+        state = UnitFSM.HIT;
+        _anim.SetTrigger("hit");
+    }
     public void Death()
     {
         state = UnitFSM.DEAD;

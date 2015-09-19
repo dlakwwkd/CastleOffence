@@ -12,7 +12,7 @@ public class TowerAI : MonoBehaviour
         DEAD,
     }
 
-    public GameObject   missile     = null;
+    public GameObject   missileObj  = null;
     public TowerFSM     state       = TowerFSM.IDLE;
     public float        stateTime   = 0.0f;
 
@@ -137,13 +137,17 @@ public class TowerAI : MonoBehaviour
     }
     void AttackProcess()
     {
-        var m = ObjectManager.instance.Assign(missile.name);
-        m.GetComponent<ObjectStatus>().owner = _objInfo.owner;
-        m.transform.localPosition = transform.localPosition + Vector3.up * GetComponent<BoxCollider2D>().size.y;
+        var missile = ObjectManager.instance.Assign(missileObj.name);
+        missile.transform.localPosition = transform.localPosition + Vector3.up * GetComponent<BoxCollider2D>().size.y;
 
+        var info = missile.GetComponent<ObjectStatus>();
+        info.owner = _objInfo.owner;
+        info.damage = _objInfo.damage;
+
+        var body = missile.GetComponent<Rigidbody2D>();
         var displacement = _target.transform.localPosition - transform.localPosition;
         var fireForce = new Vector2(displacement.x * 25.0f, displacement.y * 25.0f + 500.0f);
-        m.GetComponent<Rigidbody2D>().AddForce(fireForce);
+        body.AddForce(fireForce);
     }
 
     public void Death()

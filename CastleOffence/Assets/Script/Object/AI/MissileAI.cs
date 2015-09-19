@@ -41,12 +41,9 @@ public class MissileAI : MonoBehaviour
         {
             if (otherObjInfo.type == ObjectStatus.ObjectType.UNIT)
             {
-                var ai = other.GetComponent<UnitAI>();
-                ai.stateTime = 0.0f;
-                ai.state = UnitAI.UnitFSM.HIT;
-                other.GetComponent<Animator>().SetTrigger("hit");
+                other.GetComponent<UnitAI>().Attacked();
             }
-            other.GetComponent<Rigidbody2D>().AddForce(_body.velocity * 10.0f);
+            other.GetComponent<Rigidbody2D>().AddForce(_body.velocity * 25.0f);
             otherObjInfo.Damaged(_objInfo.damage);
 
             StartCoroutine("ArrowShaking");
@@ -59,7 +56,7 @@ public class MissileAI : MonoBehaviour
         var r = transform.localRotation.eulerAngles;
         var reverse = 1.0f;
         var rotation = 5.0f;
-        var time = 0.5f;
+        var time = 1.0f;
         var gap = rotation / time;
 
         while (time > 0)

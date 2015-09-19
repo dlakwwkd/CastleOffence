@@ -21,6 +21,11 @@ public class CameraMove : MonoBehaviour
     public void Lock() { isLocked = true; _deltaPos = Vector3.zero; }
     public void UnLock() { isLocked = false; }
 
+    public void Shake(float shakeTime, float shakeSense)
+    {
+        StartCoroutine(CameraShakeProcess(shakeTime, shakeSense));
+    }
+
     void        Start()
     {
         _camera = GetComponent<Camera>();
@@ -60,6 +65,7 @@ public class CameraMove : MonoBehaviour
         if (Input.GetButtonUp("Fire1"))
         {
             StartCoroutine("SmoothMove", _deltaPos);
+            _deltaPos = Vector3.zero;
         }
     }
     void        ZoomInEditor()
@@ -95,6 +101,7 @@ public class CameraMove : MonoBehaviour
                 break;
             case TouchPhase.Ended:
                 StartCoroutine("SmoothMove", _deltaPos);
+                _deltaPos = Vector3.zero;
                 break;
         }
     }
@@ -156,6 +163,26 @@ public class CameraMove : MonoBehaviour
             deltaPos *= 0.8f;
             yield return new WaitForEndOfFrame();
         }
-        yield return null;
+    }
+    IEnumerator CameraShakeProcess(float shakeTime, float shakeSense)
+    {
+        var basePos = transform.localPosition;
+        while (shakeTime > 0.0f)
+        {
+            shakeTime -= Time.deltaTime;
+            basePos -= _deltaPos;
+
+            transform.localPosition = basePos;
+            var pos = Vector3.zero;
+            pos.x = Random.Range(-shakeSense, shakeSense);
+            pos.y = Random.Range(-shakeSense, shakeSense);
+            pos.z = -10.0f;
+            transform.localPosition += pos * shakeTime;
+            MoveBoundaryCheck();
+
+            yield return new WaitForEndOfFrame();
+        }
+        var p = transform.localPosition;
+        transform.localPosition = new Vector3(p.x, p.y, -10.0f);
     }
 }

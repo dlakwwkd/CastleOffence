@@ -75,7 +75,6 @@ public class ObjectStatus : MonoBehaviour
         }
         _hpBar.SetActive(true);
         _body.simulated = true;
-        _body.gravityScale = 1.0f;
     }
     void OnDisable()
     {
@@ -111,7 +110,7 @@ public class ObjectStatus : MonoBehaviour
             var sprite = _hpGauge.GetComponent<SpriteRenderer>();
             sprite.color = new Color(1.0f - hpRatio, hpRatio, 0, sprite.color.a);
         }
-        if(_curHp <= 0)
+        if (_curHp <= 0)
         {
             _isDead = true;
             if (type == ObjectType.UNIT)
@@ -131,8 +130,18 @@ public class ObjectStatus : MonoBehaviour
         }
     }
 
+    public void InstantlyDeath()
+    {
+        if (!_isDead)
+        {
+            _isDead = true;
+            StartCoroutine("InstantlyDestroy");
+        }
+    }
+
     IEnumerator Destroy()
     {
+        yield return new WaitForEndOfFrame();
         if (type == ObjectType.MISSILE)
         {
             _body.simulated = false;
@@ -164,6 +173,34 @@ public class ObjectStatus : MonoBehaviour
         }
 
         if(type == ObjectType.CASTLE)
+        {
+            gameObject.SetActive(false);
+        }
+        owner = PlayerType.NONE;
+        ObjectManager.instance.Free(gameObject);
+    }
+
+
+    IEnumerator InstantlyDestroy()
+    {
+        yield return new WaitForEndOfFrame();
+        if (type == ObjectType.MISSILE)
+        {
+            _body.simulated = false;
+        }
+        else
+        {
+            var sprite = _hpGauge.GetComponent<SpriteRenderer>();
+            sprite.color = new Color(0, 1.0f, 0, sprite.color.a);
+            _hpGauge.localScale = Vector3.one;
+            _hpBar.SetActive(false);
+
+            if (owner == PlayerType.PLAYER)
+                GameManager.instance.playerObjList.Remove(gameObject);
+            else
+                GameManager.instance.enemyObjList.Remove(gameObject);
+        }
+        if (type == ObjectType.CASTLE)
         {
             gameObject.SetActive(false);
         }

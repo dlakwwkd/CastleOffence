@@ -192,6 +192,7 @@
      <Compile Include="Assets\Script\Container\UnitSetting.cs" />
      <Compile Include="Assets\Script\DestroyZone.cs" />
      <Compile Include="Assets\Script\GameManager.cs" />
+     <Compile Include="Assets\Script\Object\AI\CannonAI.cs" />
      <Compile Include="Assets\Script\Object\AI\MissileAI.cs" />
      <Compile Include="Assets\Script\Object\AI\TowerAI.cs" />
      <Compile Include="Assets\Script\Object\AI\UnitAI.cs" />
