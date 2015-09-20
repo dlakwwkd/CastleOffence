@@ -95,7 +95,7 @@ public class UnitAI : MonoBehaviour
                 _anim.SetTrigger("attack");
                 return;
             }
-            float speed = _objInfo.moveSpeed * (float)_objInfo.dir * Time.deltaTime;
+            float speed = _objInfo.moveSpeed * (float)_objInfo.dir;
             _body.velocity = new Vector2(speed, _body.velocity.y);
         }
         else
