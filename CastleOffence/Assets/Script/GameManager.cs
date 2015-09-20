@@ -59,18 +59,18 @@ public class GameManager : MonoBehaviour
         _enemy.AddComponent<EnemyAI>();
         _enemy.GetComponent<EnemyAI>().unitList = enemyUnitList;
 
-        playerCastlePos = new Vector2(_cameraInfo.leftSide + 5.0f, 2.5f);
-        enemyCastlePos = new Vector2(_cameraInfo.rightSide - 5.0f, 2.5f);
+        playerCastlePos = new Vector2(_cameraInfo.leftSide + 5.0f, 2.0f);
+        enemyCastlePos = new Vector2(_cameraInfo.rightSide - 5.0f, 2.0f);
 
         var castleA = Instantiate(castle) as GameObject;
         castleA.transform.SetParent(_player.transform);
-        castleA.transform.localPosition = playerCastlePos;
+        castleA.transform.localPosition = new Vector3(playerCastlePos.x, playerCastlePos.y - 1.5f, 2.0f);
         castleA.name = "PlayerCastle";
         castleA.GetComponent<ObjectStatus>().owner = PlayerType.PLAYER;
 
         var castleB = Instantiate(castle) as GameObject;
         castleB.transform.SetParent(_enemy.transform);
-        castleB.transform.localPosition = enemyCastlePos;
+        castleB.transform.localPosition = new Vector3(enemyCastlePos.x, enemyCastlePos.y - 1.5f, 2.0f);
         castleB.name = "EnemyCastle";
         castleB.GetComponent<ObjectStatus>().owner = PlayerType.ENEMY;
 

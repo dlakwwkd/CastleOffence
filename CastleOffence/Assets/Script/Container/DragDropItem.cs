@@ -63,7 +63,7 @@ public class DragDropItem : UIDragDropItem
         pos = Input.GetTouch(0).position;
 #endif
         pos = Camera.main.ScreenToWorldPoint(pos);
-        pos.z = 0.0f;
+        pos.z = 1.0f;
         _obj.transform.position = pos;
     }
     protected override void OnDragDropRelease(GameObject surface)
