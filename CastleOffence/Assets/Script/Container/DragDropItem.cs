@@ -8,11 +8,12 @@ public class DragDropItem : UIDragDropItem
     public int          amount  = 1;
 
     GameObject  _obj    = null;
-    UILabel     _label  = null;
+    UILabel     _cost   = null;
+    UILabel     _amount = null;
 
     public void             Purchase()
     {
-        _label.text = (++amount).ToString();
+        _amount.text = (++amount).ToString();
     }
 
     protected override void Start()
@@ -22,9 +23,13 @@ public class DragDropItem : UIDragDropItem
 		mGrid = NGUITools.FindInParents<UIGrid>(mTrans.parent);
 		if (mGrid != null) mGrid.repositionNow = true;
 
-        _label = GetComponentInChildren<UILabel>();
-        _label.text = amount.ToString();
-        _label.depth = 2;
+        _cost = transform.FindChild("Cost").GetComponent<UILabel>();
+        _cost.text = prefab.GetComponent<ObjectStatus>().cost.ToString();
+        _cost.depth = 2;
+
+        _amount = transform.FindChild("Amount").GetComponent<UILabel>();
+        _amount.text = amount.ToString();
+        _amount.depth = 2;
     }
 
     protected override void OnDragDropStart()
@@ -72,7 +77,7 @@ public class DragDropItem : UIDragDropItem
             ObjectManager.instance.Free(_obj);
         else
         {
-            _label.text = (--amount).ToString();
+            _amount.text = (--amount).ToString();
             _obj.GetComponent<ObjectStatus>().owner = PlayerType.PLAYER;
             _obj.GetComponent<Rigidbody2D>().simulated = true;
 

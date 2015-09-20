@@ -3,17 +3,24 @@ using System.Collections;
 
 public class ItemButton : UIButton
 {
-    DragDropItem _item = null;
+    PlayerStatus    _player = null;
+    DragDropItem    _item   = null;
+    int             _cost   = 0;
 
     protected override void OnInit()
     {
+        _player = GameManager.instance.player.GetComponent<PlayerStatus>();
         _item = GetComponent<DragDropItem>();
+        _cost = _item.prefab.GetComponent<ObjectStatus>().cost;
         tweenTarget = gameObject;
         base.OnInit();
     }
     protected override void OnClick()
     {
-        _item.Purchase();
+        if(_player.Purchase(_cost))
+        {
+            _item.Purchase();
+        }
         base.OnClick();
     }
     protected override void OnPress(bool isDown)
