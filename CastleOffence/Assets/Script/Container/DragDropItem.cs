@@ -41,6 +41,11 @@ public class DragDropItem : UIDragDropItem
 
         if (_obj.GetComponent<ObjectStatus>().type == ObjectStatus.ObjectType.TOWER)
             _obj.GetComponent<TowerAI>().state = TowerAI.TowerFSM.DEAD;
+        else
+        {
+            var mat = _obj.GetComponent<MeshRenderer>().material;
+            mat.mainTextureScale = new Vector2(xSize, ySize);
+        }
     }
     protected override void OnDragDropMove(Vector2 delta)
     {

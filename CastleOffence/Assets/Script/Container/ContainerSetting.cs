@@ -4,11 +4,9 @@ using System.Collections.Generic;
 [System.Serializable]
 public struct ItemInfo
 {
-    public GameObject item;
-    public GameObject icon;
-    public int amount;
-    public float xSize;
-    public float ySize;
+    public GameObject   item;
+    public GameObject   icon;
+    public int          amount;
 }
 
 public class ContainerSetting : MonoBehaviour
@@ -46,34 +44,46 @@ public class ContainerSetting : MonoBehaviour
         {
             var itemInfo = itemList[i];
 
-            var newItem = Instantiate(itemType) as GameObject;
-            newItem.transform.SetParent(_grid.transform);
-            newItem.transform.localPosition = Vector3.zero;
-            newItem.transform.localRotation = Quaternion.identity;
-            newItem.transform.localScale = Vector3.one;
-            newItem.name = itemType.name + "_" + i;
+            for (int xSize = 1; xSize <= 3; ++xSize)
+            {
+                for(int ySize = 1; ySize <= 3; ++ySize)
+                {
+                    if (xSize > 1 && ySize > 1)
+                        break;
 
-            var dragDrop = newItem.GetComponent<DragDropItem>();
-            dragDrop.prefab = itemInfo.item;
-            dragDrop.amount = itemInfo.amount;
-            dragDrop.xSize = itemInfo.xSize;
-            dragDrop.ySize = itemInfo.ySize;
+                    var newItem = Instantiate(itemType) as GameObject;
+                    newItem.transform.SetParent(_grid.transform);
+                    newItem.name = itemType.name + "_" + itemInfo.item.name + "_" + xSize + ySize;
+                    TransformInit(newItem.transform);
 
-            var icon = Instantiate(itemInfo.icon) as GameObject;
-            icon.transform.SetParent(newItem.transform);
-            icon.transform.localPosition = Vector3.zero;
-            icon.transform.localRotation = Quaternion.identity;
-            icon.transform.localScale = Vector3.one;
+                    var dragDrop = newItem.GetComponent<DragDropItem>();
+                    dragDrop.prefab = itemInfo.item;
+                    dragDrop.amount = itemInfo.amount;
+                    dragDrop.xSize = xSize;
+                    dragDrop.ySize = ySize;
 
-            var sprite = icon.GetComponent<UISprite>();
-            var aspect = itemInfo.xSize / itemInfo.ySize;
-            var w = sprite.width;
-            var h = sprite.height;
-            if (aspect > 1)
-                h = (int)(sprite.height / aspect);
-            else
-                w = (int)(sprite.width * aspect);
-            sprite.SetDimensions(w, h);
+                    var icon = new GameObject();
+                    icon.transform.SetParent(newItem.transform);
+                    icon.name = itemInfo.item.name;
+                    icon.layer = gameObject.layer;
+                    TransformInit(icon.transform);
+
+                    var item = ObjectManager.instance.Assign(itemInfo.item.name);
+                    {
+                        var texture = icon.AddComponent<UITexture>();
+                        texture.mainTexture = item.GetComponent<MeshRenderer>().material.mainTexture;
+                        texture.uvRect = new Rect(Vector2.zero, new Vector2(xSize, ySize));
+
+                        var w = 80;
+                        var h = 80;
+                        var aspect = (float)xSize / ySize;
+                        if (aspect > 1) h = (int)(h / aspect);
+                        else w = (int)(w * aspect);
+                        texture.SetDimensions(w, h);
+                    }
+                    ObjectManager.instance.Free(item);
+                }
+            }
         }
     }
     public void SettingTowers(List<ItemInfo> itemList)
@@ -84,22 +94,25 @@ public class ContainerSetting : MonoBehaviour
 
             var newItem = Instantiate(itemType) as GameObject;
             newItem.transform.SetParent(_grid.transform);
-            newItem.transform.localPosition = Vector3.zero;
-            newItem.transform.localRotation = Quaternion.identity;
-            newItem.transform.localScale = Vector3.one;
             newItem.name = itemType.name + "_" + i;
+            TransformInit(newItem.transform);
 
             var dragDrop = newItem.GetComponent<DragDropItem>();
             dragDrop.prefab = itemInfo.item;
             dragDrop.amount = itemInfo.amount;
-            dragDrop.xSize = itemInfo.xSize;
-            dragDrop.ySize = itemInfo.ySize;
+            dragDrop.xSize = 1.0f;
+            dragDrop.ySize = 1.0f;
 
             var icon = Instantiate(itemInfo.icon) as GameObject;
             icon.transform.SetParent(newItem.transform);
-            icon.transform.localPosition = Vector3.zero;
-            icon.transform.localRotation = Quaternion.identity;
-            icon.transform.localScale = Vector3.one;
+            TransformInit(icon.transform);
         }
+    }
+
+    void TransformInit(Transform t)
+    {
+        t.transform.localPosition = Vector3.zero;
+        t.transform.localRotation = Quaternion.identity;
+        t.transform.localScale = Vector3.one;
     }
 }

@@ -35,6 +35,7 @@ public class ObjectStatus : MonoBehaviour
     public float        deathTime           = 0.0f;
 
     List<SpriteRenderer>    _sprites    = new List<SpriteRenderer>();
+    MeshRenderer            _mash       = null;
     Rigidbody2D             _body       = null;
     GameObject              _hpBar      = null;
     Transform               _hpGauge    = null;
@@ -44,14 +45,19 @@ public class ObjectStatus : MonoBehaviour
 
     void Awake()
     {
-        var sprite = GetComponent<SpriteRenderer>();
-        if (sprite)
-            _sprites.Add(sprite);
-
-        var sprites = GetComponentsInChildren<SpriteRenderer>();
-        for (int i = 0; i < sprites.Length; ++i)
-            _sprites.Add(sprites[i]);
-
+        if (type == ObjectType.BARRIER)
+        {
+            _mash = GetComponent<MeshRenderer>();
+        }
+        else
+        {
+            var sprite = GetComponent<SpriteRenderer>();
+            if (sprite)
+                _sprites.Add(sprite);
+            var sprites = GetComponentsInChildren<SpriteRenderer>();
+            for (int i = 0; i < sprites.Length; ++i)
+                _sprites.Add(sprites[i]);
+        }
         _body = GetComponent<Rigidbody2D>();
 
         var collider = GetComponent<BoxCollider2D>();
@@ -68,17 +74,24 @@ public class ObjectStatus : MonoBehaviour
     {
         _curHp = maxHp;
         _isDead = false;
-        for (int i = 0; i < _sprites.Count; ++i)
+
+        if (type == ObjectType.BARRIER)
         {
-            var color = _sprites[i].color;
-            _sprites[i].color = new Color(color.r, color.g, color.b, 1.0f);
+            var color = _mash.material.GetColor("_TintColor");
+            _mash.material.SetColor("_TintColor", new Color(color.r, color.g, color.b, 1.0f));
+        }
+        else
+        {
+            for (int i = 0; i < _sprites.Count; ++i)
+            {
+                var color = _sprites[i].color;
+                _sprites[i].color = new Color(color.r, color.g, color.b, 1.0f);
+            }
         }
         _hpBar.SetActive(true);
         _body.simulated = true;
     }
-    void OnDisable()
-    {
-    }
+
 
     public bool IsDead()
     {
@@ -139,9 +152,9 @@ public class ObjectStatus : MonoBehaviour
         }
     }
 
+
     IEnumerator Destroy()
     {
-        yield return new WaitForEndOfFrame();
         if (type == ObjectType.MISSILE)
         {
             _body.simulated = false;
@@ -152,6 +165,8 @@ public class ObjectStatus : MonoBehaviour
             sprite.color = new Color(0, 1.0f, 0, sprite.color.a);
             _hpGauge.localScale = Vector3.one;
             _hpBar.SetActive(false);
+
+            yield return new WaitForEndOfFrame();
 
             if (owner == PlayerType.PLAYER)
                 GameManager.instance.playerObjList.Remove(gameObject);
@@ -164,10 +179,18 @@ public class ObjectStatus : MonoBehaviour
         while(time > 0)
         {
             time -= Time.deltaTime;
-            for (int i = 0; i < _sprites.Count; ++i)
+            if(type == ObjectType.BARRIER)
             {
-                var color = _sprites[i].color;
-                _sprites[i].color = new Color(color.r, color.g, color.b, time * 2);
+                var color = _mash.material.GetColor("_TintColor");
+                _mash.material.SetColor("_TintColor", new Color(color.r, color.g, color.b, time * 2));
+            }
+            else
+            {
+                for (int i = 0; i < _sprites.Count; ++i)
+                {
+                    var color = _sprites[i].color;
+                    _sprites[i].color = new Color(color.r, color.g, color.b, time * 2);
+                }
             }
             yield return new WaitForEndOfFrame();
         }
@@ -180,10 +203,8 @@ public class ObjectStatus : MonoBehaviour
         ObjectManager.instance.Free(gameObject);
     }
 
-
     IEnumerator InstantlyDestroy()
     {
-        yield return new WaitForEndOfFrame();
         if (type == ObjectType.MISSILE)
         {
             _body.simulated = false;
@@ -194,6 +215,8 @@ public class ObjectStatus : MonoBehaviour
             sprite.color = new Color(0, 1.0f, 0, sprite.color.a);
             _hpGauge.localScale = Vector3.one;
             _hpBar.SetActive(false);
+
+            yield return new WaitForEndOfFrame();
 
             if (owner == PlayerType.PLAYER)
                 GameManager.instance.playerObjList.Remove(gameObject);
