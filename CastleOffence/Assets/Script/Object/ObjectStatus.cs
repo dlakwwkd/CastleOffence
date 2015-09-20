@@ -25,6 +25,7 @@ public class ObjectStatus : MonoBehaviour
     public Direction    dir                 = Direction.RIGHT;
     public GameObject   hpBar               = null;
     public int          cost                = 0;
+    public int          reward              = 0;
     public int          maxHp               = 0;
     public int          damage              = 0;
     public float        attackRange         = 0.0f;
@@ -126,10 +127,13 @@ public class ObjectStatus : MonoBehaviour
         if (_curHp <= 0)
         {
             _isDead = true;
+            if(owner == PlayerType.PLAYER)
+                GameManager.instance.enemy.GetComponent<PlayerStatus>().Reward(reward);
+            else
+                GameManager.instance.player.GetComponent<PlayerStatus>().Reward(reward);
+
             if (type == ObjectType.UNIT)
-            {
                 GetComponent<UnitAI>().Death();
-            }
             StartCoroutine("Destroy");
         }
     }

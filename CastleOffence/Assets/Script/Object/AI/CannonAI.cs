@@ -61,7 +61,7 @@ public class CannonAI : MonoBehaviour
                 var power = explosionPower * gap * 50.0f;
                 enemy.GetComponent<Rigidbody2D>().AddForce(new Vector2(dir.x * power * 2, dir.y * power));
                 enemyStatus.Damaged((int)(_objInfo.damage * gap));
-            } 
+            }
         }
         Camera.main.GetComponent<CameraMove>().Shake(1.0f, 0.2f);
 

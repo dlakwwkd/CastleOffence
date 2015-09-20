@@ -7,13 +7,15 @@ public class GameManager : MonoBehaviour
     static GameManager _instance = null;
     public static GameManager instance { get { return _instance; } }
 
-    CameraMove _cameraInfo  = null;
-    GameObject _player      = null;
-    GameObject _enemy       = null;
+    CameraMove  _cameraInfo     = null;
+    GameObject  _player         = null;
+    GameObject  _enemy          = null;
+    GameObject  _uiRoot         = null;
 
     public GameObject       player { get { return _player; } }
     public GameObject       enemy { get { return _enemy; } }
 
+    public GameObject       rewardLabel     = null;
     public GameObject       castle          = null;
     public Vector2          playerCastlePos = Vector2.zero;
     public Vector2          enemyCastlePos  = Vector2.zero;
@@ -75,16 +77,15 @@ public class GameManager : MonoBehaviour
         playerObjList.Add(castleA);
         enemyObjList.Add(castleB);
 
-        var uiRoot = GameObject.FindGameObjectWithTag("UIRoot");
-        var barrier = uiRoot.transform.FindChild("BarrierButton").FindChild("Container");
-        var tower = uiRoot.transform.FindChild("TowerButton").FindChild("Container");
-        var unit = uiRoot.transform.FindChild("UnitContainer");
+        _uiRoot = GameObject.FindGameObjectWithTag("UIRoot");
+        var barrier = _uiRoot.transform.FindChild("BarrierButton").FindChild("Container");
+        var tower = _uiRoot.transform.FindChild("TowerButton").FindChild("Container");
+        var unit = _uiRoot.transform.FindChild("UnitContainer");
         barrier.GetComponent<ContainerSetting>().SettingBrriers(barrierList);
         tower.GetComponent<ContainerSetting>().SettingTowers(towerList);
         unit.GetComponent<UnitSetting>().SettingUnits(unitList);
     }
     public void StartGame()
     {
-        
     }
 }

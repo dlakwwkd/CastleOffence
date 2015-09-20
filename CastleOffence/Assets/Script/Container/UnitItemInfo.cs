@@ -6,16 +6,24 @@ public class UnitItemInfo : MonoBehaviour
     public GameObject prefab = null;
     public GameObject coolTimeBox = null;
 
-    ObjectStatus    _unitInfo     = null;
+    PlayerStatus    _player     = null;
+    ObjectStatus    _unitInfo   = null;
     Vector2         _createPos  = Vector2.zero;
     float           _coolTime   = 0.0f;
+    int             _cost       = 0;
     bool            _isOn       = true;
 
     void Start()
     {
+        _player = GameManager.instance.player.GetComponent<PlayerStatus>();
         _unitInfo = prefab.GetComponent<ObjectStatus>();
         _createPos = GameManager.instance.playerCastlePos;
         _coolTime = _unitInfo.createTime;
+        _cost = _unitInfo.cost;
+
+        var label = transform.FindChild("Cost").GetComponent<UILabel>();
+        label.text = _cost.ToString();
+        label.depth = 11;
 
         UIEventListener.Get(gameObject).onClick += onClick;
         UIEventListener.Get(gameObject).onPress += onPress;
@@ -25,9 +33,12 @@ public class UnitItemInfo : MonoBehaviour
     {
         if (_isOn)
         {
-            _isOn = false;
-            ProduceUnit();
-            StartCoroutine("CoolTimeProcess");
+            if (_player.Purchase(_cost))
+            {
+                _isOn = false;
+                ProduceUnit();
+                StartCoroutine("CoolTimeProcess");
+            }
         }
     }
     void onPress(GameObject sender, bool isDown)

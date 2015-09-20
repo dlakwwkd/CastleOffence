@@ -6,7 +6,7 @@ public class CameraMove : MonoBehaviour
     public bool     isLocked    = false;
     public float    easeValue   = 3.0f;
 
-    public float    minSize     = 1.0f;
+    public float    minSize     = 4.0f;
     public float    maxSize     = 8.0f;
 
     public float    leftSide    = -25.0f;
@@ -176,13 +176,10 @@ public class CameraMove : MonoBehaviour
             var pos = Vector3.zero;
             pos.x = Random.Range(-shakeSense, shakeSense);
             pos.y = Random.Range(-shakeSense, shakeSense);
-            pos.z = -10.0f;
-            transform.localPosition += pos * shakeTime;
+            transform.localPosition += new Vector3(pos.x * shakeTime, pos.y * shakeTime, -10.0f);
             MoveBoundaryCheck();
 
             yield return new WaitForEndOfFrame();
         }
-        var p = transform.localPosition;
-        transform.localPosition = new Vector3(p.x, p.y, -10.0f);
     }
 }

@@ -210,6 +210,12 @@ public class UnitAI : MonoBehaviour
             ai.Attacked();
             ai.KnockBack();
         }
+        else
+        {
+            var power = _objInfo.damage * 10;
+            var dir = Vector3.Normalize(_target.transform.position - transform.position);
+            _target.GetComponent<Rigidbody2D>().AddForce(new Vector2(dir.x * power * 2, dir.y * power));
+        }
         targetInfo.Damaged(_objInfo.damage);
     }
 
