@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
@@ -11,7 +12,7 @@ public class GameManager : MonoBehaviour
     public List<GameObject>     playerObjList { get { return _playerObjList; } }
     public List<GameObject>     enemyObjList { get { return _enemyObjList; } }
 
-    public GameObject           rewardLabel     = null;
+    public GameObject           labelPrefab     = null;
     public GameObject           castle          = null;
 
     public Vector2              playerCastlePos = Vector2.zero;
@@ -25,6 +26,7 @@ public class GameManager : MonoBehaviour
     public List<GameObject>     enemyTowerList  = new List<GameObject>();
 
     CameraMove          _cameraInfo     = null;
+    Camera              _nguiCam        = null;
     UIRoot              _uiRoot         = null;
     PlayerStatus        _player         = null;
     PlayerStatus        _enemy          = null;
@@ -37,6 +39,10 @@ public class GameManager : MonoBehaviour
         if (_instance == null)
             _instance = this;
     }
+    void OnDisable()
+    {
+        StopAllCoroutines();
+    }
     void Start()
     {
         InitGame();
@@ -47,6 +53,7 @@ public class GameManager : MonoBehaviour
     public void InitGame()
     {
         _cameraInfo = Camera.main.GetComponent<CameraMove>();
+        _nguiCam = NGUITools.FindCameraForLayer(LayerMask.NameToLayer("NGUI"));
         _uiRoot = GameObject.FindGameObjectWithTag("UIRoot").GetComponent<UIRoot>();
 
         ItemListSetting();
@@ -56,6 +63,12 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
     }
+    public void RewardLabelShow(Vector3 worldPos, int reward)
+    {
+        var text = "+" + reward.ToString();
+        StartCoroutine(UpScrollingLabel(worldPos, 35, text, Color.yellow));
+    }
+
 
 
     void PlayerSetting()
@@ -107,5 +120,42 @@ public class GameManager : MonoBehaviour
         barrier.GetComponent<ContainerSetting>().SettingBrriers(barrierList);
         tower.GetComponent<ContainerSetting>().SettingTowers(towerList);
         unit.GetComponent<UnitSetting>().SettingUnits(unitList);
+    }
+
+
+    IEnumerator UpScrollingLabel(Vector3 worldPos, int fontSize, string text, Color color)
+    {
+        var obj = Instantiate(labelPrefab) as GameObject;
+        obj.transform.SetParent(_uiRoot.transform);
+        obj.transform.localPosition = Vector3.zero;
+        obj.transform.localRotation = Quaternion.identity;
+        obj.transform.localScale = Vector3.one;
+
+        var label = obj.GetComponent<UILabel>();
+        label.fontSize = fontSize;
+        label.text = text;
+        label.color = color;
+
+        float speed = 1.0f;
+        float time = 2.0f;
+        while(time > 0.0f)
+        {
+            time -= Time.deltaTime;
+            worldPos += Vector3.up * speed * Time.deltaTime;
+
+            var pos = _nguiCam.ViewportToScreenPoint(Camera.main.WorldToViewportPoint(worldPos));
+            pos -= new Vector3(Screen.width * 0.5f, Screen.height * 0.5f);
+            pos *= _uiRoot.manualHeight / Screen.height;
+            pos.z = 0.0f;
+
+            label.fontSize = (int)(fontSize * (8.0f / Camera.main.orthographicSize));
+
+            obj.transform.localPosition = pos;
+            if(time < 1.0f)
+                label.alpha = time;
+
+            yield return new WaitForEndOfFrame();
+        }
+        Destroy(obj);
     }
 }

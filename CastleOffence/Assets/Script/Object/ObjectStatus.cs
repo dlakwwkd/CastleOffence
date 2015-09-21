@@ -131,7 +131,10 @@ public class ObjectStatus : MonoBehaviour
             if(owner == PlayerStatus.PlayerType.PLAYER)
                 GameManager.instance.enemy.Reward(reward);
             else
+            {
+                GameManager.instance.RewardLabelShow(transform.position, reward);
                 GameManager.instance.player.Reward(reward);
+            }
 
             if (type == ObjectType.UNIT)
                 GetComponent<UnitAI>().Death();

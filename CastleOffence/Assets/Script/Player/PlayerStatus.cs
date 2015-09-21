@@ -51,23 +51,32 @@ public class PlayerStatus : MonoBehaviour
     }
 
 
-    void IncomeUp(GameObject sender)
+    public void IncomeUp(GameObject sender)
     {
         if(Purchase(_incomeAmountUpCost))
         {
             _income += _incomeUp;
             _incomeUp += 10;
             _incomeAmountUpCost = _income * 10;
-            _incomeUpLabel.text = _incomeAmountUpCost.ToString();
+            if (type == PlayerType.PLAYER)
+                _incomeUpLabel.text = _incomeAmountUpCost.ToString();
         }
     }
-    void SpeedUp(GameObject sender)
+    public void SpeedUp(GameObject sender)
     {
         if(Purchase(_incomeSpeedUpCost))
         {
             _incomeRate -= 0.2f;
+            if (_incomeRate < 0.25f)
+            {
+                _incomeSpeedUpCost = int.MaxValue;
+                if (type == PlayerType.PLAYER)
+                    _speedUpLabel.text = "Max";
+                return;
+            }
             _incomeSpeedUpCost += (int)(_incomeSpeedUpCost * 0.5f);
-            _speedUpLabel.text = _incomeSpeedUpCost.ToString();
+            if (type == PlayerType.PLAYER)
+                _speedUpLabel.text = _incomeSpeedUpCost.ToString();
         }
     }
 

@@ -24,6 +24,8 @@ public class EnemyAI : MonoBehaviour
             StartCoroutine("ProduceUnit", unitList[i]);
         for (int i = 0; i < towerList.Count; ++i)
             StartCoroutine("ProduceTower", towerList[i]);
+
+        StartCoroutine("IncomeUpgrade");
     }
 
 
@@ -51,7 +53,7 @@ public class EnemyAI : MonoBehaviour
     IEnumerator ProduceTower(GameObject obj)
     {
         var objInfo = obj.GetComponent<ObjectStatus>();
-        var coolTime = 1.0f;
+        var coolTime = 3.0f;
         while (true)
         {
             yield return new WaitForSeconds(coolTime);
@@ -69,6 +71,17 @@ public class EnemyAI : MonoBehaviour
 
                 GameManager.instance.enemyObjList.Add(unit);
             }
+        }
+    }
+    IEnumerator IncomeUpgrade()
+    {
+        var coolTime = 2.0f;
+        while(true)
+        {
+            yield return new WaitForSeconds(coolTime);
+
+            _status.IncomeUp(gameObject);
+            _status.SpeedUp(gameObject);
         }
     }
 }
