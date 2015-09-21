@@ -51,7 +51,7 @@ public class CannonAI : MonoBehaviour
         {
             var enemy = enemies[i];
             var enemyPos = enemy.transform.position;
-            var dist = Vector3.Distance(transform.position, enemyPos);
+            var dist = Vector2.Distance(transform.position, enemyPos);
             if (dist < explosionRange)
             {
                 var enemyStatus = enemy.GetComponent<ObjectStatus>();
