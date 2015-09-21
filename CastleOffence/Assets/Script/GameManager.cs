@@ -72,8 +72,8 @@ public class GameManager : MonoBehaviour
         _player.type = PlayerStatus.PlayerType.PLAYER;
         _enemy.type = PlayerStatus.PlayerType.ENEMY;
 
-        _player.Init(600);
-        _enemy.Init(600);
+        _player.Init(300);
+        _enemy.Init(300);
 
         var ai = enemy.AddComponent<EnemyAI>();
         ai.unitList = enemyUnitList;

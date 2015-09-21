@@ -11,6 +11,10 @@ public class EnemyAI : MonoBehaviour
     Vector2         _createPos  = Vector2.zero;
 
 
+    void OnDisable()
+    {
+        StopAllCoroutines();
+    }
     void Start()
     {
         _status = GameManager.instance.enemy;
@@ -20,10 +24,6 @@ public class EnemyAI : MonoBehaviour
             StartCoroutine("ProduceUnit", unitList[i]);
         for (int i = 0; i < towerList.Count; ++i)
             StartCoroutine("ProduceTower", towerList[i]);
-    }
-    void OnDisable()
-    {
-        StopAllCoroutines();
     }
 
 

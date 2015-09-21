@@ -177,7 +177,7 @@ public class CameraMove : MonoBehaviour
             var pos = Vector3.zero;
             pos.x = Random.Range(-shakeSense, shakeSense);
             pos.y = Random.Range(-shakeSense, shakeSense);
-            transform.localPosition += new Vector3(pos.x * shakeTime, pos.y * shakeTime, -10.0f);
+            transform.localPosition += new Vector3(pos.x * shakeTime, pos.y * shakeTime);
             MoveBoundaryCheck();
 
             yield return new WaitForEndOfFrame();
