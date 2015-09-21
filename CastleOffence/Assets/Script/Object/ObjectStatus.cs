@@ -23,6 +23,8 @@ public class ObjectStatus : MonoBehaviour
     public ObjectType               type                = ObjectType.NONE;
     public Direction                dir                 = Direction.RIGHT;
     public GameObject               hpBar               = null;
+    public AudioClip                attackSound         = null;
+    public AudioClip                hitSound            = null;
     public int                      cost                = 0;
     public int                      reward              = 0;
     public int                      maxHp               = 0;
@@ -129,6 +131,7 @@ public class ObjectStatus : MonoBehaviour
             sprite.color = new Color(1.0f - hpRatio, hpRatio, 0, sprite.color.a);
         }
         GameManager.instance.DamageLabelShow(transform.position, dam);
+        AudioManager.instance.PlaySfx(hitSound);
 
         if (_curHp <= 0)
         {
@@ -139,10 +142,16 @@ public class ObjectStatus : MonoBehaviour
             {
                 GameManager.instance.RewardLabelShow(transform.position, reward);
                 GameManager.instance.player.Reward(reward);
+                AudioManager.instance.PlayReward();
             }
 
-            if (type == ObjectType.UNIT)
-                GetComponent<UnitAI>().Death();
+            switch(type)
+            {
+                case ObjectType.UNIT:       GetComponent<UnitAI>().Death();             break;
+                case ObjectType.TOWER:      AudioManager.instance.PlayTowerDeath();     break;
+                case ObjectType.CASTLE:     AudioManager.instance.PlayCastleDeath();    break;
+                case ObjectType.BARRIER:    AudioManager.instance.PlayBarrierDeath();   break;
+            }
             StartCoroutine("Destroy");
         }
     }

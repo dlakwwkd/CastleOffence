@@ -41,6 +41,7 @@ public class CannonAI : MonoBehaviour
 
     IEnumerator Explosion()
     {
+        AudioManager.instance.PlaySfx(_objInfo.attackSound);
         List<GameObject> enemies = null;
         if (_objInfo.owner == PlayerStatus.PlayerType.PLAYER)
             enemies = GameManager.instance.enemyObjList;

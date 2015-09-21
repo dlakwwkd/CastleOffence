@@ -182,6 +182,7 @@ public class UnitAI : MonoBehaviour
     }
     void AttackProcess()
     {
+        AudioManager.instance.PlaySfx(_objInfo.attackSound);
         var targetInfo = _target.GetComponent<ObjectStatus>();
         if (targetInfo.type == ObjectStatus.ObjectType.UNIT)
         {

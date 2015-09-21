@@ -116,7 +116,7 @@ static public class NGUITools
 			if (mListener != null && mListener.enabled && NGUITools.GetActive(mListener.gameObject))
 			{
 #if UNITY_4_3 || UNITY_4_5 || UNITY_4_6
-				AudioSource source = mListener.audio;
+				AudioSource source = mListener.source;
 #else
 				AudioSource source = mListener.GetComponent<AudioSource>();
 #endif

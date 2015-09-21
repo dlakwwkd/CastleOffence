@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
     public void IncomeLabelShow(Vector3 uiPos, int income)
     {
         var text = "+" + income.ToString();
-        StartCoroutine(UpScrollingLabelUI(uiPos, 50, text, Color.yellow, 3, 5.0f));
+        StartCoroutine(UpScrollingLabelUI(uiPos, 50, text, Color.yellow, 3, 10.0f));
     }
 
 

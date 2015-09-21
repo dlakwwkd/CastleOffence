@@ -32,6 +32,7 @@ public class DragDropItem : UIDragDropItem
     public void Purchase()
     {
         _amount.text = (++amount).ToString();
+        AudioManager.instance.PlayPurchaseItem();
     }
 
 
@@ -113,6 +114,7 @@ public class DragDropItem : UIDragDropItem
             body.mass *= (1.0f + (xSize * ySize - 1.0f) * 0.5f);
             body.simulated = true;
 
+            AudioManager.instance.PlayBuild();
             GameManager.instance.playerObjList.Add(_obj);
         }
         _obj = null;

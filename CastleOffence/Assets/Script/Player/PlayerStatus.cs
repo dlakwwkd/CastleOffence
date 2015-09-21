@@ -61,12 +61,15 @@ public class PlayerStatus : MonoBehaviour
             _incomeUp += 10;
             _incomeAmountUpCost = _income * 10;
             if (type == PlayerType.PLAYER)
+            {
+                AudioManager.instance.PlayIncomeUp();
                 _incomeUpLabel.text = _incomeAmountUpCost.ToString();
+            }
         }
     }
     public void SpeedUp(GameObject sender)
     {
-        if(Purchase(_incomeSpeedUpCost))
+        if (Purchase(_incomeSpeedUpCost))
         {
             _incomeRate -= 0.2f;
             if (_incomeRate < 0.25f)
@@ -78,7 +81,10 @@ public class PlayerStatus : MonoBehaviour
             }
             _incomeSpeedUpCost += (int)(_incomeSpeedUpCost * 0.5f);
             if (type == PlayerType.PLAYER)
+            {
+                AudioManager.instance.PlaySpeedUp();
                 _speedUpLabel.text = _incomeSpeedUpCost.ToString();
+            }
         }
     }
 

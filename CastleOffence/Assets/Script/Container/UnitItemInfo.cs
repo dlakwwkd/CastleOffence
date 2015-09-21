@@ -40,6 +40,7 @@ public class UnitItemInfo : MonoBehaviour
                 _isOn = false;
                 ProduceUnit();
                 StartCoroutine("CoolTimeProcess");
+                AudioManager.instance.PlayPurchaseUnit();
             }
         }
     }

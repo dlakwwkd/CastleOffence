@@ -129,6 +129,7 @@ public class TowerAI : MonoBehaviour
     }
     void AttackProcess()
     {
+        AudioManager.instance.PlaySfx(_objInfo.attackSound);
         var pivotGap = 2.0f;
         if (_objInfo.type == ObjectStatus.ObjectType.CASTLE)
             pivotGap += 3.0f;
@@ -148,11 +149,11 @@ public class TowerAI : MonoBehaviour
         var body = missile.GetComponent<Rigidbody2D>();
         body.AddForce(fireForce);
 
-        var dirVector = fireForce.normalized;
-        var angle = Vector2.Angle(Vector2.right, dirVector);
-        if (dirVector.y < 0)
-            angle = -angle;
-        missile.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, angle));
+//         var dirVector = fireForce.normalized;
+//         var angle = Vector2.Angle(Vector2.right, dirVector);
+//         if (dirVector.y < 0)
+//             angle = -angle;
+//         missile.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, angle));
     }
 
     public void Death()
