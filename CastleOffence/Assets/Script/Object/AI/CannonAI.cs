@@ -62,7 +62,7 @@ public class CannonAI : MonoBehaviour
                 var gap = (explosionRange - dist) / explosionRange;
                 var dir = Vector3.Normalize(enemyPos - transform.position);
                 var power = explosionPower * gap * 50.0f;
-                enemy.GetComponent<Rigidbody2D>().AddForce(new Vector2(dir.x * power * 2, dir.y * power));
+                enemy.GetComponent<Rigidbody2D>().AddForce(new Vector2(dir.x * power * 3.0f, dir.y * power));
                 enemyStatus.Damaged((int)(_objInfo.damage * gap));
             }
         }

@@ -129,19 +129,23 @@ public class TowerAI : MonoBehaviour
     }
     void AttackProcess()
     {
-        var missile = ObjectManager.instance.Assign(missileObj.name);
-        missile.transform.localPosition = transform.localPosition + Vector3.up;
-
+        var pivotGap = 2.0f;
         if (_objInfo.type == ObjectStatus.ObjectType.CASTLE)
-            missile.transform.localPosition += Vector3.up * 3.0f;
+            pivotGap += 3.0f;
+
+        var missile = ObjectManager.instance.Assign(missileObj.name);
+        missile.transform.localPosition = transform.localPosition + Vector3.up * pivotGap;
 
         var info = missile.GetComponent<ObjectStatus>();
         info.owner = _objInfo.owner;
         info.damage = _objInfo.damage;
 
-        var body = missile.GetComponent<Rigidbody2D>();
+        var forceRatio = 25.0f;
+        var forceGap = 500.0f - pivotGap * forceRatio;
         var displacement = _target.transform.localPosition - transform.localPosition;
-        var fireForce = new Vector2(displacement.x * 25.0f, displacement.y * 25.0f + 500.0f);
+
+        var fireForce = new Vector2(displacement.x * forceRatio, displacement.y * forceRatio + forceGap);
+        var body = missile.GetComponent<Rigidbody2D>();
         body.AddForce(fireForce);
     }
 

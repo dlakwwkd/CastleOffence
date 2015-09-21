@@ -45,7 +45,8 @@ public class MissileAI : MonoBehaviour
             {
                 other.GetComponent<UnitAI>().Attacked();
             }
-            other.GetComponent<Rigidbody2D>().AddForce(_body.velocity * 25.0f);
+            var power = _body.velocity * 25.0f;
+            other.GetComponent<Rigidbody2D>().AddForce(new Vector2(power.x * 1.5f, power.y));
             otherObjInfo.Damaged(_objInfo.damage);
 
             StartCoroutine("ArrowShaking");

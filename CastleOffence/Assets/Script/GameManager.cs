@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     public List<UnitInfo>       unitList        = new List<UnitInfo>();
 
     public List<GameObject>     enemyUnitList   = new List<GameObject>();
+    public List<GameObject>     enemyTowerList  = new List<GameObject>();
 
     CameraMove          _cameraInfo     = null;
     UIRoot              _uiRoot         = null;
@@ -71,10 +72,12 @@ public class GameManager : MonoBehaviour
         _player.type = PlayerStatus.PlayerType.PLAYER;
         _enemy.type = PlayerStatus.PlayerType.ENEMY;
 
-        _player.Init(300);
-        _enemy.Init(300);
+        _player.Init(600);
+        _enemy.Init(600);
 
-        enemy.AddComponent<EnemyAI>().unitList = enemyUnitList;
+        var ai = enemy.AddComponent<EnemyAI>();
+        ai.unitList = enemyUnitList;
+        ai.towerList = enemyTowerList;
     }
     void CastleSetting()
     {
