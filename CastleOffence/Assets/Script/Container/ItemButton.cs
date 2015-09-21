@@ -11,7 +11,7 @@ public class ItemButton : UIButton
     {
         _player = GameManager.instance.player;
         _item = GetComponent<DragDropItem>();
-        _cost = _item.prefab.GetComponent<ObjectStatus>().cost;
+        _cost = (_item.prefab.GetComponent<ObjectStatus>().cost * (int)(_item.xSize * _item.ySize));
         tweenTarget = gameObject;
         base.OnInit();
     }

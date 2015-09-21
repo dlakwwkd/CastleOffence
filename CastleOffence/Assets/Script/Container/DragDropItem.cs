@@ -20,7 +20,7 @@ public class DragDropItem : UIDragDropItem
 		if (mGrid != null) mGrid.repositionNow = true;
 
         _cost = transform.FindChild("Cost").GetComponent<UILabel>();
-        _cost.text = prefab.GetComponent<ObjectStatus>().cost.ToString();
+        _cost.text = (prefab.GetComponent<ObjectStatus>().cost * xSize * ySize).ToString();
         _cost.depth = 2;
 
         _amount = transform.FindChild("Amount").GetComponent<UILabel>();
@@ -45,15 +45,27 @@ public class DragDropItem : UIDragDropItem
         _obj = ObjectManager.instance.Assign(prefab.name);
         _obj.transform.localScale = new Vector3(xSize, ySize, 1.0f);
         _obj.transform.localRotation = Quaternion.identity;
-        _obj.GetComponent<Rigidbody2D>().simulated = false;
 
-        if (_obj.GetComponent<ObjectStatus>().type == ObjectStatus.ObjectType.TOWER)
-            _obj.GetComponent<TowerAI>().state = TowerAI.TowerFSM.DEAD;
-        else
+        var info = _obj.GetComponent<ObjectStatus>();
+        switch (info.type)
         {
-            var mat = _obj.GetComponent<MeshRenderer>().material;
-            mat.mainTextureScale = new Vector2(xSize, ySize);
+            case ObjectStatus.ObjectType.BARRIER:
+            {
+                var mat = _obj.GetComponent<MeshRenderer>().material;
+                mat.mainTextureScale = new Vector2(xSize, ySize);
+
+                info.MaxHpFix(prefab.GetComponent<ObjectStatus>().maxHp);
+                break;
+            }
+            case ObjectStatus.ObjectType.TOWER:
+            {
+                _obj.GetComponent<TowerAI>().state = TowerAI.TowerFSM.DEAD;
+                break;
+            }
         }
+        var body = _obj.GetComponent<Rigidbody2D>();
+        body.mass = prefab.GetComponent<Rigidbody2D>().mass;
+        body.simulated = false;
     }
     protected override void OnDragDropMove(Vector2 delta)
     {
@@ -81,11 +93,25 @@ public class DragDropItem : UIDragDropItem
         else
         {
             _amount.text = (--amount).ToString();
-            _obj.GetComponent<ObjectStatus>().owner = PlayerStatus.PlayerType.PLAYER;
-            _obj.GetComponent<Rigidbody2D>().simulated = true;
 
-            if (_obj.GetComponent<ObjectStatus>().type == ObjectStatus.ObjectType.TOWER)
-                _obj.GetComponent<TowerAI>().state = TowerAI.TowerFSM.IDLE;
+            var info = _obj.GetComponent<ObjectStatus>();
+            info.owner = PlayerStatus.PlayerType.PLAYER;
+            switch(info.type)
+            {
+                case ObjectStatus.ObjectType.BARRIER:
+                {
+                    info.MaxHpFix(info.maxHp * (int)(xSize * ySize));
+                    break;
+                }
+                case ObjectStatus.ObjectType.TOWER:
+                {
+                    _obj.GetComponent<TowerAI>().state = TowerAI.TowerFSM.IDLE;
+                    break;
+                }
+            }
+            var body = _obj.GetComponent<Rigidbody2D>();
+            body.mass *= (1.0f + (xSize * ySize - 1.0f) * 0.5f);
+            body.simulated = true;
 
             GameManager.instance.playerObjList.Add(_obj);
         }

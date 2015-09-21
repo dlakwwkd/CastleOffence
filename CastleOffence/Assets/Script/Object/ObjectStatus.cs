@@ -97,6 +97,10 @@ public class ObjectStatus : MonoBehaviour
     {
         return _isDead;
     }
+    public void MaxHpFix(int hp)
+    {
+        _curHp = maxHp = hp;
+    }
     public void ChangeDir(Direction d)
     {
         if(dir != d)
