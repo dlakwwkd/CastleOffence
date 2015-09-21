@@ -11,10 +11,6 @@ public class DragDropItem : UIDragDropItem
     UILabel     _cost   = null;
     UILabel     _amount = null;
 
-    public void             Purchase()
-    {
-        _amount.text = (++amount).ToString();
-    }
 
     protected override void Start()
     {
@@ -31,6 +27,13 @@ public class DragDropItem : UIDragDropItem
         _amount.text = amount.ToString();
         _amount.depth = 2;
     }
+
+
+    public void Purchase()
+    {
+        _amount.text = (++amount).ToString();
+    }
+
 
     protected override void OnDragDropStart()
     {
@@ -78,7 +81,7 @@ public class DragDropItem : UIDragDropItem
         else
         {
             _amount.text = (--amount).ToString();
-            _obj.GetComponent<ObjectStatus>().owner = PlayerType.PLAYER;
+            _obj.GetComponent<ObjectStatus>().owner = PlayerStatus.PlayerType.PLAYER;
             _obj.GetComponent<Rigidbody2D>().simulated = true;
 
             if (_obj.GetComponent<ObjectStatus>().type == ObjectStatus.ObjectType.TOWER)

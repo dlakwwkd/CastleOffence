@@ -23,6 +23,7 @@ public class EnemyAI : MonoBehaviour
         StopAllCoroutines();
     }
 
+
     IEnumerator ProduceUnit(GameObject obj)
     {
         float coolTime = obj.GetComponent<ObjectStatus>().createTime;
@@ -34,7 +35,7 @@ public class EnemyAI : MonoBehaviour
             unit.transform.position = _createPos;
 
             var status = unit.GetComponent<ObjectStatus>();
-            status.owner = PlayerType.ENEMY;
+            status.owner = PlayerStatus.PlayerType.ENEMY;
             status.ChangeDir(ObjectStatus.Direction.LEFT);
 
             GameManager.instance.enemyObjList.Add(unit);

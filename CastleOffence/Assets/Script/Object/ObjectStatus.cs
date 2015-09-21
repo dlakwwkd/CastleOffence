@@ -13,27 +13,26 @@ public class ObjectStatus : MonoBehaviour
         CASTLE,
         MISSILE,
     }
-
     public enum Direction
     {
         LEFT = -1,
         RIGHT = 1,
     }
 
-    public PlayerType   owner               = PlayerType.NONE;
-    public ObjectType   type                = ObjectType.NONE;
-    public Direction    dir                 = Direction.RIGHT;
-    public GameObject   hpBar               = null;
-    public int          cost                = 0;
-    public int          reward              = 0;
-    public int          maxHp               = 0;
-    public int          damage              = 0;
-    public float        attackRange         = 0.0f;
-    public float        attackFrontDelay    = 0.0f;
-    public float        attackBackDelay     = 0.0f;
-    public float        moveSpeed           = 0.0f;
-    public float        createTime          = 0.0f;
-    public float        deathTime           = 0.0f;
+    public PlayerStatus.PlayerType  owner               = PlayerStatus.PlayerType.NONE;
+    public ObjectType               type                = ObjectType.NONE;
+    public Direction                dir                 = Direction.RIGHT;
+    public GameObject               hpBar               = null;
+    public int                      cost                = 0;
+    public int                      reward              = 0;
+    public int                      maxHp               = 0;
+    public int                      damage              = 0;
+    public float                    attackRange         = 0.0f;
+    public float                    attackFrontDelay    = 0.0f;
+    public float                    attackBackDelay     = 0.0f;
+    public float                    moveSpeed           = 0.0f;
+    public float                    createTime          = 0.0f;
+    public float                    deathTime           = 0.0f;
 
     List<SpriteRenderer>    _sprites    = new List<SpriteRenderer>();
     MeshRenderer            _mash       = null;
@@ -98,7 +97,6 @@ public class ObjectStatus : MonoBehaviour
     {
         return _isDead;
     }
-
     public void ChangeDir(Direction d)
     {
         if(dir != d)
@@ -112,7 +110,6 @@ public class ObjectStatus : MonoBehaviour
             _hpBar.transform.localRotation = transform.localRotation;
         }
     }
-
     public void Damaged(int dam)
     {
         _curHp -= dam;
@@ -127,17 +124,16 @@ public class ObjectStatus : MonoBehaviour
         if (_curHp <= 0)
         {
             _isDead = true;
-            if(owner == PlayerType.PLAYER)
-                GameManager.instance.enemy.GetComponent<PlayerStatus>().Reward(reward);
+            if(owner == PlayerStatus.PlayerType.PLAYER)
+                GameManager.instance.enemy.Reward(reward);
             else
-                GameManager.instance.player.GetComponent<PlayerStatus>().Reward(reward);
+                GameManager.instance.player.Reward(reward);
 
             if (type == ObjectType.UNIT)
                 GetComponent<UnitAI>().Death();
             StartCoroutine("Destroy");
         }
     }
-
     public void Death()
     {
         if (!_isDead)
@@ -146,7 +142,6 @@ public class ObjectStatus : MonoBehaviour
             StartCoroutine("Destroy");
         }
     }
-
     public void InstantlyDeath()
     {
         if (!_isDead)
@@ -172,7 +167,7 @@ public class ObjectStatus : MonoBehaviour
 
             yield return new WaitForEndOfFrame();
 
-            if (owner == PlayerType.PLAYER)
+            if (owner == PlayerStatus.PlayerType.PLAYER)
                 GameManager.instance.playerObjList.Remove(gameObject);
             else
                 GameManager.instance.enemyObjList.Remove(gameObject);
@@ -203,10 +198,9 @@ public class ObjectStatus : MonoBehaviour
         {
             gameObject.SetActive(false);
         }
-        owner = PlayerType.NONE;
+        owner = PlayerStatus.PlayerType.NONE;
         ObjectManager.instance.Free(gameObject);
     }
-
     IEnumerator InstantlyDestroy()
     {
         if (type == ObjectType.MISSILE)
@@ -222,7 +216,7 @@ public class ObjectStatus : MonoBehaviour
 
             yield return new WaitForEndOfFrame();
 
-            if (owner == PlayerType.PLAYER)
+            if (owner == PlayerStatus.PlayerType.PLAYER)
                 GameManager.instance.playerObjList.Remove(gameObject);
             else
                 GameManager.instance.enemyObjList.Remove(gameObject);
@@ -231,7 +225,7 @@ public class ObjectStatus : MonoBehaviour
         {
             gameObject.SetActive(false);
         }
-        owner = PlayerType.NONE;
+        owner = PlayerStatus.PlayerType.NONE;
         ObjectManager.instance.Free(gameObject);
     }
 }

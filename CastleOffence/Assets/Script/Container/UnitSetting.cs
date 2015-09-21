@@ -14,10 +14,12 @@ public class UnitSetting : MonoBehaviour
 
     GameObject _grid = null;
 
+
     void Start()
     {
         _grid = transform.FindChild("Grid").gameObject;
     }
+
 
     public void SettingUnits(List<UnitInfo> itemList)
     {

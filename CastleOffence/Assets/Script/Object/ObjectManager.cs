@@ -10,7 +10,7 @@ public class ObjectManager : MonoBehaviour
     public List<GameObject>         objectList  = new List<GameObject>();
     public List<int>                sizeList    = new List<int>();
 
-    Dictionary<string, ObjectPool>  _poolList = new Dictionary<string, ObjectPool>();
+    Dictionary<string, ObjectPool>  _poolList   = new Dictionary<string, ObjectPool>();
 
     void                Start()
     {

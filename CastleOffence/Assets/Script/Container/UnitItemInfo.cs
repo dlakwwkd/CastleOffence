@@ -3,20 +3,21 @@ using System.Collections;
 
 public class UnitItemInfo : MonoBehaviour
 {
-    public GameObject prefab = null;
-    public GameObject coolTimeBox = null;
+    public GameObject prefab        = null;
+    public GameObject coolTimeBox   = null;
 
-    PlayerStatus    _player     = null;
     ObjectStatus    _unitInfo   = null;
+    PlayerStatus    _player     = null;
     Vector2         _createPos  = Vector2.zero;
     float           _coolTime   = 0.0f;
     int             _cost       = 0;
     bool            _isOn       = true;
 
+
     void Start()
     {
-        _player = GameManager.instance.player.GetComponent<PlayerStatus>();
         _unitInfo = prefab.GetComponent<ObjectStatus>();
+        _player = GameManager.instance.player;
         _createPos = GameManager.instance.playerCastlePos;
         _coolTime = _unitInfo.createTime;
         _cost = _unitInfo.cost;
@@ -28,6 +29,7 @@ public class UnitItemInfo : MonoBehaviour
         UIEventListener.Get(gameObject).onClick += onClick;
         UIEventListener.Get(gameObject).onPress += onPress;
     }
+
 
     void onClick(GameObject sender)
     {
@@ -57,11 +59,12 @@ public class UnitItemInfo : MonoBehaviour
         unit.transform.localRotation = Quaternion.identity;
 
         var status = unit.GetComponent<ObjectStatus>();
-        status.owner = PlayerType.PLAYER;
+        status.owner = PlayerStatus.PlayerType.PLAYER;
         status.ChangeDir(ObjectStatus.Direction.RIGHT);
 
         GameManager.instance.playerObjList.Add(unit);
     }
+
 
     IEnumerator CoolTimeProcess()
     {

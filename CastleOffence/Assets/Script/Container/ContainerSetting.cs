@@ -17,13 +17,15 @@ public class ContainerSetting : MonoBehaviour
     UIWidget    _widget = null;
     bool        _isOn   = false;
 
-    void        Start()
+
+    void Start()
     {
         _widget = GetComponent<UIWidget>();
         _widget.alpha = 0.0f;
 
         _grid = transform.FindChild("Scroll View").FindChild("Grid").gameObject;
     }
+
 
     public void OnOff()
     {
@@ -108,6 +110,7 @@ public class ContainerSetting : MonoBehaviour
             TransformInit(icon.transform);
         }
     }
+
 
     void TransformInit(Transform t)
     {

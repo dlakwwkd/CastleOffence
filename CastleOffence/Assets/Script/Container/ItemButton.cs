@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class ItemButton : UIButton
 {
@@ -7,9 +6,10 @@ public class ItemButton : UIButton
     DragDropItem    _item   = null;
     int             _cost   = 0;
 
+
     protected override void OnInit()
     {
-        _player = GameManager.instance.player.GetComponent<PlayerStatus>();
+        _player = GameManager.instance.player;
         _item = GetComponent<DragDropItem>();
         _cost = _item.prefab.GetComponent<ObjectStatus>().cost;
         tweenTarget = gameObject;

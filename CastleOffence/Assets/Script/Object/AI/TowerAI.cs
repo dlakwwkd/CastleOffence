@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 
 public class TowerAI : MonoBehaviour
@@ -49,7 +49,8 @@ public class TowerAI : MonoBehaviour
     {
         if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
         {
-            var dist = Math.Abs(LookEnemyAndCalcPos());
+            LookEnemy();
+            var dist = Vector2.Distance(_target.transform.position, transform.position);
             if (dist < _objInfo.attackRange)
             {
                 stateTime = 0.0f;
@@ -63,7 +64,7 @@ public class TowerAI : MonoBehaviour
     {
         if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
         {
-            var dist = Math.Abs(LookEnemyAndCalcPos());
+            var dist = Vector2.Distance(_target.transform.position, transform.position);
             if (dist > _objInfo.attackRange)
             {
                 state = TowerFSM.IDLE;
@@ -72,6 +73,7 @@ public class TowerAI : MonoBehaviour
             stateTime += Time.deltaTime;
             if (stateTime > _objInfo.attackFrontDelay)
             {
+                LookEnemy();
                 AttackProcess();
                 stateTime = -(_objInfo.attackBackDelay);
             }
@@ -94,7 +96,7 @@ public class TowerAI : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
 
             var enemyList = GameManager.instance.enemyObjList;
-            if (_objInfo.owner == PlayerType.ENEMY)
+            if (_objInfo.owner == PlayerStatus.PlayerType.ENEMY)
                 enemyList = GameManager.instance.playerObjList;
 
             var unitPos = transform.localPosition.x;
@@ -113,20 +115,25 @@ public class TowerAI : MonoBehaviour
     }
 
 
-    float LookEnemyAndCalcPos()
+    void LookEnemy()
     {
+        if (_objInfo.type == ObjectStatus.ObjectType.CASTLE)
+            return;
+
         var dir = ObjectStatus.Direction.RIGHT;
-        var displacement = _target.transform.localPosition.x - transform.localPosition.x;
+        var displacement = _target.transform.position.x - transform.position.x;
         if (displacement < 0)
             dir = ObjectStatus.Direction.LEFT;
 
         _objInfo.ChangeDir(dir);
-        return displacement;
     }
     void AttackProcess()
     {
         var missile = ObjectManager.instance.Assign(missileObj.name);
         missile.transform.localPosition = transform.localPosition + Vector3.up;
+
+        if (_objInfo.type == ObjectStatus.ObjectType.CASTLE)
+            missile.transform.localPosition += Vector3.up * 3.0f;
 
         var info = missile.GetComponent<ObjectStatus>();
         info.owner = _objInfo.owner;

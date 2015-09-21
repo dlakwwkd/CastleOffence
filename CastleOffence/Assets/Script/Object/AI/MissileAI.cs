@@ -6,6 +6,7 @@ public class MissileAI : MonoBehaviour
     ObjectStatus    _objInfo    = null;
     Rigidbody2D     _body       = null;
         
+
     void Start()
     {
         _objInfo = GetComponent<ObjectStatus>();
@@ -23,6 +24,7 @@ public class MissileAI : MonoBehaviour
 
         transform.localRotation = Quaternion.Euler(new Vector3(0, 0, angle));
     }
+
 
     void OnTriggerEnter2D(Collider2D collider)
     {
@@ -50,6 +52,7 @@ public class MissileAI : MonoBehaviour
             _objInfo.Death();
         }
     }
+
 
     IEnumerator ArrowShaking()
     {

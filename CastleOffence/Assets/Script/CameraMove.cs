@@ -6,7 +6,7 @@ public class CameraMove : MonoBehaviour
     public bool     isLocked    = false;
     public float    easeValue   = 3.0f;
 
-    public float    minSize     = 4.0f;
+    public float    minSize     = 3.0f;
     public float    maxSize     = 8.0f;
 
     public float    leftSide    = -25.0f;
@@ -18,19 +18,12 @@ public class CameraMove : MonoBehaviour
     Vector2 _prevPos    = new Vector2();
     Camera  _camera     = null;
 
-    public void Lock() { isLocked = true; _deltaPos = Vector3.zero; }
-    public void UnLock() { isLocked = false; }
 
-    public void Shake(float shakeTime, float shakeSense)
-    {
-        StartCoroutine(CameraShakeProcess(shakeTime, shakeSense));
-    }
-
-    void        Start()
+    void Start()
     {
         _camera = GetComponent<Camera>();
     }
-    void        Update()
+    void Update()
     {
         if (isLocked)
             return;
@@ -48,7 +41,16 @@ public class CameraMove : MonoBehaviour
 #endif
 	}
 
-    void        MoveInEditor()
+
+    public void Lock() { isLocked = true; _deltaPos = Vector3.zero; }
+    public void UnLock() { isLocked = false; }
+    public void Shake(float shakeTime, float shakeSense)
+    {
+        StartCoroutine(CameraShakeProcess(shakeTime, shakeSense));
+    }
+
+
+    void MoveInEditor()
     {
         if (Input.GetButtonDown("Fire1"))
         {
@@ -68,7 +70,7 @@ public class CameraMove : MonoBehaviour
             _deltaPos = Vector3.zero;
         }
     }
-    void        ZoomInEditor()
+    void ZoomInEditor()
     {
         float value = 20.0f;
         if (Input.GetAxis("Mouse ScrollWheel") < 0.0f)
@@ -84,8 +86,7 @@ public class CameraMove : MonoBehaviour
             MoveBoundaryCheck();
         }
     }
-
-    void        Move()
+    void Move()
     {
         Touch touch = Input.GetTouch(0);
         switch (touch.phase)
@@ -105,7 +106,7 @@ public class CameraMove : MonoBehaviour
                 break;
         }
     }
-    void        Zoom()
+    void Zoom()
     {
         Touch touch1 = Input.GetTouch(0);
         Touch touch2 = Input.GetTouch(1);
@@ -126,8 +127,7 @@ public class CameraMove : MonoBehaviour
         else if (touch2.phase == TouchPhase.Ended)
             _prevPos = touch1.position;
     }
-
-    void        MoveBoundaryCheck()
+    void MoveBoundaryCheck()
     {
         float left = transform.position.x - (_camera.orthographicSize * _camera.aspect);
         float right = transform.position.x + (_camera.orthographicSize * _camera.aspect);
@@ -143,13 +143,14 @@ public class CameraMove : MonoBehaviour
         else if (bottom < bottomSide)
             transform.position += new Vector3(0.0f, bottomSide - bottom, 0.0f);
     }
-    void        ZoomBoundaryCheck()
+    void ZoomBoundaryCheck()
     {
         if (_camera.orthographicSize < minSize)
             _camera.orthographicSize = minSize;
         else if (_camera.orthographicSize > maxSize)
             _camera.orthographicSize = maxSize;
     }
+
 
     IEnumerator SmoothMove(Vector3 force)
     {

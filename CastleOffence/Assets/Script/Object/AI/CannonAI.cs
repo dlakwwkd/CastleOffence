@@ -11,6 +11,7 @@ public class CannonAI : MonoBehaviour
     ObjectStatus    _objInfo = null;
     Rigidbody2D     _body = null;
 
+
     void Awake()
     {
         _objInfo = GetComponent<ObjectStatus>();
@@ -20,6 +21,7 @@ public class CannonAI : MonoBehaviour
     {
         _body.AddTorque(-1000.0f);
     }
+
 
     void OnTriggerEnter2D(Collider2D collider)
     {
@@ -36,10 +38,11 @@ public class CannonAI : MonoBehaviour
         }
     }
 
+
     IEnumerator Explosion()
     {
         List<GameObject> enemies = null;
-        if (_objInfo.owner == PlayerType.PLAYER)
+        if (_objInfo.owner == PlayerStatus.PlayerType.PLAYER)
             enemies = GameManager.instance.enemyObjList;
         else
             enemies = GameManager.instance.playerObjList;

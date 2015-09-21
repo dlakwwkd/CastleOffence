@@ -201,7 +201,6 @@
      <Compile Include="Assets\Script\Player\EnemyAI.cs" />
      <Compile Include="Assets\Script\Player\PlayerStatus.cs" />
      <Compile Include="Assets\Script\SceneChange.cs" />
-     <Compile Include="Assets\Script\Temp.cs" />
      <None Include="Assets\NGUI\Examples\Shaders\Unlit - Depth Cutout.shader" />
      <None Include="Assets\NGUI\ReadMe - 3.9.1.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Masked 1.shader" />

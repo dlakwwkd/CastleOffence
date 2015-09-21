@@ -1,20 +1,19 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-
-public enum PlayerType
-{
-    NONE,
-    PLAYER,
-    ENEMY,
-}
 
 public class PlayerStatus : MonoBehaviour
 {
+    public enum PlayerType
+    {
+        NONE,
+        PLAYER,
+        ENEMY,
+    }
+
     public PlayerType   type = PlayerType.NONE;
 
     UILabel _coinLabel  = null;
-    int     _coin       = 300;
+    int     _coin       = 0;
+
 
     void Start()
     {
@@ -25,10 +24,15 @@ public class PlayerStatus : MonoBehaviour
             _coinLabel.text = _coin.ToString();
         }
     }
-    
+
+
+    public void Init(int money)
+    {
+        _coin = money;
+    }
     public bool Purchase(int cost)
     {
-        if(cost < _coin)
+        if(cost <= _coin)
         {
             _coin -= cost;
 

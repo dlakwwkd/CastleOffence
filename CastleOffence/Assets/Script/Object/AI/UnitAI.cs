@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 using System;
-
-using System.Linq;
+//using System.Linq;
 
 public class UnitAI : MonoBehaviour
 {
@@ -150,45 +149,25 @@ public class UnitAI : MonoBehaviour
     }
 
 
-
-    IEnumerator AttackDelay()
+    public void KnockBack()
     {
-        yield return new WaitForSeconds(_objInfo.attackBackDelay);
-
-        if (state == UnitFSM.ATTACK)
-        {
-            _anim.SetTrigger("attack");
-        }
+        _body.velocity = new Vector2(-2.0f * (float)_objInfo.dir, _body.velocity.y);
     }
-    IEnumerator SearchEnemy()
+
+    public void Attacked()
     {
-        while(true)
-        {
-            yield return new WaitForSeconds(0.1f);
-
-            var enemyList = GameManager.instance.enemyObjList;
-            if (_objInfo.owner == PlayerType.ENEMY)
-                enemyList = GameManager.instance.playerObjList;
-
-            var closeEnemyDist = float.MaxValue;
-            for (int i = 0; i < enemyList.Count; ++i)
-            {
-                var enemy = enemyList[i];
-                var dist = Vector2.Distance(enemy.transform.position, transform.position);
-                if (dist < closeEnemyDist)
-                {
-                    closeEnemyDist = dist;
-                    _target = enemy;
-                }
-            }
-//             var q = enemyList
-//                 .Where(m =>
-//                 {
-//                     return m.transform.localPosition.x > unitPos;
-//                 })
-//                 .OrderBy(m => m.transform.localPosition.x)
-//                 .First();
-        }
+        StopCoroutine("AttackDelay");
+        _body.velocity = Vector2.zero;
+        stateTime = 0.0f;
+        state = UnitFSM.HIT;
+        _anim.SetTrigger("hit");
+    }
+    public void Death()
+    {
+        StopCoroutine("AttackDelay");
+        stateTime = 0.0f;
+        state = UnitFSM.DEAD;
+        _anim.SetTrigger("death");
     }
 
 
@@ -219,24 +198,44 @@ public class UnitAI : MonoBehaviour
         targetInfo.Damaged(_objInfo.damage);
     }
 
-    public void KnockBack()
-    {
-        _body.velocity = new Vector2(-2.0f * (float)_objInfo.dir, _body.velocity.y);
-    }
 
-    public void Attacked()
+    IEnumerator AttackDelay()
     {
-        StopCoroutine("AttackDelay");
-        _body.velocity = Vector2.zero;
-        stateTime = 0.0f;
-        state = UnitFSM.HIT;
-        _anim.SetTrigger("hit");
+        yield return new WaitForSeconds(_objInfo.attackBackDelay);
+
+        if (state == UnitFSM.ATTACK)
+        {
+            _anim.SetTrigger("attack");
+        }
     }
-    public void Death()
+    IEnumerator SearchEnemy()
     {
-        StopCoroutine("AttackDelay");
-        stateTime = 0.0f;
-        state = UnitFSM.DEAD;
-        _anim.SetTrigger("death");
+        while(true)
+        {
+            yield return new WaitForSeconds(0.1f);
+
+            var enemyList = GameManager.instance.enemyObjList;
+            if (_objInfo.owner == PlayerStatus.PlayerType.ENEMY)
+                enemyList = GameManager.instance.playerObjList;
+
+            var closeEnemyDist = float.MaxValue;
+            for (int i = 0; i < enemyList.Count; ++i)
+            {
+                var enemy = enemyList[i];
+                var dist = Vector2.Distance(enemy.transform.position, transform.position);
+                if (dist < closeEnemyDist)
+                {
+                    closeEnemyDist = dist;
+                    _target = enemy;
+                }
+            }
+//             var q = enemyList
+//                 .Where(m =>
+//                 {
+//                     return m.transform.localPosition.x > unitPos;
+//                 })
+//                 .OrderBy(m => m.transform.localPosition.x)
+//                 .First();
+        }
     }
 }

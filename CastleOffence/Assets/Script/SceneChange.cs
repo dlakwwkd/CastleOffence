@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class SceneChange : MonoBehaviour
 {
@@ -8,6 +7,7 @@ public class SceneChange : MonoBehaviour
         Screen.orientation = ScreenOrientation.Landscape;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
     }
+
 
     public void LoadGameScene()
     {
