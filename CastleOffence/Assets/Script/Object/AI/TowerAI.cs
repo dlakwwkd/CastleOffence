@@ -147,6 +147,12 @@ public class TowerAI : MonoBehaviour
         var fireForce = new Vector2(displacement.x * forceRatio, displacement.y * forceRatio + forceGap);
         var body = missile.GetComponent<Rigidbody2D>();
         body.AddForce(fireForce);
+
+        var dirVector = fireForce.normalized;
+        var angle = Vector2.Angle(Vector2.right, dirVector);
+        if (dirVector.y < 0)
+            angle = -angle;
+        missile.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, angle));
     }
 
     public void Death()

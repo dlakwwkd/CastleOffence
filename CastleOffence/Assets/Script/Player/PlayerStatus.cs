@@ -12,16 +12,17 @@ public class PlayerStatus : MonoBehaviour
 
     public PlayerType   type = PlayerType.NONE;
 
-    UILabel _coinLabel          = null;
-    UILabel _incomeUpLabel      = null;
-    UILabel _speedUpLabel       = null;
-    int     _coin               = 0;
-    int     _income             = 10;
-    int     _incomeUp           = 10;
-    float   _incomeRate         = 3.0f;
+    UIWidget    _statusBar          = null;
+    UILabel     _coinLabel          = null;
+    UILabel     _incomeUpLabel      = null;
+    UILabel     _speedUpLabel       = null;
+    int         _coin               = 0;
+    int         _income             = 10;
+    int         _incomeUp           = 10;
+    float       _incomeRate         = 3.0f;
 
-    int     _incomeAmountUpCost = 100;
-    int     _incomeSpeedUpCost  = 100;
+    int         _incomeAmountUpCost = 100;
+    int         _incomeSpeedUpCost  = 100;
 
 
     void OnDisable()
@@ -33,7 +34,8 @@ public class PlayerStatus : MonoBehaviour
         if (type == PlayerType.PLAYER)
         {
             var uiRoot = GameObject.FindGameObjectWithTag("UIRoot");
-            _coinLabel = uiRoot.transform.FindChild("OptionPanel").FindChild("PlayerStatusBar").FindChild("CoinAmount").GetComponent<UILabel>();
+            _statusBar = uiRoot.transform.FindChild("OptionPanel").FindChild("PlayerStatusBar").GetComponent<UIWidget>();
+            _coinLabel = _statusBar.transform.FindChild("CoinAmount").GetComponent<UILabel>();
             _coinLabel.text = _coin.ToString();
 
             var button1 = uiRoot.transform.FindChild("IncomUpButton");
@@ -111,6 +113,13 @@ public class PlayerStatus : MonoBehaviour
         while(true)
         {
             yield return new WaitForSeconds(_incomeRate);
+
+            if (type == PlayerType.PLAYER)
+            {
+                var pos = _statusBar.transform.localPosition;
+                pos += new Vector3(_statusBar.localSize.x * 0.3f, -(_statusBar.localSize.y * 0.6f));
+                GameManager.instance.IncomeLabelShow(pos, _income);
+            }
             Reward(_income);
         }
     }

@@ -64,9 +64,12 @@ public class ObjectStatus : MonoBehaviour
         var unitSize = collider.size / 2 + collider.offset;
         _hpBar = Instantiate(hpBar) as GameObject;
         _hpBar.transform.SetParent(transform);
-        _hpBar.transform.localPosition = new Vector3(0, unitSize.y + 0.5f, 0);
+        _hpBar.transform.localPosition = Vector3.up * (unitSize.y + 0.5f);
         _hpBar.name = "HpBar";
         _hpBar.SetActive(false);
+
+        if (type == ObjectType.BARRIER)
+            _hpBar.transform.localPosition -= Vector3.up * 0.5f;
 
         _hpGauge = _hpBar.transform.FindChild("HpGauge");
     }
@@ -125,6 +128,8 @@ public class ObjectStatus : MonoBehaviour
             var sprite = _hpGauge.GetComponent<SpriteRenderer>();
             sprite.color = new Color(1.0f - hpRatio, hpRatio, 0, sprite.color.a);
         }
+        GameManager.instance.DamageLabelShow(transform.position, dam);
+
         if (_curHp <= 0)
         {
             _isDead = true;

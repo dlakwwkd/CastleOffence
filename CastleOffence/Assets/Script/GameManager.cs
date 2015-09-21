@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     static GameManager          _instance = null;
     public static GameManager   instance { get { return _instance; } }
 
+    public UIRoot               uiRoot { get { return _uiRoot; } }
     public PlayerStatus         player { get { return _player; } }
     public PlayerStatus         enemy { get { return _enemy; } }
     public List<GameObject>     playerObjList { get { return _playerObjList; } }
@@ -65,8 +66,19 @@ public class GameManager : MonoBehaviour
     }
     public void RewardLabelShow(Vector3 worldPos, int reward)
     {
+        worldPos += Vector3.right * 0.5f;
         var text = "+" + reward.ToString();
-        StartCoroutine(UpScrollingLabel(worldPos, 35, text, Color.yellow));
+        StartCoroutine(UpScrollingLabel(worldPos, 35, text, Color.yellow, 1, 1.0f));
+    }
+    public void DamageLabelShow(Vector3 worldPos, int damage)
+    {
+        var text = "-" + damage.ToString();
+        StartCoroutine(UpScrollingLabel(worldPos, 25, text, Color.red, 0, 1.5f));
+    }
+    public void IncomeLabelShow(Vector3 uiPos, int income)
+    {
+        var text = "+" + income.ToString();
+        StartCoroutine(UpScrollingLabelUI(uiPos, 50, text, Color.yellow, 3, 5.0f));
     }
 
 
@@ -123,9 +135,9 @@ public class GameManager : MonoBehaviour
     }
 
 
-    IEnumerator UpScrollingLabel(Vector3 worldPos, int fontSize, string text, Color color)
+    IEnumerator UpScrollingLabel(Vector3 worldPos, int fontSize, string text, Color color, int depth, float speed)
     {
-        var obj = Instantiate(labelPrefab) as GameObject;
+        var obj = ObjectManager.instance.Assign(labelPrefab.name);
         obj.transform.SetParent(_uiRoot.transform);
         obj.transform.localPosition = Vector3.zero;
         obj.transform.localRotation = Quaternion.identity;
@@ -135,9 +147,9 @@ public class GameManager : MonoBehaviour
         label.fontSize = fontSize;
         label.text = text;
         label.color = color;
+        label.depth = depth;
 
-        float speed = 1.0f;
-        float time = 2.0f;
+        float time = 2.0f / speed;
         while(time > 0.0f)
         {
             time -= Time.deltaTime;
@@ -156,6 +168,35 @@ public class GameManager : MonoBehaviour
 
             yield return new WaitForEndOfFrame();
         }
-        Destroy(obj);
+        ObjectManager.instance.Free(obj);
+    }
+    IEnumerator UpScrollingLabelUI(Vector3 uiPos, int fontSize, string text, Color color, int depth, float speed)
+    {
+        var obj = ObjectManager.instance.Assign(labelPrefab.name);
+        obj.transform.SetParent(_uiRoot.transform);
+        obj.transform.localPosition = Vector3.zero;
+        obj.transform.localRotation = Quaternion.identity;
+        obj.transform.localScale = Vector3.one;
+
+        var label = obj.GetComponent<UILabel>();
+        label.fontSize = fontSize;
+        label.text = text;
+        label.color = color;
+        label.depth = depth;
+
+        speed *= _uiRoot.manualHeight / Screen.height;
+        float time = 1.0f;
+        while (time > 0.0f)
+        {
+            time -= Time.deltaTime;
+            uiPos += Vector3.up * speed * Time.deltaTime;
+
+            obj.transform.localPosition = uiPos;
+            if (time < 0.5f)
+                label.alpha = time;
+
+            yield return new WaitForEndOfFrame();
+        }
+        ObjectManager.instance.Free(obj);
     }
 }
