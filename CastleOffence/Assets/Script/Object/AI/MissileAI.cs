@@ -57,7 +57,11 @@ public class MissileAI : MonoBehaviour
 
     IEnumerator ArrowShaking()
     {
-        AudioManager.instance.PlaySfx(_objInfo.attackSound);
+        if (_objInfo.attackSounds.Count > 0)
+        {
+            int rand = Random.Range(0, _objInfo.attackSounds.Count);
+            AudioManager.instance.PlaySfx(_objInfo.attackSounds[rand]);
+        }
         var r = transform.localRotation.eulerAngles;
         var reverse = 1.0f;
         var rotation = 5.0f;

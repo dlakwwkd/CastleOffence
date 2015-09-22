@@ -125,6 +125,7 @@ public class PlayerStatus : MonoBehaviour
                 var pos = _statusBar.transform.localPosition;
                 pos += new Vector3(_statusBar.localSize.x * 0.3f, -(_statusBar.localSize.y * 0.6f));
                 GameManager.instance.IncomeLabelShow(pos, _income);
+                AudioManager.instance.PlayCoinUp();
             }
             Reward(_income);
         }

@@ -42,7 +42,11 @@ public class UnitItemInfo : MonoBehaviour
                 StartCoroutine("CoolTimeProcess");
                 AudioManager.instance.PlayPurchaseUnit();
             }
+            else
+                AudioManager.instance.PlayPurchaseFail();
         }
+        else
+            AudioManager.instance.PlayPurchaseFail();
     }
     void onPress(GameObject sender, bool isDown)
     {

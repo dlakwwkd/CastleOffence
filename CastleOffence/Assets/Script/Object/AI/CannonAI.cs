@@ -41,7 +41,11 @@ public class CannonAI : MonoBehaviour
 
     IEnumerator Explosion()
     {
-        AudioManager.instance.PlaySfx(_objInfo.attackSound);
+        if(_objInfo.attackSounds.Count > 0)
+        {
+            int rand = Random.Range(0, _objInfo.attackSounds.Count);
+            AudioManager.instance.PlaySfx(_objInfo.attackSounds[rand]);
+        }
         List<GameObject> enemies = null;
         if (_objInfo.owner == PlayerStatus.PlayerType.PLAYER)
             enemies = GameManager.instance.enemyObjList;

@@ -11,11 +11,10 @@ public class AudioManager : MonoBehaviour
     public AudioClip build          = null;
     public AudioClip purchase       = null;
     public AudioClip unitPurchase   = null;
+    public AudioClip purchaseFail   = null;
     public AudioClip incomeUp       = null;
     public AudioClip speedUp        = null;
-    public AudioClip towerDeeth     = null;
-    public AudioClip castleDeeth    = null;
-    public AudioClip barrierDeeth   = null;
+    public AudioClip coinUp         = null;
 
     AudioSource _audio = null;
 
@@ -42,9 +41,14 @@ public class AudioManager : MonoBehaviour
         if(clip)
             _audio.PlayOneShot(clip);
     }
+    public void PlaySfxRate(AudioClip clip, float rate)
+    {
+        if (clip)
+            StartCoroutine(RatePlay(clip, rate));
+    }
     public void PlayReward()
     {
-        StartCoroutine(RatePlay(reward, 0.1f));
+        StartCoroutine(RatePlay(reward, 0.2f));
     }
     public void PlayBuild()
     {
@@ -53,6 +57,10 @@ public class AudioManager : MonoBehaviour
     public void PlayPurchaseItem()
     {
         _audio.PlayOneShot(purchase);
+    }
+    public void PlayPurchaseFail()
+    {
+        _audio.PlayOneShot(purchaseFail);
     }
     public void PlayPurchaseUnit()
     {
@@ -66,17 +74,9 @@ public class AudioManager : MonoBehaviour
     {
         _audio.PlayOneShot(speedUp);
     }
-    public void PlayTowerDeath()
+    public void PlayCoinUp()
     {
-        _audio.PlayOneShot(towerDeeth);
-    }
-    public void PlayCastleDeath()
-    {
-        _audio.PlayOneShot(castleDeeth);
-    }
-    public void PlayBarrierDeath()
-    {
-        _audio.PlayOneShot(barrierDeeth);
+        _audio.PlayOneShot(coinUp);
     }
 
 

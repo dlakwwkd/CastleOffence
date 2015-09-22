@@ -20,7 +20,10 @@ public class ItemButton : UIButton
         if(_player.Purchase(_cost))
         {
             _item.Purchase();
+            AudioManager.instance.PlayPurchaseItem();
         }
+        else
+            AudioManager.instance.PlayPurchaseFail();
         base.OnClick();
     }
     protected override void OnPress(bool isDown)

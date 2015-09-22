@@ -32,7 +32,6 @@ public class DragDropItem : UIDragDropItem
     public void Purchase()
     {
         _amount.text = (++amount).ToString();
-        AudioManager.instance.PlayPurchaseItem();
     }
 
 

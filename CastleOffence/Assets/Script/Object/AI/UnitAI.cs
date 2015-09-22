@@ -182,7 +182,11 @@ public class UnitAI : MonoBehaviour
     }
     void AttackProcess()
     {
-        AudioManager.instance.PlaySfx(_objInfo.attackSound);
+        if (_objInfo.attackSounds.Count > 0)
+        {
+            int rand = UnityEngine.Random.Range(0, _objInfo.attackSounds.Count);
+            AudioManager.instance.PlaySfx(_objInfo.attackSounds[rand]);
+        }
         var targetInfo = _target.GetComponent<ObjectStatus>();
         if (targetInfo.type == ObjectStatus.ObjectType.UNIT)
         {
