@@ -39,16 +39,39 @@ public class AudioManager : MonoBehaviour
     public void PlaySfx(AudioClip clip)
     {
         if(clip)
-            _audio.PlayOneShot(clip);
+        {
+            var obj = ObjectManager.instance.Assign("AudioSource");
+            var source = obj.GetComponent<AudioSource>();
+
+            source.clip = clip;
+            source.Play();
+
+            StartCoroutine(EndPlay(source, clip.length));
+        }
     }
-    public void PlaySfxRate(AudioClip clip, float rate)
+    public void PlaySfx(AudioClip clip, float volume)
     {
         if (clip)
-            StartCoroutine(RatePlay(clip, rate));
+        {
+            var obj = ObjectManager.instance.Assign("AudioSource");
+            var source = obj.GetComponent<AudioSource>();
+
+            source.clip = clip;
+            source.volume = volume * 0.2f;
+            source.Play();
+
+            StartCoroutine(EndPlay(source, clip.length));
+        }
     }
+    public void PlaySfx(AudioClip clip, float volume, float delay)
+    {
+        if (clip)
+            StartCoroutine(RatePlay(clip, volume, delay));
+    }
+
     public void PlayReward()
     {
-        StartCoroutine(RatePlay(reward, 0.2f));
+        PlaySfx(reward, 1.0f, 0.2f);
     }
     public void PlayBuild()
     {
@@ -56,11 +79,11 @@ public class AudioManager : MonoBehaviour
     }
     public void PlayPurchaseItem()
     {
-        _audio.PlayOneShot(purchase);
+        _audio.PlayOneShot(purchase, 0.5f);
     }
     public void PlayPurchaseFail()
     {
-        _audio.PlayOneShot(purchaseFail);
+        _audio.PlayOneShot(purchaseFail, 0.5f);
     }
     public void PlayPurchaseUnit()
     {
@@ -68,21 +91,29 @@ public class AudioManager : MonoBehaviour
     }
     public void PlayIncomeUp()
     {
-        _audio.PlayOneShot(incomeUp);
+        _audio.PlayOneShot(incomeUp, 0.5f);
     }
     public void PlaySpeedUp()
     {
-        _audio.PlayOneShot(speedUp);
+        _audio.PlayOneShot(speedUp, 0.5f);
     }
     public void PlayCoinUp()
     {
-        _audio.PlayOneShot(coinUp);
+        _audio.PlayOneShot(coinUp, 0.5f);
     }
 
 
-    IEnumerator RatePlay(AudioClip clip, float time)
+    IEnumerator EndPlay(AudioSource source, float time)
     {
         yield return new WaitForSeconds(time);
-        _audio.PlayOneShot(clip);
+        source.Stop();
+        source.clip = null;
+        source.volume = 0.1f;
+        ObjectManager.instance.Free(source.gameObject);
+    }
+    IEnumerator RatePlay(AudioClip clip, float volume, float time)
+    {
+        yield return new WaitForSeconds(time);
+        PlaySfx(clip, volume);
     }
 }

@@ -185,7 +185,7 @@ public class UnitAI : MonoBehaviour
         if (_objInfo.attackSounds.Count > 0)
         {
             int rand = UnityEngine.Random.Range(0, _objInfo.attackSounds.Count);
-            AudioManager.instance.PlaySfx(_objInfo.attackSounds[rand]);
+            AudioManager.instance.PlaySfx(_objInfo.attackSounds[rand], 3.0f);
         }
         var targetInfo = _target.GetComponent<ObjectStatus>();
         if (targetInfo.type == ObjectStatus.ObjectType.UNIT)

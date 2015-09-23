@@ -155,8 +155,9 @@ public class GameManager : MonoBehaviour
             time -= Time.deltaTime;
             worldPos += Vector3.up * speed * Time.deltaTime;
 
-            var pos = Camera.main.WorldToScreenPoint(worldPos);
-            pos -= new Vector3(Screen.width , Screen.height) * 0.5f;
+            var pos = _nguiCam.ViewportToScreenPoint(Camera.main.WorldToViewportPoint(worldPos));
+            pos -= new Vector3(Screen.width, Screen.height) * 0.5f;
+            pos *= _uiRoot.manualHeight / Screen.height;
             pos.z = 0.0f;
 
             label.fontSize = (int)(fontSize * (8.0f / Camera.main.orthographicSize));

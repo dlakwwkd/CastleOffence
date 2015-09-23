@@ -132,7 +132,7 @@ public class ObjectStatus : MonoBehaviour
             sprite.color = new Color(1.0f - hpRatio, hpRatio, 0, sprite.color.a);
         }
         GameManager.instance.DamageLabelShow(transform.position, dam);
-        AudioManager.instance.PlaySfxRate(hitSound, 0.1f);
+        AudioManager.instance.PlaySfx(hitSound, 1.0f, 0.1f);
 
         if (_curHp <= 0)
         {
@@ -152,7 +152,7 @@ public class ObjectStatus : MonoBehaviour
             if (deathSounds.Count > 0)
             {
                 int rand = Random.Range(0, deathSounds.Count);
-                AudioManager.instance.PlaySfxRate(deathSounds[rand], 0.1f);
+                AudioManager.instance.PlaySfx(deathSounds[rand], 0.8f, 0.1f);
             }
             StartCoroutine("Destroy");
         }

@@ -44,7 +44,7 @@ public class CannonAI : MonoBehaviour
         if(_objInfo.attackSounds.Count > 0)
         {
             int rand = Random.Range(0, _objInfo.attackSounds.Count);
-            AudioManager.instance.PlaySfx(_objInfo.attackSounds[rand]);
+            AudioManager.instance.PlaySfx(_objInfo.attackSounds[rand], 1.2f);
         }
         List<GameObject> enemies = null;
         if (_objInfo.owner == PlayerStatus.PlayerType.PLAYER)

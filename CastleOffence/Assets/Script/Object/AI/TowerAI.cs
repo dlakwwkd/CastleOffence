@@ -132,7 +132,7 @@ public class TowerAI : MonoBehaviour
         if (_objInfo.attackSounds.Count > 0)
         {
             int rand = UnityEngine.Random.Range(0, _objInfo.attackSounds.Count);
-            AudioManager.instance.PlaySfx(_objInfo.attackSounds[rand]);
+            AudioManager.instance.PlaySfx(_objInfo.attackSounds[rand], 1.5f);
         }
         var pivotGap = 2.0f;
         if (_objInfo.type == ObjectStatus.ObjectType.CASTLE)
