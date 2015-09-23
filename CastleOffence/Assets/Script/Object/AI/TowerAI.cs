@@ -53,7 +53,6 @@ public class TowerAI : MonoBehaviour
             var dist = Vector2.Distance(_target.transform.position, transform.position);
             if (dist < _objInfo.attackRange)
             {
-                stateTime = 0.0f;
                 state = TowerFSM.ATTACK;
             }
         }
@@ -75,7 +74,7 @@ public class TowerAI : MonoBehaviour
             {
                 LookEnemy();
                 AttackProcess();
-                stateTime = -(_objInfo.attackBackDelay);
+                stateTime = -(_objInfo.attackBackDelay + UnityEngine.Random.Range(0.0f, 0.2f));
             }
         }
         else
@@ -93,7 +92,7 @@ public class TowerAI : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.2f);
 
             var enemyList = GameManager.instance.enemyObjList;
             if (_objInfo.owner == PlayerStatus.PlayerType.ENEMY)
@@ -146,7 +145,7 @@ public class TowerAI : MonoBehaviour
         info.damage = _objInfo.damage;
 
         var forceRatio = 25.0f;
-        var forceGap = 500.0f - pivotGap * forceRatio;
+        var forceGap = UnityEngine.Random.Range(450.0f, 550.0f) - pivotGap * forceRatio;
         var displacement = _target.transform.localPosition - transform.localPosition;
 
         var fireForce = new Vector2(displacement.x * forceRatio, displacement.y * forceRatio + forceGap);

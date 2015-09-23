@@ -75,7 +75,7 @@ public class AudioManager : MonoBehaviour
     }
     public void PlayBuild()
     {
-        _audio.PlayOneShot(build);
+        PlaySfx(build, 3.0f);
     }
     public void PlayPurchaseItem()
     {

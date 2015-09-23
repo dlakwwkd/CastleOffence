@@ -18,13 +18,15 @@ public class UnitAI : MonoBehaviour
     public UnitFSM      state       = UnitFSM.IDLE;
     public float        stateTime   = 0.0f;
 
-    Dictionary<UnitFSM, Action> _dicState   = new Dictionary<UnitFSM, Action>();
-    ObjectStatus                _objInfo    = null;
-    Rigidbody2D                 _body       = null;
-    Animator                    _anim       = null;
-    GameObject                  _target     = null;
-    float                       _hitDelay   = 0.5f;
-    float                       _idleDelay  = 0.1f;
+    Dictionary<UnitFSM, Action> _dicState       = new Dictionary<UnitFSM, Action>();
+    ObjectStatus                _objInfo        = null;
+    Rigidbody2D                 _body           = null;
+    Animator                    _anim           = null;
+    GameObject                  _target         = null;
+    float                       _hitDelay       = 0.5f;
+    float                       _idleDelay      = 0.1f;
+    float                       _moveDelay      = 0.3f;
+    float                       _backDelayTime  = 0.0f;
 
 
     void OnEnable()
@@ -51,6 +53,9 @@ public class UnitAI : MonoBehaviour
     }
     void Update()
     {
+        if (_backDelayTime > 0)
+            _backDelayTime -= Time.deltaTime;
+
         _dicState[state]();
     }
 
@@ -67,9 +72,9 @@ public class UnitAI : MonoBehaviour
             var dist = Vector2.Distance(_target.transform.position, transform.position);
             if (dist < _objInfo.attackRange)
             {
-                stateTime = 0.0f;
+                stateTime = -_backDelayTime;
                 state = UnitFSM.ATTACK;
-                _anim.SetTrigger("attack");
+                StartCoroutine("AttackDelay", _backDelayTime);
             }
             else
             {
@@ -85,21 +90,30 @@ public class UnitAI : MonoBehaviour
     {
         if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
         {
-            LookEnemy();
-            var dist = Vector2.Distance(_target.transform.position, transform.position);
-            if (dist < _objInfo.attackRange)
+            stateTime += Time.deltaTime;
+            if (stateTime > _moveDelay)
             {
                 stateTime = 0.0f;
-                state = UnitFSM.ATTACK;
-                _anim.SetTrigger("attack");
-                return;
+                LookEnemy();
+                var dist = Vector2.Distance(_target.transform.position, transform.position);
+                if (dist < _objInfo.attackRange)
+                {
+                    stateTime = -_backDelayTime;
+                    state = UnitFSM.ATTACK;
+                    StartCoroutine("AttackDelay", _backDelayTime);
+                    return;
+                }
+                if (_anim.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.walk") == false)
+                {
+                    _anim.SetTrigger("move");
+                }
+                float speed = _objInfo.moveSpeed * (float)_objInfo.dir;
+                _body.velocity = new Vector2(speed, _body.velocity.y);
             }
-            float speed = _objInfo.moveSpeed * (float)_objInfo.dir;
-            _body.velocity = new Vector2(speed, _body.velocity.y);
         }
         else
         {
-            stateTime = 0.0f;
+            stateTime = UnityEngine.Random.Range(-0.1f, 0.1f);
             state = UnitFSM.IDLE;
             _anim.SetTrigger("idle");
             _target = null;
@@ -123,13 +137,14 @@ public class UnitAI : MonoBehaviour
             {
                 LookEnemy();
                 AttackProcess();
-                StartCoroutine("AttackDelay");
-                stateTime = -(_objInfo.attackBackDelay);
+                _backDelayTime = _objInfo.attackBackDelay + UnityEngine.Random.Range(0.0f, 0.2f);
+                stateTime = -(_backDelayTime);
+                StartCoroutine("AttackDelay", _backDelayTime);
             }
         }
         else
         {
-            stateTime = 0.0f;
+            stateTime = UnityEngine.Random.Range(-0.1f, 0.1f);
             state = UnitFSM.IDLE;
             _anim.SetTrigger("idle");
             _target = null;
@@ -140,7 +155,7 @@ public class UnitAI : MonoBehaviour
         stateTime += Time.deltaTime;
         if (stateTime > _hitDelay)
         {
-            stateTime = 0.0f;
+            stateTime = UnityEngine.Random.Range(-0.1f, 0.1f);
             state = UnitFSM.IDLE;
         }
     }
@@ -204,9 +219,9 @@ public class UnitAI : MonoBehaviour
     }
 
 
-    IEnumerator AttackDelay()
+    IEnumerator AttackDelay(float delay)
     {
-        yield return new WaitForSeconds(_objInfo.attackBackDelay);
+        yield return new WaitForSeconds(delay);
 
         if (state == UnitFSM.ATTACK)
         {
@@ -217,7 +232,7 @@ public class UnitAI : MonoBehaviour
     {
         while(true)
         {
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.2f);
 
             var enemyList = GameManager.instance.enemyObjList;
             if (_objInfo.owner == PlayerStatus.PlayerType.ENEMY)
