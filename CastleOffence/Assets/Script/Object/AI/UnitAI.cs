@@ -33,6 +33,8 @@ public class UnitAI : MonoBehaviour
     {
         StopAllCoroutines();
         state = UnitFSM.IDLE;
+        _backDelayTime = 0.0f;
+        _target = null;
         GameManager.instance.playerObjList.Remove(gameObject);
     }
     void Start()

@@ -23,7 +23,7 @@ public class EnemyAI : MonoBehaviour
         for(int i = 0; i < unitList.Count; ++i)
             StartCoroutine("ProduceUnit", unitList[i]);
         for (int i = 0; i < towerList.Count; ++i)
-            StartCoroutine(ProduceTower(towerList[i], (2.0f - i) * 3.0f));
+            StartCoroutine(ProduceTower(towerList[i], (towerList.Count - i) * 3.0f));
 
         StartCoroutine("IncomeUpgrade");
     }
