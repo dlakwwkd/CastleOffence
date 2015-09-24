@@ -29,10 +29,6 @@ public class UnitAI : MonoBehaviour
     float                       _backDelayTime  = 0.0f;
 
 
-    void OnEnable()
-    {
-        StartCoroutine("SearchEnemy");
-    }
     void OnDisable()
     {
         StopAllCoroutines();
@@ -62,29 +58,31 @@ public class UnitAI : MonoBehaviour
 
     void Idle()
     {
-        if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
+        stateTime += Time.deltaTime;
+        if (stateTime > _idleDelay)
         {
-            stateTime += Time.deltaTime;
-            if (stateTime < _idleDelay)
-                return;
-
-            LookEnemy();
-            var dist = Vector2.Distance(_target.transform.position, transform.position);
-            if (dist < _objInfo.attackRange)
+            stateTime = 0.0f;
+            if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
             {
-                stateTime = -_backDelayTime;
-                state = UnitFSM.ATTACK;
-                StartCoroutine("AttackDelay", _backDelayTime);
+                LookEnemy();
+                var dist = Vector2.Distance(_target.transform.position, transform.position);
+                if (dist < _objInfo.attackRange)
+                {
+                    stateTime = -_backDelayTime;
+                    state = UnitFSM.ATTACK;
+                    StartCoroutine("AttackDelay", _backDelayTime);
+                }
+                else
+                {
+                    state = UnitFSM.MOVE;
+                    _anim.SetTrigger("move");
+                }
             }
             else
             {
-                stateTime = 0.0f;
-                state = UnitFSM.MOVE;
-                _anim.SetTrigger("move");
+                SearchEnemy();
             }
         }
-        else
-            _target = null;
     }
     void Move()
     {
@@ -94,6 +92,7 @@ public class UnitAI : MonoBehaviour
             if (stateTime > _moveDelay)
             {
                 stateTime = 0.0f;
+                SearchEnemy();
                 LookEnemy();
                 var dist = Vector2.Distance(_target.transform.position, transform.position);
                 if (dist < _objInfo.attackRange)
@@ -217,6 +216,24 @@ public class UnitAI : MonoBehaviour
         }
         targetInfo.Damaged(_objInfo.damage);
     }
+    void SearchEnemy()
+    {
+        var enemyList = GameManager.instance.enemyObjList;
+        if (_objInfo.owner == PlayerStatus.PlayerType.ENEMY)
+            enemyList = GameManager.instance.playerObjList;
+
+        var closeEnemyDist = float.MaxValue;
+        for (int i = 0; i < enemyList.Count; ++i)
+        {
+            var enemy = enemyList[i];
+            var dist = Vector2.Distance(enemy.transform.position, transform.position);
+            if (dist < closeEnemyDist)
+            {
+                closeEnemyDist = dist;
+                _target = enemy;
+            }
+        }
+    }
 
 
     IEnumerator AttackDelay(float delay)
@@ -226,36 +243,6 @@ public class UnitAI : MonoBehaviour
         if (state == UnitFSM.ATTACK)
         {
             _anim.SetTrigger("attack");
-        }
-    }
-    IEnumerator SearchEnemy()
-    {
-        while(true)
-        {
-            yield return new WaitForSeconds(0.2f);
-
-            var enemyList = GameManager.instance.enemyObjList;
-            if (_objInfo.owner == PlayerStatus.PlayerType.ENEMY)
-                enemyList = GameManager.instance.playerObjList;
-
-            var closeEnemyDist = float.MaxValue;
-            for (int i = 0; i < enemyList.Count; ++i)
-            {
-                var enemy = enemyList[i];
-                var dist = Vector2.Distance(enemy.transform.position, transform.position);
-                if (dist < closeEnemyDist)
-                {
-                    closeEnemyDist = dist;
-                    _target = enemy;
-                }
-            }
-//             var q = enemyList
-//                 .Where(m =>
-//                 {
-//                     return m.transform.localPosition.x > unitPos;
-//                 })
-//                 .OrderBy(m => m.transform.localPosition.x)
-//                 .First();
         }
     }
 }

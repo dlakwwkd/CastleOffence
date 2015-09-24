@@ -88,29 +88,9 @@ public class TowerAI : MonoBehaviour
     }
 
 
-    IEnumerator SearchEnemy()
+    public void Death()
     {
-        while (true)
-        {
-            yield return new WaitForSeconds(0.2f);
-
-            var enemyList = GameManager.instance.enemyObjList;
-            if (_objInfo.owner == PlayerStatus.PlayerType.ENEMY)
-                enemyList = GameManager.instance.playerObjList;
-
-            var unitPos = transform.localPosition.x;
-            var closeEnemyDist = float.MaxValue;
-
-            for (int i = 0; i < enemyList.Count; ++i)
-            {
-                var dist = Math.Abs(enemyList[i].transform.localPosition.x - unitPos);
-                if (dist < closeEnemyDist)
-                {
-                    closeEnemyDist = dist;
-                    _target = enemyList[i];
-                }
-            }
-        }
+        state = TowerFSM.DEAD;
     }
 
 
@@ -152,15 +132,36 @@ public class TowerAI : MonoBehaviour
         var body = missile.GetComponent<Rigidbody2D>();
         body.AddForce(fireForce);
 
-//         var dirVector = fireForce.normalized;
-//         var angle = Vector2.Angle(Vector2.right, dirVector);
-//         if (dirVector.y < 0)
-//             angle = -angle;
-//         missile.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, angle));
+        //         var dirVector = fireForce.normalized;
+        //         var angle = Vector2.Angle(Vector2.right, dirVector);
+        //         if (dirVector.y < 0)
+        //             angle = -angle;
+        //         missile.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, angle));
     }
 
-    public void Death()
+
+    IEnumerator SearchEnemy()
     {
-        state = TowerFSM.DEAD;
+        while (true)
+        {
+            yield return new WaitForSeconds(0.2f);
+
+            var enemyList = GameManager.instance.enemyObjList;
+            if (_objInfo.owner == PlayerStatus.PlayerType.ENEMY)
+                enemyList = GameManager.instance.playerObjList;
+
+            var unitPos = transform.localPosition.x;
+            var closeEnemyDist = float.MaxValue;
+
+            for (int i = 0; i < enemyList.Count; ++i)
+            {
+                var dist = Math.Abs(enemyList[i].transform.localPosition.x - unitPos);
+                if (dist < closeEnemyDist)
+                {
+                    closeEnemyDist = dist;
+                    _target = enemyList[i];
+                }
+            }
+        }
     }
 }
