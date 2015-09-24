@@ -34,7 +34,7 @@ public class MissileAI : MonoBehaviour
         var other = collider.gameObject;
         if(other.gameObject.name == "Ground")
         {
-            StartCoroutine("ArrowShaking");
+            StartCoroutine("ArrowShaking", other.transform);
             _objInfo.Death();
             return;
         }
@@ -49,13 +49,13 @@ public class MissileAI : MonoBehaviour
             other.GetComponent<Rigidbody2D>().AddForce(new Vector2(power.x * 1.5f, power.y));
             otherObjInfo.Damaged(_objInfo.damage);
 
-            StartCoroutine("ArrowShaking");
+            StartCoroutine("ArrowShaking", other.transform);
             _objInfo.Death();
         }
     }
 
 
-    IEnumerator ArrowShaking()
+    IEnumerator ArrowShaking(Transform targetPos)
     {
         if (_objInfo.attackSounds.Count > 0)
         {
@@ -67,9 +67,16 @@ public class MissileAI : MonoBehaviour
         var rotation = 5.0f;
         var time = 1.0f;
         var gap = rotation / time;
-
+        var startPos = targetPos.localPosition;
         while (time > 0)
         {
+            if(targetPos.gameObject.activeSelf)
+            {
+                var deltaPos = targetPos.localPosition - startPos;
+                deltaPos.z = 0.0f;
+                startPos = targetPos.localPosition;
+                transform.localPosition += deltaPos;
+            }
             transform.localRotation = Quaternion.Euler(new Vector3(r.x, r.y , r.z + rotation * reverse));
             reverse = -reverse;
             rotation -= Time.deltaTime * gap;

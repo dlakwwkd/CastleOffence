@@ -191,6 +191,7 @@
      <Compile Include="Assets\Script\Container\ItemButton.cs" />
      <Compile Include="Assets\Script\Container\UnitItemInfo.cs" />
      <Compile Include="Assets\Script\Container\UnitSetting.cs" />
+     <Compile Include="Assets\Script\Container\UnitUpgrade.cs" />
      <Compile Include="Assets\Script\DestroyZone.cs" />
      <Compile Include="Assets\Script\GameManager.cs" />
      <Compile Include="Assets\Script\Object\AI\CannonAI.cs" />
