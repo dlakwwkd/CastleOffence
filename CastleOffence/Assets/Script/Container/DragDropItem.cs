@@ -114,7 +114,7 @@ public class DragDropItem : UIDragDropItem
             body.simulated = true;
 
             AudioManager.instance.PlayBuild();
-            GameManager.instance.playerObjList.Add(_obj);
+            GameManager.instance.mPlayerObjList.Add(_obj);
         }
         _obj = null;
     }

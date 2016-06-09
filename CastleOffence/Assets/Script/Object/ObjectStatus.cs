@@ -138,11 +138,11 @@ public class ObjectStatus : MonoBehaviour
         {
             _isDead = true;
             if(owner == PlayerStatus.PlayerType.PLAYER)
-                GameManager.instance.enemy.Reward(reward);
+                GameManager.instance.mEnemy.Reward(reward);
             else
             {
                 GameManager.instance.RewardLabelShow(transform.position, reward);
-                GameManager.instance.player.Reward(reward);
+                GameManager.instance.mPlayer.Reward(reward);
                 AudioManager.instance.PlayReward();
             }
             switch(type)
@@ -191,9 +191,9 @@ public class ObjectStatus : MonoBehaviour
             yield return new WaitForEndOfFrame();
 
             if (owner == PlayerStatus.PlayerType.PLAYER)
-                GameManager.instance.playerObjList.Remove(gameObject);
+                GameManager.instance.mPlayerObjList.Remove(gameObject);
             else
-                GameManager.instance.enemyObjList.Remove(gameObject);
+                GameManager.instance.mEnemyObjList.Remove(gameObject);
         }
         yield return new WaitForSeconds(deathTime);
 
@@ -240,9 +240,9 @@ public class ObjectStatus : MonoBehaviour
             yield return new WaitForEndOfFrame();
 
             if (owner == PlayerStatus.PlayerType.PLAYER)
-                GameManager.instance.playerObjList.Remove(gameObject);
+                GameManager.instance.mPlayerObjList.Remove(gameObject);
             else
-                GameManager.instance.enemyObjList.Remove(gameObject);
+                GameManager.instance.mEnemyObjList.Remove(gameObject);
         }
         if (type == ObjectType.CASTLE)
         {

@@ -17,8 +17,8 @@ public class UnitItemInfo : MonoBehaviour
     void Start()
     {
         _unitInfo = prefab.GetComponent<ObjectStatus>();
-        _player = GameManager.instance.player;
-        _createPos = GameManager.instance.playerCastlePos;
+        _player = GameManager.instance.mPlayer;
+        _createPos = GameManager.instance.mPlayerCastlePos;
         _coolTime = _unitInfo.createTime;
         _cost = _unitInfo.cost;
 
@@ -67,7 +67,7 @@ public class UnitItemInfo : MonoBehaviour
         status.owner = PlayerStatus.PlayerType.PLAYER;
         status.ChangeDir(ObjectStatus.Direction.RIGHT);
 
-        GameManager.instance.playerObjList.Add(unit);
+        GameManager.instance.mPlayerObjList.Add(unit);
     }
 
 

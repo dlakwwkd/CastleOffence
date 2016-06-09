@@ -48,9 +48,9 @@ public class CannonAI : MonoBehaviour
         }
         List<GameObject> enemies = null;
         if (_objInfo.owner == PlayerStatus.PlayerType.PLAYER)
-            enemies = GameManager.instance.enemyObjList;
+            enemies = GameManager.instance.mEnemyObjList;
         else
-            enemies = GameManager.instance.playerObjList;
+            enemies = GameManager.instance.mPlayerObjList;
 
         for(int i = 0; i < enemies.Count; ++i)
         {

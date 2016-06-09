@@ -9,7 +9,7 @@ public class ItemButton : UIButton
 
     protected override void OnInit()
     {
-        _player = GameManager.instance.player;
+        _player = GameManager.instance.mPlayer;
         _item = GetComponent<DragDropItem>();
         _cost = (_item.prefab.GetComponent<ObjectStatus>().cost * (int)(_item.xSize * _item.ySize));
         tweenTarget = gameObject;

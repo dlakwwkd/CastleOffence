@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 public class EnemyAI : MonoBehaviour
 {
-    public List<GameObject> unitList    = new List<GameObject>();
-    public List<GameObject> towerList   = new List<GameObject>();
+    public List<GameObject> UnitList    = new List<GameObject>();
+    public List<GameObject> TowerList   = new List<GameObject>();
 
     PlayerStatus    _status     = null;
     Vector2         _createPos  = Vector2.zero;
@@ -17,13 +17,13 @@ public class EnemyAI : MonoBehaviour
     }
     void Start()
     {
-        _status = GameManager.instance.enemy;
-        _createPos = GameManager.instance.enemyCastlePos;
+        _status = GameManager.instance.mEnemy;
+        _createPos = GameManager.instance.mEnemyCastlePos;
 
-        for(int i = 0; i < unitList.Count; ++i)
-            StartCoroutine("ProduceUnit", unitList[i]);
-        for (int i = 0; i < towerList.Count; ++i)
-            StartCoroutine(ProduceTower(towerList[i], (towerList.Count - i) * 3.0f));
+        for(int i = 0; i < UnitList.Count; ++i)
+            StartCoroutine("ProduceUnit", UnitList[i]);
+        for (int i = 0; i < TowerList.Count; ++i)
+            StartCoroutine(ProduceTower(TowerList[i], (TowerList.Count - i) * 3.0f));
 
         StartCoroutine("IncomeUpgrade");
     }
@@ -46,7 +46,7 @@ public class EnemyAI : MonoBehaviour
                 status.owner = PlayerStatus.PlayerType.ENEMY;
                 status.ChangeDir(ObjectStatus.Direction.LEFT);
 
-                GameManager.instance.enemyObjList.Add(unit);
+                GameManager.instance.mEnemyObjList.Add(unit);
             }
         }
     }
@@ -69,7 +69,7 @@ public class EnemyAI : MonoBehaviour
                 status.owner = PlayerStatus.PlayerType.ENEMY;
                 status.ChangeDir(ObjectStatus.Direction.LEFT);
 
-                GameManager.instance.enemyObjList.Add(unit);
+                GameManager.instance.mEnemyObjList.Add(unit);
             }
         }
     }

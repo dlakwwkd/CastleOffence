@@ -29,7 +29,7 @@ public class TowerAI : MonoBehaviour
     {
         StopAllCoroutines();
         state = TowerFSM.IDLE;
-        GameManager.instance.playerObjList.Remove(gameObject);
+        GameManager.instance.mPlayerObjList.Remove(gameObject);
     }
     void Start()
     {
@@ -146,9 +146,9 @@ public class TowerAI : MonoBehaviour
         {
             yield return new WaitForSeconds(0.2f);
 
-            var enemyList = GameManager.instance.enemyObjList;
+            var enemyList = GameManager.instance.mEnemyObjList;
             if (_objInfo.owner == PlayerStatus.PlayerType.ENEMY)
-                enemyList = GameManager.instance.playerObjList;
+                enemyList = GameManager.instance.mPlayerObjList;
 
             var unitPos = transform.localPosition.x;
             var closeEnemyDist = float.MaxValue;

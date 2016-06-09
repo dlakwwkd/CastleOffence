@@ -35,7 +35,7 @@ public class UnitAI : MonoBehaviour
         state = UnitFSM.IDLE;
         _backDelayTime = 0.0f;
         _target = null;
-        GameManager.instance.playerObjList.Remove(gameObject);
+        GameManager.instance.mPlayerObjList.Remove(gameObject);
     }
     void Start()
     {
@@ -220,9 +220,9 @@ public class UnitAI : MonoBehaviour
     }
     void SearchEnemy()
     {
-        var enemyList = GameManager.instance.enemyObjList;
+        var enemyList = GameManager.instance.mEnemyObjList;
         if (_objInfo.owner == PlayerStatus.PlayerType.ENEMY)
-            enemyList = GameManager.instance.playerObjList;
+            enemyList = GameManager.instance.mPlayerObjList;
 
         var closeEnemyDist = float.MaxValue;
         for (int i = 0; i < enemyList.Count; ++i)

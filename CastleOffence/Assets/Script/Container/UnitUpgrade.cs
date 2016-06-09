@@ -22,7 +22,7 @@ public class UnitUpgrade : MonoBehaviour
 
     void onClick(GameObject sender)
     {
-        var player = GameManager.instance.player;
+        var player = GameManager.instance.mPlayer;
         if (player.Purchase(_cost))
         {
             _cost += _cost * 2;
