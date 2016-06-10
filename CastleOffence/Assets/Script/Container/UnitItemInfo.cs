@@ -14,6 +14,7 @@ public class UnitItemInfo : MonoBehaviour
     bool            _isOn       = true;
 
 
+
     void Start()
     {
         _unitInfo = prefab.GetComponent<ObjectStatus>();
@@ -29,6 +30,7 @@ public class UnitItemInfo : MonoBehaviour
         UIEventListener.Get(gameObject).onClick += onClick;
         UIEventListener.Get(gameObject).onPress += onPress;
     }
+
 
 
     void onClick(GameObject sender)
@@ -48,6 +50,7 @@ public class UnitItemInfo : MonoBehaviour
         else
             AudioManager.instance.PlayPurchaseFail();
     }
+
     void onPress(GameObject sender, bool isDown)
     {
         if (isDown)
@@ -55,6 +58,7 @@ public class UnitItemInfo : MonoBehaviour
         else
             Camera.main.GetComponent<CameraMove>().UnLock();
     }
+
 
 
     void ProduceUnit()
@@ -69,6 +73,7 @@ public class UnitItemInfo : MonoBehaviour
 
         GameManager.instance.mPlayerObjList.Add(unit);
     }
+
 
 
     IEnumerator CoolTimeProcess()

@@ -29,10 +29,12 @@ public class DragDropItem : UIDragDropItem
     }
 
 
+
     public void Purchase()
     {
         _amount.text = (++amount).ToString();
     }
+
 
 
     protected override void OnDragDropStart()
@@ -67,6 +69,7 @@ public class DragDropItem : UIDragDropItem
         body.mass = prefab.GetComponent<Rigidbody2D>().mass;
         body.simulated = false;
     }
+
     protected override void OnDragDropMove(Vector2 delta)
     {
         if (amount < 1) return;
@@ -81,6 +84,7 @@ public class DragDropItem : UIDragDropItem
         pos.z = 1.0f;
         _obj.transform.position = pos;
     }
+
     protected override void OnDragDropRelease(GameObject surface)
 	{
         if (amount < 1) return;

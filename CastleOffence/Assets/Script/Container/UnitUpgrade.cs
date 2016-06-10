@@ -3,8 +3,8 @@ using System.Collections;
 
 public class UnitUpgrade : MonoBehaviour
 {
-    UILabel         _label  = null;
-    int             _cost = 0;
+    UILabel _label  = null;
+    int     _cost   = 0;
 
 
     void Start()
@@ -20,6 +20,7 @@ public class UnitUpgrade : MonoBehaviour
     }
 
 
+
     void onClick(GameObject sender)
     {
         var player = GameManager.instance.mPlayer;
@@ -27,15 +28,12 @@ public class UnitUpgrade : MonoBehaviour
         {
             _cost += _cost * 2;
             _label.text = _cost.ToString();
-
-
-
-
             AudioManager.instance.PlayPurchaseUnit();
         }
         else
             AudioManager.instance.PlayPurchaseFail();
     }
+
     void onPress(GameObject sender, bool isDown)
     {
         if (isDown)

@@ -10,7 +10,7 @@ public class PlayerStatus : MonoBehaviour
         ENEMY,
     }
 
-    public PlayerType   type = PlayerType.NONE;
+    public PlayerType mType { get; set; }
 
     UIWidget    _statusBar          = null;
     UILabel     _coinLabel          = null;
@@ -20,7 +20,6 @@ public class PlayerStatus : MonoBehaviour
     int         _income             = 10;
     int         _incomeUp           = 10;
     float       _incomeRate         = 3.0f;
-
     int         _incomeAmountUpCost = 100;
     int         _incomeSpeedUpCost  = 100;
 
@@ -29,9 +28,10 @@ public class PlayerStatus : MonoBehaviour
     {
         StopAllCoroutines();
     }
+
     void Start()
     {
-        if (type == PlayerType.PLAYER)
+        if (mType == PlayerType.PLAYER)
         {
             var uiRoot = GameObject.FindGameObjectWithTag("UIRoot");
             _statusBar = uiRoot.transform.FindChild("OptionPanel").FindChild("PlayerStatusBar").GetComponent<UIWidget>();
@@ -53,20 +53,22 @@ public class PlayerStatus : MonoBehaviour
     }
 
 
+
     public void IncomeUp(GameObject sender)
     {
-        if(Purchase(_incomeAmountUpCost))
+        if (Purchase(_incomeAmountUpCost))
         {
             _income += _incomeUp;
             _incomeUp += 10;
             _incomeAmountUpCost = _income * 10;
-            if (type == PlayerType.PLAYER)
+            if (mType == PlayerType.PLAYER)
             {
                 AudioManager.instance.PlayIncomeUp();
                 _incomeUpLabel.text = _incomeAmountUpCost.ToString();
             }
         }
     }
+
     public void SpeedUp(GameObject sender)
     {
         if (Purchase(_incomeSpeedUpCost))
@@ -75,12 +77,12 @@ public class PlayerStatus : MonoBehaviour
             if (_incomeRate < 0.25f)
             {
                 _incomeSpeedUpCost = int.MaxValue;
-                if (type == PlayerType.PLAYER)
+                if (mType == PlayerType.PLAYER)
                     _speedUpLabel.text = "Max";
                 return;
             }
             _incomeSpeedUpCost += (int)(_incomeSpeedUpCost * 0.5f);
-            if (type == PlayerType.PLAYER)
+            if (mType == PlayerType.PLAYER)
             {
                 AudioManager.instance.PlaySpeedUp();
                 _speedUpLabel.text = _incomeSpeedUpCost.ToString();
@@ -89,38 +91,42 @@ public class PlayerStatus : MonoBehaviour
     }
 
 
+
     public void Init(int money)
     {
         _coin = money;
     }
+
     public bool Purchase(int cost)
     {
-        if(cost <= _coin)
+        if (cost <= _coin)
         {
             _coin -= cost;
 
-            if (type == PlayerType.PLAYER)
+            if (mType == PlayerType.PLAYER)
                 _coinLabel.text = _coin.ToString();
             return true;
         }
         return false;
     }
+
     public void Reward(int money)
     {
         _coin += money;
 
-        if(type == PlayerType.PLAYER)
+        if (mType == PlayerType.PLAYER)
             _coinLabel.text = _coin.ToString();
     }
 
 
+
     IEnumerator Incom()
     {
-        while(true)
+        while (true)
         {
             yield return new WaitForSeconds(_incomeRate);
 
-            if (type == PlayerType.PLAYER)
+            if (mType == PlayerType.PLAYER)
             {
                 var pos = _statusBar.transform.localPosition;
                 pos += new Vector3(_statusBar.localSize.x * 0.3f, -(_statusBar.localSize.y * 0.6f));

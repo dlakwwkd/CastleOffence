@@ -3,16 +3,16 @@ using System.Collections;
 
 public class CameraMove : MonoBehaviour
 {
-    public bool     isLocked    = false;
-    public float    easeValue   = 3.0f;
+    public bool     IsLocked    = false;
+    public float    EaseValue   = 3.0f;
 
-    public float    minSize     = 3.0f;
-    public float    maxSize     = 8.0f;
+    public float    MinSize     = 3.0f;
+    public float    MaxSize     = 8.0f;
 
-    public float    leftSide    = -25.0f;
-    public float    rightSide   = +25.0f;
-    public float    topSide     = +14.0f;
-    public float    bottomSide  = -2.0f;
+    public float    LeftSide    = -25.0f;
+    public float    RightSide   = +25.0f;
+    public float    TopSide     = +14.0f;
+    public float    BottomSide  = -2.0f;
 
     Vector3 _deltaPos   = new Vector3();
     Vector2 _prevPos    = new Vector2();
@@ -23,9 +23,10 @@ public class CameraMove : MonoBehaviour
     {
         _camera = GetComponent<Camera>();
     }
+
     void Update()
     {
-        if (isLocked)
+        if (IsLocked)
             return;
 #if UNITY_EDITOR
         MoveInEditor();
@@ -42,12 +43,14 @@ public class CameraMove : MonoBehaviour
 	}
 
 
-    public void Lock() { isLocked = true; _deltaPos = Vector3.zero; }
-    public void UnLock() { isLocked = false; }
+
+    public void Lock() { IsLocked = true; _deltaPos = Vector3.zero; }
+    public void UnLock() { IsLocked = false; }
     public void Shake(float shakeTime, float shakeSense)
     {
         StartCoroutine(CameraShakeProcess(shakeTime, shakeSense));
     }
+
 
 
     void MoveInEditor()
@@ -70,6 +73,7 @@ public class CameraMove : MonoBehaviour
             _deltaPos = Vector3.zero;
         }
     }
+
     void ZoomInEditor()
     {
         float value = 20.0f;
@@ -86,6 +90,7 @@ public class CameraMove : MonoBehaviour
             MoveBoundaryCheck();
         }
     }
+
     void Move()
     {
         Touch touch = Input.GetTouch(0);
@@ -106,6 +111,7 @@ public class CameraMove : MonoBehaviour
                 break;
         }
     }
+
     void Zoom()
     {
         Touch touch1 = Input.GetTouch(0);
@@ -127,6 +133,7 @@ public class CameraMove : MonoBehaviour
         else if (touch2.phase == TouchPhase.Ended)
             _prevPos = touch1.position;
     }
+
     void MoveBoundaryCheck()
     {
         float left = transform.position.x - (_camera.orthographicSize * _camera.aspect);
@@ -134,27 +141,29 @@ public class CameraMove : MonoBehaviour
         float top = transform.position.y + (_camera.orthographicSize);
         float bottom = transform.position.y - (_camera.orthographicSize);
 
-        if (left < leftSide)
-            transform.position += new Vector3(leftSide - left, 0.0f, 0.0f);
-        else if (right > rightSide)
-            transform.position += new Vector3(rightSide - right, 0.0f, 0.0f);
-        if (top > topSide)
-            transform.position += new Vector3(0.0f, topSide - top, 0.0f);
-        else if (bottom < bottomSide)
-            transform.position += new Vector3(0.0f, bottomSide - bottom, 0.0f);
+        if (left < LeftSide)
+            transform.position += new Vector3(LeftSide - left, 0.0f, 0.0f);
+        else if (right > RightSide)
+            transform.position += new Vector3(RightSide - right, 0.0f, 0.0f);
+        if (top > TopSide)
+            transform.position += new Vector3(0.0f, TopSide - top, 0.0f);
+        else if (bottom < BottomSide)
+            transform.position += new Vector3(0.0f, BottomSide - bottom, 0.0f);
     }
+
     void ZoomBoundaryCheck()
     {
-        if (_camera.orthographicSize < minSize)
-            _camera.orthographicSize = minSize;
-        else if (_camera.orthographicSize > maxSize)
-            _camera.orthographicSize = maxSize;
+        if (_camera.orthographicSize < MinSize)
+            _camera.orthographicSize = MinSize;
+        else if (_camera.orthographicSize > MaxSize)
+            _camera.orthographicSize = MaxSize;
     }
+
 
 
     IEnumerator SmoothMove(Vector3 force)
     {
-        Vector3 deltaPos = force * (easeValue * 10);
+        Vector3 deltaPos = force * (EaseValue * 10);
 
         while(deltaPos.magnitude > 0.001f)
         {
@@ -165,6 +174,7 @@ public class CameraMove : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
     }
+
     IEnumerator CameraShakeProcess(float shakeTime, float shakeSense)
     {
         var basePos = transform.localPosition;

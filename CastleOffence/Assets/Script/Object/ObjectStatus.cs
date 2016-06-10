@@ -56,10 +56,14 @@ public class ObjectStatus : MonoBehaviour
         {
             var sprite = GetComponent<SpriteRenderer>();
             if (sprite)
+            {
                 _sprites.Add(sprite);
+            }
             var sprites = GetComponentsInChildren<SpriteRenderer>();
             for (int i = 0; i < sprites.Length; ++i)
+            {
                 _sprites.Add(sprites[i]);
+            }
         }
         _body = GetComponent<Rigidbody2D>();
 
@@ -76,6 +80,7 @@ public class ObjectStatus : MonoBehaviour
 
         _hpGauge = _hpBar.transform.FindChild("HpGauge");
     }
+
     void OnEnable()
     {
         _curHp = maxHp;
@@ -99,17 +104,20 @@ public class ObjectStatus : MonoBehaviour
     }
 
 
+
     public bool IsDead()
     {
         return _isDead;
     }
+
     public void MaxHpFix(int hp)
     {
         _curHp = maxHp = hp;
     }
+
     public void ChangeDir(Direction d)
     {
-        if(dir != d)
+        if (dir != d)
         {
             dir = d;
             if (dir == Direction.LEFT)
@@ -120,6 +128,7 @@ public class ObjectStatus : MonoBehaviour
             _hpBar.transform.localRotation = transform.localRotation;
         }
     }
+
     public void Damaged(int dam)
     {
         _curHp -= dam;
@@ -137,18 +146,22 @@ public class ObjectStatus : MonoBehaviour
         if (_curHp <= 0)
         {
             _isDead = true;
-            if(owner == PlayerStatus.PlayerType.PLAYER)
+            if (owner == PlayerStatus.PlayerType.PLAYER)
+            {
                 GameManager.instance.mEnemy.Reward(reward);
+            }
             else
             {
                 GameManager.instance.RewardLabelShow(transform.position, reward);
                 GameManager.instance.mPlayer.Reward(reward);
                 AudioManager.instance.PlayReward();
             }
-            switch(type)
+
+            switch (type)
             {
                 case ObjectType.UNIT: GetComponent<UnitAI>().Death(); break;
             }
+
             if (deathSounds.Count > 0)
             {
                 int rand = Random.Range(0, deathSounds.Count);
@@ -157,6 +170,7 @@ public class ObjectStatus : MonoBehaviour
             StartCoroutine("Destroy");
         }
     }
+
     public void Death()
     {
         if (!_isDead)
@@ -165,6 +179,7 @@ public class ObjectStatus : MonoBehaviour
             StartCoroutine("Destroy");
         }
     }
+
     public void InstantlyDeath()
     {
         if (!_isDead)
@@ -173,6 +188,7 @@ public class ObjectStatus : MonoBehaviour
             StartCoroutine("InstantlyDestroy");
         }
     }
+
 
 
     IEnumerator Destroy()
@@ -198,10 +214,10 @@ public class ObjectStatus : MonoBehaviour
         yield return new WaitForSeconds(deathTime);
 
         float time = 0.5f;
-        while(time > 0)
+        while (time > 0)
         {
             time -= Time.deltaTime;
-            if(type == ObjectType.BARRIER)
+            if (type == ObjectType.BARRIER)
             {
                 var color = _mash.material.GetColor("_TintColor");
                 _mash.material.SetColor("_TintColor", new Color(color.r, color.g, color.b, time * 2));
@@ -217,13 +233,14 @@ public class ObjectStatus : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        if(type == ObjectType.CASTLE)
+        if (type == ObjectType.CASTLE)
         {
             gameObject.SetActive(false);
         }
         owner = PlayerStatus.PlayerType.NONE;
         ObjectManager.instance.Free(gameObject);
     }
+
     IEnumerator InstantlyDestroy()
     {
         if (type == ObjectType.MISSILE)

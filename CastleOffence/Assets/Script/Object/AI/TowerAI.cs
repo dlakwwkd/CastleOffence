@@ -25,12 +25,14 @@ public class TowerAI : MonoBehaviour
     {
         StartCoroutine("SearchEnemy");
     }
+
     void OnDisable()
     {
         StopAllCoroutines();
         state = TowerFSM.IDLE;
         GameManager.instance.mPlayerObjList.Remove(gameObject);
     }
+
     void Start()
     {
         _objInfo = GetComponent<ObjectStatus>();
@@ -39,10 +41,12 @@ public class TowerAI : MonoBehaviour
         _dicState[TowerFSM.ATTACK]  = Attack;
         _dicState[TowerFSM.DEAD]    = Dead;
     }
+
     void Update()
     {
         _dicState[state]();
     }
+
 
 
     void Idle()
@@ -59,6 +63,7 @@ public class TowerAI : MonoBehaviour
         else
             _target = null;
     }
+
     void Attack()
     {
         if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
@@ -83,15 +88,18 @@ public class TowerAI : MonoBehaviour
             _target = null;
         }
     }
+
     void Dead()
     {
     }
+
 
 
     public void Death()
     {
         state = TowerFSM.DEAD;
     }
+
 
 
     void LookEnemy()
@@ -106,6 +114,7 @@ public class TowerAI : MonoBehaviour
 
         _objInfo.ChangeDir(dir);
     }
+
     void AttackProcess()
     {
         if (_objInfo.attackSounds.Count > 0)
@@ -138,6 +147,7 @@ public class TowerAI : MonoBehaviour
         //             angle = -angle;
         //         missile.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, angle));
     }
+
 
 
     IEnumerator SearchEnemy()

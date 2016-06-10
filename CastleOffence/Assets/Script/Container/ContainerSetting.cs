@@ -27,9 +27,10 @@ public class ContainerSetting : MonoBehaviour
     }
 
 
+
     public void OnOff()
     {
-        if(_isOn)
+        if (_isOn)
         {
             _widget.alpha = 0.0f;
             _isOn = false;
@@ -40,15 +41,16 @@ public class ContainerSetting : MonoBehaviour
             _isOn = true;
         }
     }
+
     public void SettingBrriers(List<ItemInfo> itemList)
     {
-        for(int i = 0; i < itemList.Count; ++i)
+        for (int i = 0; i < itemList.Count; ++i)
         {
             var itemInfo = itemList[i];
 
             for (int xSize = 1; xSize <= 3; ++xSize)
             {
-                for(int ySize = 1; ySize <= 3; ++ySize)
+                for (int ySize = 1; ySize <= 3; ++ySize)
                 {
                     if (xSize > 1 && ySize > 1)
                         break;
@@ -79,8 +81,11 @@ public class ContainerSetting : MonoBehaviour
                         var w = 80;
                         var h = 80;
                         var aspect = (float)xSize / ySize;
-                        if (aspect > 1) h = (int)(h / aspect);
-                        else w = (int)(w * aspect);
+                        if (aspect > 1)
+                            h = (int)(h / aspect);
+                        else
+                            w = (int)(w * aspect);
+
                         texture.SetDimensions(w, h);
                     }
                     ObjectManager.instance.Free(item);
@@ -88,6 +93,7 @@ public class ContainerSetting : MonoBehaviour
             }
         }
     }
+
     public void SettingTowers(List<ItemInfo> itemList)
     {
         for (int i = 0; i < itemList.Count; ++i)
@@ -110,6 +116,7 @@ public class ContainerSetting : MonoBehaviour
             TransformInit(icon.transform);
         }
     }
+
 
 
     void TransformInit(Transform t)

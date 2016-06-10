@@ -9,14 +9,17 @@ public class SceneChange : MonoBehaviour
     }
 
 
+
     public void LoadGameScene()
     {
         Application.LoadLevel("Game");
     }
+
     public void PopGameScene()
     {
         Application.LoadLevel("Main");
     }
+
     public void CloseApp()
     {
         Application.Quit();

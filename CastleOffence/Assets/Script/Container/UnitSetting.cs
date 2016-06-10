@@ -21,6 +21,7 @@ public class UnitSetting : MonoBehaviour
     }
 
 
+
     public void SettingUnits(List<UnitInfo> itemList)
     {
         for (int i = 0; i < itemList.Count; ++i)

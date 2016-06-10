@@ -8,8 +8,8 @@ public class CannonAI : MonoBehaviour
     public float        explosionRange  = 0.0f;
     public float        explosionPower  = 0.0f;
 
-    ObjectStatus    _objInfo = null;
-    Rigidbody2D     _body = null;
+    ObjectStatus    _objInfo    = null;
+    Rigidbody2D     _body       = null;
 
 
     void Awake()
@@ -17,10 +17,12 @@ public class CannonAI : MonoBehaviour
         _objInfo = GetComponent<ObjectStatus>();
         _body = GetComponent<Rigidbody2D>();
     }
+
     void OnEnable()
     {
         _body.AddTorque(-1000.0f);
     }
+
 
 
     void OnTriggerEnter2D(Collider2D collider)
@@ -37,6 +39,7 @@ public class CannonAI : MonoBehaviour
             _objInfo.InstantlyDeath();
         }
     }
+
 
 
     IEnumerator Explosion()

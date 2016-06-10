@@ -100,8 +100,8 @@ public class GameManager : MonoBehaviour
         mPlayer = player.AddComponent<PlayerStatus>();
         mEnemy = enemy.AddComponent<PlayerStatus>();
 
-        mPlayer.type = PlayerStatus.PlayerType.PLAYER;
-        mEnemy.type = PlayerStatus.PlayerType.ENEMY;
+        mPlayer.mType = PlayerStatus.PlayerType.PLAYER;
+        mEnemy.mType = PlayerStatus.PlayerType.ENEMY;
 
         mPlayer.Init(3000);
         mEnemy.Init(3000);
@@ -113,8 +113,8 @@ public class GameManager : MonoBehaviour
 
     void CastleSetting()
     {
-        mPlayerCastlePos = new Vector2(_cameraInfo.leftSide + 5.0f, 2.0f);
-        mEnemyCastlePos = new Vector2(_cameraInfo.rightSide - 5.0f, 2.0f);
+        mPlayerCastlePos = new Vector2(_cameraInfo.LeftSide + 5.0f, 2.0f);
+        mEnemyCastlePos = new Vector2(_cameraInfo.RightSide - 5.0f, 2.0f);
 
         var castleA = Instantiate(CastlePrefab) as GameObject;
         castleA.transform.SetParent(mPlayer.transform);

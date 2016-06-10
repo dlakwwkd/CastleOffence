@@ -15,6 +15,7 @@ public class ItemButton : UIButton
         tweenTarget = gameObject;
         base.OnInit();
     }
+
     protected override void OnClick()
     {
         if(_player.Purchase(_cost))
@@ -26,6 +27,7 @@ public class ItemButton : UIButton
             AudioManager.instance.PlayPurchaseFail();
         base.OnClick();
     }
+
     protected override void OnPress(bool isDown)
     {
         if (isDown)

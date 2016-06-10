@@ -37,6 +37,7 @@ public class UnitAI : MonoBehaviour
         _target = null;
         GameManager.instance.mPlayerObjList.Remove(gameObject);
     }
+
     void Start()
     {
         _objInfo = GetComponent<ObjectStatus>();
@@ -49,6 +50,7 @@ public class UnitAI : MonoBehaviour
         _dicState[UnitFSM.HIT]      = Hit;
         _dicState[UnitFSM.DEAD]     = Dead;
     }
+
     void Update()
     {
         if (_backDelayTime > 0)
@@ -56,6 +58,7 @@ public class UnitAI : MonoBehaviour
 
         _dicState[state]();
     }
+
 
 
     void Idle()
@@ -86,6 +89,7 @@ public class UnitAI : MonoBehaviour
             }
         }
     }
+
     void Move()
     {
         if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
@@ -120,6 +124,7 @@ public class UnitAI : MonoBehaviour
             _target = null;
         }
     }
+
     void Attack()
     {
         if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
@@ -151,6 +156,7 @@ public class UnitAI : MonoBehaviour
             _target = null;
         }
     }
+
     void Hit()
     {
         stateTime += Time.deltaTime;
@@ -160,9 +166,11 @@ public class UnitAI : MonoBehaviour
             state = UnitFSM.IDLE;
         }
     }
+
     void Dead()
     {
     }
+
 
 
     public void KnockBack()
@@ -178,6 +186,7 @@ public class UnitAI : MonoBehaviour
         state = UnitFSM.HIT;
         _anim.SetTrigger("hit");
     }
+
     public void Death()
     {
         StopCoroutine("AttackDelay");
@@ -185,6 +194,7 @@ public class UnitAI : MonoBehaviour
         state = UnitFSM.DEAD;
         _anim.SetTrigger("death");
     }
+
 
 
     void LookEnemy()
@@ -196,6 +206,7 @@ public class UnitAI : MonoBehaviour
 
         _objInfo.ChangeDir(dir);
     }
+
     void AttackProcess()
     {
         if (_objInfo.attackSounds.Count > 0)
@@ -218,6 +229,7 @@ public class UnitAI : MonoBehaviour
         }
         targetInfo.Damaged(_objInfo.damage);
     }
+
     void SearchEnemy()
     {
         var enemyList = GameManager.instance.mEnemyObjList;
@@ -236,6 +248,7 @@ public class UnitAI : MonoBehaviour
             }
         }
     }
+
 
 
     IEnumerator AttackDelay(float delay)
