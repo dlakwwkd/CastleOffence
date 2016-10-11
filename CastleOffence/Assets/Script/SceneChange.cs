@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SceneChange : MonoBehaviour
 {
@@ -12,12 +13,14 @@ public class SceneChange : MonoBehaviour
 
     public void LoadGameScene()
     {
-        Application.LoadLevel("Game");
+        SceneManager.LoadScene("Game");
+        //Application.LoadLevel("Game");
     }
 
     public void PopGameScene()
     {
-        Application.LoadLevel("Main");
+        SceneManager.LoadScene("Main");
+        //Application.LoadLevel("Main");
     }
 
     public void CloseApp()

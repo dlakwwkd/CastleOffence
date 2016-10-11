@@ -91,7 +91,8 @@ internal class Unity5DynamicLabelWorkAround : UnityEditor.AssetModificationProce
 	{
 		foreach (var path in paths)
 		{
-			if (path == UnityEditor.EditorApplication.currentScene)
+			//if (path == UnityEditor.EditorApplication.currentScene)
+			if (path == UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene().path)
 			{
 				UILabel[] labels = Object.FindObjectsOfType<UILabel>();
 				for (int i = 0, imax = labels.Length; i < imax; ++i) labels[i].MarkAsChanged();
