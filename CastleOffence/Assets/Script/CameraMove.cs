@@ -40,7 +40,7 @@ public class CameraMove : MonoBehaviour
             Zoom();
         MoveBoundaryCheck();
 #endif
-	}
+    }
 
 
 
@@ -53,6 +53,7 @@ public class CameraMove : MonoBehaviour
 
 
 
+#if UNITY_EDITOR
     void MoveInEditor()
     {
         if (Input.GetButtonDown("Fire1"))
@@ -90,6 +91,7 @@ public class CameraMove : MonoBehaviour
             MoveBoundaryCheck();
         }
     }
+#endif
 
     void Move()
     {

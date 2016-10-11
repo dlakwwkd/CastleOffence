@@ -600,14 +600,19 @@ public class UIInput : MonoBehaviour
 			if (pf == RuntimePlatform.IPhonePlayer
 				|| pf == RuntimePlatform.Android
 				|| pf == RuntimePlatform.WP8Player
- #if UNITY_4_3
+#if UNITY_4_3
 				|| pf == RuntimePlatform.BB10Player
- #else
+#else
+			/*
 				|| pf == RuntimePlatform.BlackBerryPlayer
 				|| pf == RuntimePlatform.MetroPlayerARM
 				|| pf == RuntimePlatform.MetroPlayerX64
 				|| pf == RuntimePlatform.MetroPlayerX86
- #endif
+			*/
+				|| pf == RuntimePlatform.WSAPlayerARM
+				|| pf == RuntimePlatform.WSAPlayerX64
+				|| pf == RuntimePlatform.WSAPlayerX86
+#endif
 			)
 			{
 				string val;
@@ -639,9 +644,9 @@ public class UIInput : MonoBehaviour
 					TouchScreenKeyboard.Open(val, kt, false, false, true) :
 					TouchScreenKeyboard.Open(val, kt, !inputShouldBeHidden && inputType == InputType.AutoCorrect,
 						label.multiLine && !hideInput, false, false, defaultText);
- #if UNITY_METRO
+#if UNITY_METRO
 				mKeyboard.active = true;
- #endif
+#endif
 			}
 			else
 #endif // MOBILE
