@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -6,7 +7,9 @@ public class EnemyAI : MonoBehaviour
 {
     //-----------------------------------------------------------------------------------
     // inspector field
+    [FormerlySerializedAs("unitList")]
     public List<GameObject> UnitList    = new List<GameObject>();
+    [FormerlySerializedAs("towerList")]
     public List<GameObject> TowerList   = new List<GameObject>();
 
     //-----------------------------------------------------------------------------------

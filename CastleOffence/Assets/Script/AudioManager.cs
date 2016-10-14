@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 using System.Collections;
 
 public class AudioManager : MonoBehaviour
@@ -9,15 +10,24 @@ public class AudioManager : MonoBehaviour
 
     //-----------------------------------------------------------------------------------
     // inspector field
-    public AudioClip music          = null;
-    public AudioClip reward         = null;
-    public AudioClip build          = null;
-    public AudioClip purchase       = null;
-    public AudioClip unitPurchase   = null;
-    public AudioClip purchaseFail   = null;
-    public AudioClip incomeUp       = null;
-    public AudioClip speedUp        = null;
-    public AudioClip coinUp         = null;
+    [FormerlySerializedAs("music")]
+    public AudioClip Music          = null;
+    [FormerlySerializedAs("reward")]
+    public AudioClip Reward         = null;
+    [FormerlySerializedAs("build")]
+    public AudioClip Build          = null;
+    [FormerlySerializedAs("purchase")]
+    public AudioClip Purchase       = null;
+    [FormerlySerializedAs("unitPurchase")]
+    public AudioClip UnitPurchase   = null;
+    [FormerlySerializedAs("purchaseFail")]
+    public AudioClip PurchaseFail   = null;
+    [FormerlySerializedAs("incomeUp")]
+    public AudioClip IncomeUp       = null;
+    [FormerlySerializedAs("speedUp")]
+    public AudioClip SpeedUp        = null;
+    [FormerlySerializedAs("coinUp")]
+    public AudioClip CoinUp         = null;
 
     //-----------------------------------------------------------------------------------
     // handler functions
@@ -30,9 +40,9 @@ public class AudioManager : MonoBehaviour
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        if (music)
+        if (Music)
         {
-            audioSource.clip = music;
+            audioSource.clip = Music;
             audioSource.loop = true;
             audioSource.Play();
         }
@@ -77,14 +87,14 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void PlayReward() { PlaySfx(reward, 1.0f, 0.2f); }
-    public void PlayBuild() { PlaySfx(build, 3.0f); }
-    public void PlayPurchaseItem() { audioSource.PlayOneShot(purchase, 0.5f); }
-    public void PlayPurchaseFail() { audioSource.PlayOneShot(purchaseFail, 0.5f); }
-    public void PlayPurchaseUnit() { audioSource.PlayOneShot(unitPurchase); }
-    public void PlayIncomeUp() { audioSource.PlayOneShot(incomeUp, 0.5f); }
-    public void PlaySpeedUp() { audioSource.PlayOneShot(speedUp, 0.5f); }
-    public void PlayCoinUp() { audioSource.PlayOneShot(coinUp, 0.5f); }
+    public void PlayReward() { PlaySfx(Reward, 1.0f, 0.2f); }
+    public void PlayBuild() { PlaySfx(Build, 3.0f); }
+    public void PlayPurchaseItem() { audioSource.PlayOneShot(Purchase, 0.5f); }
+    public void PlayPurchaseFail() { audioSource.PlayOneShot(PurchaseFail, 0.5f); }
+    public void PlayPurchaseUnit() { audioSource.PlayOneShot(UnitPurchase); }
+    public void PlayIncomeUp() { audioSource.PlayOneShot(IncomeUp, 0.5f); }
+    public void PlaySpeedUp() { audioSource.PlayOneShot(SpeedUp, 0.5f); }
+    public void PlayCoinUp() { audioSource.PlayOneShot(CoinUp, 0.5f); }
 
     //-----------------------------------------------------------------------------------
     // coroutine functions

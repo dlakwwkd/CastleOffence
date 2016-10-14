@@ -1,12 +1,17 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class DragDropItem : UIDragDropItem
 {
     //-----------------------------------------------------------------------------------
     // inspector field
+    [FormerlySerializedAs("prefab")]
     public GameObject   Prefab  = null;
+    [FormerlySerializedAs("xSize")]
     public float        XSize   = 1.0f;
+    [FormerlySerializedAs("ySize")]
     public float        YSize   = 1.0f;
+    [FormerlySerializedAs("amount")]
     public int          Amount  = 1;
 
     //-----------------------------------------------------------------------------------

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -6,8 +7,11 @@ public class CannonAI : MonoBehaviour
 {
     //-----------------------------------------------------------------------------------
     // inspector field
+    [FormerlySerializedAs("effectObj")]
     public GameObject   EffectObj       = null;
+    [FormerlySerializedAs("explosionRange")]
     public float        ExplosionRange  = 0.0f;
+    [FormerlySerializedAs("explosionPower")]
     public float        ExplosionPower  = 0.0f;
 
     //-----------------------------------------------------------------------------------

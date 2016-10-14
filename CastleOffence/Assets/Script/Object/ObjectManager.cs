@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -74,7 +75,9 @@ public class ObjectManager : MonoBehaviour
 
     //-----------------------------------------------------------------------------------
     // inspector field
+    [FormerlySerializedAs("objectList")]
     public List<GameObject>     ObjectList  = new List<GameObject>();
+    [FormerlySerializedAs("sizeList")]
     public List<int>            SizeList    = new List<int>();
 
     //-----------------------------------------------------------------------------------
