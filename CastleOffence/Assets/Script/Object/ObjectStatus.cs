@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Serialization;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -22,39 +21,22 @@ public class ObjectStatus : MonoBehaviour
 
     //-----------------------------------------------------------------------------------
     // inspector field
-    [FormerlySerializedAs("owner")]
     public PlayerStatus.PlayerType  Owner               = PlayerStatus.PlayerType.NONE;
-    [FormerlySerializedAs("type")]
     public ObjectType               Type                = ObjectType.NONE;
-    [FormerlySerializedAs("dir")]
     public Direction                Dir                 = Direction.RIGHT;
-    [FormerlySerializedAs("hpBar")]
     public GameObject               HpBar               = null;
-    [FormerlySerializedAs("hitSound")]
     public AudioClip                HitSound            = null;
-    [FormerlySerializedAs("attackSounds")]
     public List<AudioClip>          AttackSounds        = new List<AudioClip>();
-    [FormerlySerializedAs("deathSounds")]
     public List<AudioClip>          DeathSounds         = new List<AudioClip>();
-    [FormerlySerializedAs("cost")]
     public int                      Cost                = 0;
-    [FormerlySerializedAs("reward")]
     public int                      Reward              = 0;
-    [FormerlySerializedAs("maxHp")]
     public int                      MaxHp               = 0;
-    [FormerlySerializedAs("damage")]
     public int                      Damage              = 0;
-    [FormerlySerializedAs("attackRange")]
     public float                    AttackRange         = 0.0f;
-    [FormerlySerializedAs("attackFrontDelay")]
     public float                    AttackFrontDelay    = 0.0f;
-    [FormerlySerializedAs("attackBackDelay")]
     public float                    AttackBackDelay     = 0.0f;
-    [FormerlySerializedAs("moveSpeed")]
     public float                    MoveSpeed           = 0.0f;
-    [FormerlySerializedAs("createTime")]
     public float                    CreateTime          = 0.0f;
-    [FormerlySerializedAs("deathTime")]
     public float                    DeathTime           = 0.0f;
 
     //-----------------------------------------------------------------------------------

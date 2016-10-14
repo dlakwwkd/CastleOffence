@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Serialization;
 using System.Collections;
 
 public class AudioManager : MonoBehaviour
@@ -10,23 +9,14 @@ public class AudioManager : MonoBehaviour
 
     //-----------------------------------------------------------------------------------
     // inspector field
-    [FormerlySerializedAs("music")]
     public AudioClip Music          = null;
-    [FormerlySerializedAs("reward")]
     public AudioClip Reward         = null;
-    [FormerlySerializedAs("build")]
     public AudioClip Build          = null;
-    [FormerlySerializedAs("purchase")]
     public AudioClip Purchase       = null;
-    [FormerlySerializedAs("unitPurchase")]
     public AudioClip UnitPurchase   = null;
-    [FormerlySerializedAs("purchaseFail")]
     public AudioClip PurchaseFail   = null;
-    [FormerlySerializedAs("incomeUp")]
     public AudioClip IncomeUp       = null;
-    [FormerlySerializedAs("speedUp")]
     public AudioClip SpeedUp        = null;
-    [FormerlySerializedAs("coinUp")]
     public AudioClip CoinUp         = null;
 
     //-----------------------------------------------------------------------------------

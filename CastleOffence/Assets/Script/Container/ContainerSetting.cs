@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Serialization;
 using System.Collections.Generic;
 
 [System.Serializable]
@@ -14,7 +13,6 @@ public class ContainerSetting : MonoBehaviour
 {
     //-----------------------------------------------------------------------------------
     // inspector field
-    [FormerlySerializedAs("itemType")]
     public GameObject ItemType = null;
 
     //-----------------------------------------------------------------------------------

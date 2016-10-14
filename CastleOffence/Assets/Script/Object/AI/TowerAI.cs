@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Serialization;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -15,11 +14,8 @@ public class TowerAI : MonoBehaviour
 
     //-----------------------------------------------------------------------------------
     // inspector field
-    [FormerlySerializedAs("missileObj")]
     public GameObject   MissileObj  = null;
-    [FormerlySerializedAs("state")]
     public TowerFSM     State       = TowerFSM.IDLE;
-    [FormerlySerializedAs("stateTime")]
     public float        StateTime   = 0.0f;
 
     //-----------------------------------------------------------------------------------

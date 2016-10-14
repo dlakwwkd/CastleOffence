@@ -1,14 +1,11 @@
 ﻿using UnityEngine;
-using UnityEngine.Serialization;
 using System.Collections;
 
 public class UnitItemInfo : MonoBehaviour
 {
     //-----------------------------------------------------------------------------------
     // inspector field
-    [FormerlySerializedAs("prefab")]
     public GameObject Prefab        = null;
-    [FormerlySerializedAs("coolTimeBox")]
     public GameObject CoolTimeBox   = null;
 
     //-----------------------------------------------------------------------------------
