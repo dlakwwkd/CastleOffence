@@ -2,77 +2,67 @@ using UnityEngine;
 
 public class DragDropItem : UIDragDropItem
 {
-	public GameObject   prefab  = null;
-    public float        xSize   = 1.0f;
-    public float        ySize   = 1.0f;
-    public int          amount  = 1;
+    //-----------------------------------------------------------------------------------
+    // inspector field
+    public GameObject   Prefab  = null;
+    public float        XSize   = 1.0f;
+    public float        YSize   = 1.0f;
+    public int          Amount  = 1;
 
-    GameObject  _obj    = null;
-    UILabel     _cost   = null;
-    UILabel     _amount = null;
-
-
+    //-----------------------------------------------------------------------------------
+    // handler functions
     protected override void Start()
     {
         base.Start();
         mRoot = NGUITools.FindInParents<UIRoot>(mTrans.parent);
-		mGrid = NGUITools.FindInParents<UIGrid>(mTrans.parent);
-		if (mGrid != null) mGrid.repositionNow = true;
+        mGrid = NGUITools.FindInParents<UIGrid>(mTrans.parent);
+        if (mGrid != null) mGrid.repositionNow = true;
 
-        _cost = transform.FindChild("Cost").GetComponent<UILabel>();
-        _cost.text = (prefab.GetComponent<ObjectStatus>().cost * xSize * ySize).ToString();
-        _cost.depth = 2;
+        costLabel = transform.FindChild("Cost").GetComponent<UILabel>();
+        costLabel.text = (Prefab.GetComponent<ObjectStatus>().Cost * XSize * YSize).ToString();
+        costLabel.depth = 2;
 
-        _amount = transform.FindChild("Amount").GetComponent<UILabel>();
-        _amount.text = amount.ToString();
-        _amount.depth = 2;
+        amountLabel = transform.FindChild("Amount").GetComponent<UILabel>();
+        amountLabel.text = Amount.ToString();
+        amountLabel.depth = 2;
     }
-
-
-
-    public void Purchase()
-    {
-        _amount.text = (++amount).ToString();
-    }
-
-
 
     protected override void OnDragDropStart()
     {
-        if (amount < 1) return;
+        if (Amount < 1) return;
 
         if (mDragScrollView != null)
             mDragScrollView.enabled = false;
 
-        _obj = ObjectManager.instance.Assign(prefab.name);
-        _obj.transform.localScale = new Vector3(xSize, ySize, 1.0f);
-        _obj.transform.localRotation = Quaternion.identity;
+        obj = ObjectManager.instance.Assign(Prefab.name);
+        obj.transform.localScale = new Vector3(XSize, YSize, 1.0f);
+        obj.transform.localRotation = Quaternion.identity;
 
-        var info = _obj.GetComponent<ObjectStatus>();
-        switch (info.type)
+        var info = obj.GetComponent<ObjectStatus>();
+        switch (info.Type)
         {
             case ObjectStatus.ObjectType.BARRIER:
             {
-                var mat = _obj.GetComponent<MeshRenderer>().material;
-                mat.mainTextureScale = new Vector2(xSize, ySize);
+                var mat = obj.GetComponent<MeshRenderer>().material;
+                mat.mainTextureScale = new Vector2(XSize, YSize);
 
-                info.MaxHpFix(prefab.GetComponent<ObjectStatus>().maxHp);
+                info.MaxHpFix(Prefab.GetComponent<ObjectStatus>().MaxHp);
                 break;
             }
             case ObjectStatus.ObjectType.TOWER:
             {
-                _obj.GetComponent<TowerAI>().state = TowerAI.TowerFSM.DEAD;
+                obj.GetComponent<TowerAI>().State = TowerAI.TowerFSM.DEAD;
                 break;
             }
         }
-        var body = _obj.GetComponent<Rigidbody2D>();
-        body.mass = prefab.GetComponent<Rigidbody2D>().mass;
+        var body = obj.GetComponent<Rigidbody2D>();
+        body.mass = Prefab.GetComponent<Rigidbody2D>().mass;
         body.simulated = false;
     }
 
     protected override void OnDragDropMove(Vector2 delta)
     {
-        if (amount < 1) return;
+        if (Amount < 1) return;
 
         Vector3 pos;
 #if UNITY_EDITOR
@@ -82,44 +72,57 @@ public class DragDropItem : UIDragDropItem
 #endif
         pos = Camera.main.ScreenToWorldPoint(pos);
         pos.z = 1.0f;
-        _obj.transform.position = pos;
+        obj.transform.position = pos;
     }
 
     protected override void OnDragDropRelease(GameObject surface)
-	{
-        if (amount < 1) return;
+    {
+        if (Amount < 1) return;
 
         if (mDragScrollView != null)
             StartCoroutine(EnableDragScrollView());
 
         if (NGUITools.FindInParents<UIDragDropContainer>(surface))
-            ObjectManager.instance.Free(_obj);
+            ObjectManager.instance.Free(obj);
         else
         {
-            _amount.text = (--amount).ToString();
+            amountLabel.text = (--Amount).ToString();
 
-            var info = _obj.GetComponent<ObjectStatus>();
-            info.owner = PlayerStatus.PlayerType.PLAYER;
-            switch(info.type)
+            var info = obj.GetComponent<ObjectStatus>();
+            info.Owner = PlayerStatus.PlayerType.PLAYER;
+            switch(info.Type)
             {
                 case ObjectStatus.ObjectType.BARRIER:
                 {
-                    info.MaxHpFix(info.maxHp * (int)(xSize * ySize));
+                    info.MaxHpFix(info.MaxHp * (int)(XSize * YSize));
                     break;
                 }
                 case ObjectStatus.ObjectType.TOWER:
                 {
-                    _obj.GetComponent<TowerAI>().state = TowerAI.TowerFSM.IDLE;
+                    obj.GetComponent<TowerAI>().State = TowerAI.TowerFSM.IDLE;
                     break;
                 }
             }
-            var body = _obj.GetComponent<Rigidbody2D>();
-            body.mass *= (1.0f + (xSize * ySize - 1.0f) * 0.5f);
+            var body = obj.GetComponent<Rigidbody2D>();
+            body.mass *= (1.0f + (XSize * YSize - 1.0f) * 0.5f);
             body.simulated = true;
 
             AudioManager.instance.PlayBuild();
-            GameManager.instance.mPlayerObjList.Add(_obj);
+            GameManager.instance.playerObjList.Add(obj);
         }
-        _obj = null;
+        obj = null;
     }
+
+    //-----------------------------------------------------------------------------------
+    // public functions
+    public void Purchase()
+    {
+        amountLabel.text = (++Amount).ToString();
+    }
+
+    //-----------------------------------------------------------------------------------
+    // private field
+    GameObject obj         = null;
+    UILabel     costLabel   = null;
+    UILabel     amountLabel = null;
 }

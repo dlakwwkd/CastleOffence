@@ -4,26 +4,22 @@ using System.Collections.Generic;
 
 public class ObjectPool
 {
-    GameObject          _objectType     = null;
-    List<GameObject>    _objectList     = new List<GameObject>();
-    Stack<int>          _freeList       = new Stack<int>();
-    int                 _allocInterval  = 0;
-
-
+    //-----------------------------------------------------------------------------------
+    // public functions
     public void Init(GameObject obj, int size)
     {
-        _objectType = obj;
-        _allocInterval = size;
+        objectType = obj;
+        allocInterval = size;
         Alloc();
     }
 
     public GameObject Assign()
     {
-        if (_freeList.Count < 1)
+        if (freeList.Count < 1)
             Alloc();
 
-        int idx = _freeList.Pop();
-        var obj = _objectList[idx];
+        int idx = freeList.Pop();
+        var obj = objectList[idx];
         obj.SetActive(true);
         return obj;
     }
@@ -34,70 +30,76 @@ public class ObjectPool
 
         int idx = obj.name.IndexOf('_');
         var key = obj.name.Substring(idx + 1);
-        _freeList.Push(int.Parse(key));
+        freeList.Push(int.Parse(key));
     }
 
     public void FreeAll()
     {
-        for (int i = 0; i < _objectList.Count; ++i)
+        for (int i = 0; i < objectList.Count; ++i)
         {
-            var obj = _objectList[i];
+            var obj = objectList[i];
             if (!obj.activeSelf) continue;
             Free(obj);
         }
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // private functions
     void Alloc()
     {
-        for (int i = 0; i < _allocInterval; ++i)
+        for (int i = 0; i < allocInterval; ++i)
         {
-            var obj = GameObject.Instantiate(_objectType) as GameObject;
-            obj.name = _objectType.name + "_" + _objectList.Count;
+            var obj = GameObject.Instantiate(objectType) as GameObject;
+            obj.name = objectType.name + "_" + objectList.Count;
             obj.SetActive(false);
 
-            _freeList.Push(_objectList.Count);
-            _objectList.Add(obj);
+            freeList.Push(objectList.Count);
+            objectList.Add(obj);
         }
     }
+
+    //-----------------------------------------------------------------------------------
+    // private field
+    GameObject          objectType      = null;
+    List<GameObject>    objectList      = new List<GameObject>();
+    Stack<int>          freeList        = new Stack<int>();
+    int                 allocInterval   = 0;
 }
-
-
 
 public class ObjectManager : MonoBehaviour
 {
-    public static ObjectManager     instance { get; private set; }
+    //-----------------------------------------------------------------------------------
+    // property
+    public static ObjectManager instance { get; private set; }
 
-    // inspector
-    public List<GameObject>         objectList  = new List<GameObject>();
-    public List<int>                sizeList    = new List<int>();
+    //-----------------------------------------------------------------------------------
+    // inspector field
+    public List<GameObject>     ObjectList  = new List<GameObject>();
+    public List<int>            SizeList    = new List<int>();
 
-    // private
-    Dictionary<string, ObjectPool>  _poolList   = new Dictionary<string, ObjectPool>();
-
-
+    //-----------------------------------------------------------------------------------
+    // handler functions
     void Start()
     {
         if (instance == null)
             instance = this;
 
-        if (objectList.Count != sizeList.Count)
+        if (ObjectList.Count != SizeList.Count)
             Debug.LogError("ObjectPool size is invalied!");
 
-        for (int i = 0; i < objectList.Count; ++i)
+        for (int i = 0; i < ObjectList.Count; ++i)
         {
             var pool = new ObjectPool();
-            pool.Init(objectList[i], sizeList[i]);
-            _poolList.Add(objectList[i].name, pool);
+            pool.Init(ObjectList[i], SizeList[i]);
+            poolList.Add(ObjectList[i].name, pool);
         }
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // public functions
     public GameObject Assign(string objName)
     {
-        return _poolList[objName].Assign();
+        return poolList[objName].Assign();
     }
 
     public void Free(GameObject obj)
@@ -106,12 +108,12 @@ public class ObjectManager : MonoBehaviour
 
         int idx = obj.name.IndexOf('_');
         var key = obj.name.Remove(idx);
-        _poolList[key].Free(obj);
+        poolList[key].Free(obj);
     }
 
     public void FreeAll()
     {
-        foreach (var pool in _poolList)
+        foreach (var pool in poolList)
             pool.Value.FreeAll();
     }
 
@@ -120,11 +122,15 @@ public class ObjectManager : MonoBehaviour
         StartCoroutine(After(obj, after));
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // coroutine functions
     IEnumerator After(GameObject obj, float after)
     {
         yield return new WaitForSeconds(after);
         Free(obj);
     }
+    
+    //-----------------------------------------------------------------------------------
+    // private field
+    Dictionary<string, ObjectPool> poolList = new Dictionary<string, ObjectPool>();
 }

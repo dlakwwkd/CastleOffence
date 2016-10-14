@@ -11,34 +11,33 @@ public struct ItemInfo
 
 public class ContainerSetting : MonoBehaviour
 {
-    public GameObject itemType = null;
+    //-----------------------------------------------------------------------------------
+    // inspector field
+    public GameObject ItemType = null;
 
-    GameObject  _grid   = null;
-    UIWidget    _widget = null;
-    bool        _isOn   = false;
-
-
+    //-----------------------------------------------------------------------------------
+    // handler functions
     void Start()
     {
-        _widget = GetComponent<UIWidget>();
-        _widget.alpha = 0.0f;
+        widget = GetComponent<UIWidget>();
+        widget.alpha = 0.0f;
 
-        _grid = transform.FindChild("Scroll View").FindChild("Grid").gameObject;
+        grid = transform.FindChild("Scroll View").FindChild("Grid").gameObject;
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // public functions
     public void OnOff()
     {
-        if (_isOn)
+        if (isOn)
         {
-            _widget.alpha = 0.0f;
-            _isOn = false;
+            widget.alpha = 0.0f;
+            isOn = false;
         }
         else
         {
-            _widget.alpha = 1.0f;
-            _isOn = true;
+            widget.alpha = 1.0f;
+            isOn = true;
         }
     }
 
@@ -55,16 +54,16 @@ public class ContainerSetting : MonoBehaviour
                     if (xSize > 1 && ySize > 1)
                         break;
 
-                    var newItem = Instantiate(itemType) as GameObject;
-                    newItem.transform.SetParent(_grid.transform);
-                    newItem.name = itemType.name + "_" + itemInfo.item.name + "_" + xSize + ySize;
+                    var newItem = Instantiate(ItemType) as GameObject;
+                    newItem.transform.SetParent(grid.transform);
+                    newItem.name = ItemType.name + "_" + itemInfo.item.name + "_" + xSize + ySize;
                     TransformInit(newItem.transform);
 
                     var dragDrop = newItem.GetComponent<DragDropItem>();
-                    dragDrop.prefab = itemInfo.item;
-                    dragDrop.amount = itemInfo.amount;
-                    dragDrop.xSize = xSize;
-                    dragDrop.ySize = ySize;
+                    dragDrop.Prefab = itemInfo.item;
+                    dragDrop.Amount = itemInfo.amount;
+                    dragDrop.XSize = xSize;
+                    dragDrop.YSize = ySize;
 
                     var icon = new GameObject();
                     icon.transform.SetParent(newItem.transform);
@@ -100,16 +99,16 @@ public class ContainerSetting : MonoBehaviour
         {
             var itemInfo = itemList[i];
 
-            var newItem = Instantiate(itemType) as GameObject;
-            newItem.transform.SetParent(_grid.transform);
-            newItem.name = itemType.name + "_" + i;
+            var newItem = Instantiate(ItemType) as GameObject;
+            newItem.transform.SetParent(grid.transform);
+            newItem.name = ItemType.name + "_" + i;
             TransformInit(newItem.transform);
 
             var dragDrop = newItem.GetComponent<DragDropItem>();
-            dragDrop.prefab = itemInfo.item;
-            dragDrop.amount = itemInfo.amount;
-            dragDrop.xSize = 1.0f;
-            dragDrop.ySize = 1.0f;
+            dragDrop.Prefab = itemInfo.item;
+            dragDrop.Amount = itemInfo.amount;
+            dragDrop.XSize = 1.0f;
+            dragDrop.YSize = 1.0f;
 
             var icon = Instantiate(itemInfo.icon) as GameObject;
             icon.transform.SetParent(newItem.transform);
@@ -117,12 +116,18 @@ public class ContainerSetting : MonoBehaviour
         }
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // private functions
     void TransformInit(Transform t)
     {
         t.transform.localPosition = Vector3.zero;
         t.transform.localRotation = Quaternion.identity;
         t.transform.localScale = Vector3.one;
     }
+    
+    //-----------------------------------------------------------------------------------
+    // private field
+    GameObject  grid    = null;
+    UIWidget    widget  = null;
+    bool        isOn    = false;
 }

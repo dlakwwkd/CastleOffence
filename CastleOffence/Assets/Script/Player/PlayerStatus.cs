@@ -10,41 +10,28 @@ public class PlayerStatus : MonoBehaviour
         ENEMY,
     }
 
-    public PlayerType mType { get; set; }
-
-    UIWidget    _statusBar          = null;
-    UILabel     _coinLabel          = null;
-    UILabel     _incomeUpLabel      = null;
-    UILabel     _speedUpLabel       = null;
-    int         _coin               = 0;
-    int         _income             = 10;
-    int         _incomeUp           = 10;
-    float       _incomeRate         = 3.0f;
-    int         _incomeAmountUpCost = 100;
-    int         _incomeSpeedUpCost  = 100;
-
-
-    void OnDisable()
-    {
-        StopAllCoroutines();
-    }
-
+    //-----------------------------------------------------------------------------------
+    // property
+    public PlayerType type { get; set; }
+    
+    //-----------------------------------------------------------------------------------
+    // handler functions
     void Start()
     {
-        if (mType == PlayerType.PLAYER)
+        if (type == PlayerType.PLAYER)
         {
             var uiRoot = GameObject.FindGameObjectWithTag("UIRoot");
-            _statusBar = uiRoot.transform.FindChild("OptionPanel").FindChild("PlayerStatusBar").GetComponent<UIWidget>();
-            _coinLabel = _statusBar.transform.FindChild("CoinAmount").GetComponent<UILabel>();
-            _coinLabel.text = _coin.ToString();
+            statusBar = uiRoot.transform.FindChild("OptionPanel").FindChild("PlayerStatusBar").GetComponent<UIWidget>();
+            coinLabel = statusBar.transform.FindChild("CoinAmount").GetComponent<UILabel>();
+            coinLabel.text = coin.ToString();
 
             var button1 = uiRoot.transform.FindChild("IncomUpButton");
-            _incomeUpLabel = button1.FindChild("Animation").FindChild("Cost").GetComponent<UILabel>();
-            _incomeUpLabel.text = _incomeAmountUpCost.ToString();
+            incomeUpLabel = button1.FindChild("Animation").FindChild("Cost").GetComponent<UILabel>();
+            incomeUpLabel.text = incomeAmountUpCost.ToString();
 
             var button2 = uiRoot.transform.FindChild("SpeedUpButton");
-            _speedUpLabel = button2.FindChild("Animation").FindChild("Cost").GetComponent<UILabel>();
-            _speedUpLabel.text = _incomeSpeedUpCost.ToString();
+            speedUpLabel = button2.FindChild("Animation").FindChild("Cost").GetComponent<UILabel>();
+            speedUpLabel.text = incomeSpeedUpCost.ToString();
 
             UIEventListener.Get(button1.gameObject).onClick += IncomeUp;
             UIEventListener.Get(button2.gameObject).onClick += SpeedUp;
@@ -52,59 +39,62 @@ public class PlayerStatus : MonoBehaviour
         StartCoroutine("Incom");
     }
 
+    void OnDisable()
+    {
+        StopAllCoroutines();
+    }
 
-
+    //-----------------------------------------------------------------------------------
+    // public functions
     public void IncomeUp(GameObject sender)
     {
-        if (Purchase(_incomeAmountUpCost))
+        if (Purchase(incomeAmountUpCost))
         {
-            _income += _incomeUp;
-            _incomeUp += 10;
-            _incomeAmountUpCost = _income * 10;
-            if (mType == PlayerType.PLAYER)
+            income += incomeUp;
+            incomeUp += 10;
+            incomeAmountUpCost = income * 10;
+            if (type == PlayerType.PLAYER)
             {
                 AudioManager.instance.PlayIncomeUp();
-                _incomeUpLabel.text = _incomeAmountUpCost.ToString();
+                incomeUpLabel.text = incomeAmountUpCost.ToString();
             }
         }
     }
 
     public void SpeedUp(GameObject sender)
     {
-        if (Purchase(_incomeSpeedUpCost))
+        if (Purchase(incomeSpeedUpCost))
         {
-            _incomeRate -= 0.2f;
-            if (_incomeRate < 0.25f)
+            incomeRate -= 0.2f;
+            if (incomeRate < 0.25f)
             {
-                _incomeSpeedUpCost = int.MaxValue;
-                if (mType == PlayerType.PLAYER)
-                    _speedUpLabel.text = "Max";
+                incomeSpeedUpCost = int.MaxValue;
+                if (type == PlayerType.PLAYER)
+                    speedUpLabel.text = "Max";
                 return;
             }
-            _incomeSpeedUpCost += (int)(_incomeSpeedUpCost * 0.5f);
-            if (mType == PlayerType.PLAYER)
+            incomeSpeedUpCost += (int)(incomeSpeedUpCost * 0.5f);
+            if (type == PlayerType.PLAYER)
             {
                 AudioManager.instance.PlaySpeedUp();
-                _speedUpLabel.text = _incomeSpeedUpCost.ToString();
+                speedUpLabel.text = incomeSpeedUpCost.ToString();
             }
         }
     }
 
-
-
     public void Init(int money)
     {
-        _coin = money;
+        coin = money;
     }
 
     public bool Purchase(int cost)
     {
-        if (cost <= _coin)
+        if (cost <= coin)
         {
-            _coin -= cost;
+            coin -= cost;
 
-            if (mType == PlayerType.PLAYER)
-                _coinLabel.text = _coin.ToString();
+            if (type == PlayerType.PLAYER)
+                coinLabel.text = coin.ToString();
             return true;
         }
         return false;
@@ -112,28 +102,41 @@ public class PlayerStatus : MonoBehaviour
 
     public void Reward(int money)
     {
-        _coin += money;
+        coin += money;
 
-        if (mType == PlayerType.PLAYER)
-            _coinLabel.text = _coin.ToString();
+        if (type == PlayerType.PLAYER)
+            coinLabel.text = coin.ToString();
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // coroutine functions
     IEnumerator Incom()
     {
         while (true)
         {
-            yield return new WaitForSeconds(_incomeRate);
+            yield return new WaitForSeconds(incomeRate);
 
-            if (mType == PlayerType.PLAYER)
+            if (type == PlayerType.PLAYER)
             {
-                var pos = _statusBar.transform.localPosition;
-                pos += new Vector3(_statusBar.localSize.x * 0.3f, -(_statusBar.localSize.y * 0.6f));
-                GameManager.instance.IncomeLabelShow(pos, _income);
+                var pos = statusBar.transform.localPosition;
+                pos += new Vector3(statusBar.localSize.x * 0.3f, -(statusBar.localSize.y * 0.6f));
+                GameManager.instance.IncomeLabelShow(pos, income);
                 AudioManager.instance.PlayCoinUp();
             }
-            Reward(_income);
+            Reward(income);
         }
     }
+    
+    //-----------------------------------------------------------------------------------
+    // private field
+    UIWidget    statusBar           = null;
+    UILabel     coinLabel           = null;
+    UILabel     incomeUpLabel       = null;
+    UILabel     speedUpLabel        = null;
+    int         coin                = 0;
+    int         income              = 10;
+    int         incomeUp            = 10;
+    float       incomeRate          = 3.0f;
+    int         incomeAmountUpCost  = 100;
+    int         incomeSpeedUpCost   = 100;
 }

@@ -3,22 +3,20 @@ using System.Collections;
 
 public class MissileAI : MonoBehaviour
 {
-    ObjectStatus    _objInfo    = null;
-    Rigidbody2D     _body       = null;
-        
-
+    //-----------------------------------------------------------------------------------
+    // handler functions
     void Start()
     {
-        _objInfo = GetComponent<ObjectStatus>();
-        _body = GetComponent<Rigidbody2D>();
+        objInfo = GetComponent<ObjectStatus>();
+        body = GetComponent<Rigidbody2D>();
     }
 
     void Update()
     {
-        if (_objInfo.IsDead())
+        if (objInfo.IsDead())
             return;
 
-        var dirVector = _body.velocity.normalized;
+        var dirVector = body.velocity.normalized;
         var angle = Vector2.Angle(Vector2.right, dirVector);
         if (dirVector.y < 0)
             angle = -angle;
@@ -26,44 +24,42 @@ public class MissileAI : MonoBehaviour
         transform.localRotation = Quaternion.Euler(new Vector3(0, 0, angle));
     }
 
-
-
     void OnTriggerEnter2D(Collider2D collider)
     {
-        if (_objInfo.IsDead())
+        if (objInfo.IsDead())
             return;
 
         var other = collider.gameObject;
         if(other.gameObject.name == "Ground")
         {
             StartCoroutine("ArrowShaking", other.transform);
-            _objInfo.Death();
+            objInfo.Death();
             return;
         }
         var otherObjInfo = other.GetComponent<ObjectStatus>();
-        if (otherObjInfo != null && otherObjInfo.owner != _objInfo.owner && !otherObjInfo.IsDead())
+        if (otherObjInfo != null && otherObjInfo.Owner != objInfo.Owner && !otherObjInfo.IsDead())
         {
-            if (otherObjInfo.type == ObjectStatus.ObjectType.UNIT)
+            if (otherObjInfo.Type == ObjectStatus.ObjectType.UNIT)
             {
                 other.GetComponent<UnitAI>().Attacked();
             }
-            var power = _body.velocity * 25.0f;
+            var power = body.velocity * 25.0f;
             other.GetComponent<Rigidbody2D>().AddForce(new Vector2(power.x * 1.5f, power.y));
-            otherObjInfo.Damaged(_objInfo.damage);
+            otherObjInfo.Damaged(objInfo.Damage);
 
             StartCoroutine("ArrowShaking", other.transform);
-            _objInfo.Death();
+            objInfo.Death();
         }
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // coroutine functions
     IEnumerator ArrowShaking(Transform targetPos)
     {
-        if (_objInfo.attackSounds.Count > 0)
+        if (objInfo.AttackSounds.Count > 0)
         {
-            int rand = Random.Range(0, _objInfo.attackSounds.Count);
-            AudioManager.instance.PlaySfx(_objInfo.attackSounds[rand]);
+            int rand = Random.Range(0, objInfo.AttackSounds.Count);
+            AudioManager.instance.PlaySfx(objInfo.AttackSounds[rand]);
         }
         var r = transform.localRotation.eulerAngles;
         var reverse = 1.0f;
@@ -87,4 +83,9 @@ public class MissileAI : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
     }
+    
+    //-----------------------------------------------------------------------------------
+    // private field
+    ObjectStatus    objInfo = null;
+    Rigidbody2D     body    = null;
 }

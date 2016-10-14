@@ -19,153 +19,148 @@ public class ObjectStatus : MonoBehaviour
         RIGHT = 1,
     }
 
-    public PlayerStatus.PlayerType  owner               = PlayerStatus.PlayerType.NONE;
-    public ObjectType               type                = ObjectType.NONE;
-    public Direction                dir                 = Direction.RIGHT;
-    public GameObject               hpBar               = null;
-    public AudioClip                hitSound            = null;
-    public List<AudioClip>          attackSounds        = new List<AudioClip>();
-    public List<AudioClip>          deathSounds         = new List<AudioClip>();
-    public int                      cost                = 0;
-    public int                      reward              = 0;
-    public int                      maxHp               = 0;
-    public int                      damage              = 0;
-    public float                    attackRange         = 0.0f;
-    public float                    attackFrontDelay    = 0.0f;
-    public float                    attackBackDelay     = 0.0f;
-    public float                    moveSpeed           = 0.0f;
-    public float                    createTime          = 0.0f;
-    public float                    deathTime           = 0.0f;
+    //-----------------------------------------------------------------------------------
+    // inspector field
+    public PlayerStatus.PlayerType  Owner               = PlayerStatus.PlayerType.NONE;
+    public ObjectType               Type                = ObjectType.NONE;
+    public Direction                Dir                 = Direction.RIGHT;
+    public GameObject               HpBar               = null;
+    public AudioClip                HitSound            = null;
+    public List<AudioClip>          AttackSounds        = new List<AudioClip>();
+    public List<AudioClip>          DeathSounds         = new List<AudioClip>();
+    public int                      Cost                = 0;
+    public int                      Reward              = 0;
+    public int                      MaxHp               = 0;
+    public int                      Damage              = 0;
+    public float                    AttackRange         = 0.0f;
+    public float                    AttackFrontDelay    = 0.0f;
+    public float                    AttackBackDelay     = 0.0f;
+    public float                    MoveSpeed           = 0.0f;
+    public float                    CreateTime          = 0.0f;
+    public float                    DeathTime           = 0.0f;
 
-    List<SpriteRenderer>    _sprites    = new List<SpriteRenderer>();
-    MeshRenderer            _mash       = null;
-    Rigidbody2D             _body       = null;
-    GameObject              _hpBar      = null;
-    Transform               _hpGauge    = null;
-    int                     _curHp      = 0;
-    bool                    _isDead     = true;
-
-
+    //-----------------------------------------------------------------------------------
+    // handler functions
     void Awake()
     {
-        if (type == ObjectType.BARRIER)
+        if (Type == ObjectType.BARRIER)
         {
-            _mash = GetComponent<MeshRenderer>();
+            mash = GetComponent<MeshRenderer>();
         }
         else
         {
             var sprite = GetComponent<SpriteRenderer>();
             if (sprite)
             {
-                _sprites.Add(sprite);
+                this.sprites.Add(sprite);
             }
             var sprites = GetComponentsInChildren<SpriteRenderer>();
             for (int i = 0; i < sprites.Length; ++i)
             {
-                _sprites.Add(sprites[i]);
+                this.sprites.Add(sprites[i]);
             }
         }
-        _body = GetComponent<Rigidbody2D>();
+        body = GetComponent<Rigidbody2D>();
 
         var collider = GetComponent<BoxCollider2D>();
         var unitSize = collider.size / 2 + collider.offset;
-        _hpBar = Instantiate(hpBar) as GameObject;
-        _hpBar.transform.SetParent(transform);
-        _hpBar.transform.localPosition = Vector3.up * (unitSize.y + 0.5f);
-        _hpBar.name = "HpBar";
-        _hpBar.SetActive(false);
+        hpBar = Instantiate(HpBar) as GameObject;
+        hpBar.transform.SetParent(transform);
+        hpBar.transform.localPosition = Vector3.up * (unitSize.y + 0.5f);
+        hpBar.name = "HpBar";
+        hpBar.SetActive(false);
 
-        if (type == ObjectType.BARRIER)
-            _hpBar.transform.localPosition -= Vector3.up * 0.5f;
+        if (Type == ObjectType.BARRIER)
+            hpBar.transform.localPosition -= Vector3.up * 0.5f;
 
-        _hpGauge = _hpBar.transform.FindChild("HpGauge");
+        hpGauge = hpBar.transform.FindChild("HpGauge");
     }
 
     void OnEnable()
     {
-        _curHp = maxHp;
-        _isDead = false;
+        curHp = MaxHp;
+        isDead = false;
 
-        if (type == ObjectType.BARRIER)
+        if (Type == ObjectType.BARRIER)
         {
-            var color = _mash.material.GetColor("_TintColor");
-            _mash.material.SetColor("_TintColor", new Color(color.r, color.g, color.b, 1.0f));
+            var color = mash.material.GetColor("_TintColor");
+            mash.material.SetColor("_TintColor", new Color(color.r, color.g, color.b, 1.0f));
         }
         else
         {
-            for (int i = 0; i < _sprites.Count; ++i)
+            for (int i = 0; i < sprites.Count; ++i)
             {
-                var color = _sprites[i].color;
-                _sprites[i].color = new Color(color.r, color.g, color.b, 1.0f);
+                var color = sprites[i].color;
+                sprites[i].color = new Color(color.r, color.g, color.b, 1.0f);
             }
         }
-        _hpBar.SetActive(true);
-        _body.simulated = true;
+        hpBar.SetActive(true);
+        body.simulated = true;
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // public functions
     public bool IsDead()
     {
-        return _isDead;
+        return isDead;
     }
 
     public void MaxHpFix(int hp)
     {
-        _curHp = maxHp = hp;
+        curHp = MaxHp = hp;
     }
 
     public void ChangeDir(Direction d)
     {
-        if (dir != d)
+        if (Dir != d)
         {
-            dir = d;
-            if (dir == Direction.LEFT)
+            Dir = d;
+            if (Dir == Direction.LEFT)
                 transform.localRotation = Quaternion.Euler(new Vector3(0, 180.0f, 0));
             else
                 transform.localRotation = Quaternion.identity;
 
-            _hpBar.transform.localRotation = transform.localRotation;
+            hpBar.transform.localRotation = transform.localRotation;
         }
     }
 
     public void Damaged(int dam)
     {
-        _curHp -= dam;
+        curHp -= dam;
 
-        var hpRatio = (float)_curHp / maxHp;
-        if (type != ObjectType.MISSILE)
+        var hpRatio = (float)curHp / MaxHp;
+        if (Type != ObjectType.MISSILE)
         {
-            _hpGauge.localScale = new Vector3(hpRatio, 1.0f, 1.0f);
-            var sprite = _hpGauge.GetComponent<SpriteRenderer>();
+            hpGauge.localScale = new Vector3(hpRatio, 1.0f, 1.0f);
+            var sprite = hpGauge.GetComponent<SpriteRenderer>();
             sprite.color = new Color(1.0f - hpRatio, hpRatio, 0, sprite.color.a);
         }
         GameManager.instance.DamageLabelShow(transform.position, dam);
-        AudioManager.instance.PlaySfx(hitSound, 1.0f, 0.1f);
+        AudioManager.instance.PlaySfx(HitSound, 1.0f, 0.1f);
 
-        if (_curHp <= 0)
+        if (curHp <= 0)
         {
-            _isDead = true;
-            if (owner == PlayerStatus.PlayerType.PLAYER)
+            isDead = true;
+            if (Owner == PlayerStatus.PlayerType.PLAYER)
             {
-                GameManager.instance.mEnemy.Reward(reward);
+                GameManager.instance.enemy.Reward(Reward);
             }
             else
             {
-                GameManager.instance.RewardLabelShow(transform.position, reward);
-                GameManager.instance.mPlayer.Reward(reward);
+                GameManager.instance.RewardLabelShow(transform.position, Reward);
+                GameManager.instance.player.Reward(Reward);
                 AudioManager.instance.PlayReward();
             }
 
-            switch (type)
+            switch (Type)
             {
                 case ObjectType.UNIT: GetComponent<UnitAI>().Death(); break;
             }
 
-            if (deathSounds.Count > 0)
+            if (DeathSounds.Count > 0)
             {
-                int rand = Random.Range(0, deathSounds.Count);
-                AudioManager.instance.PlaySfx(deathSounds[rand], 0.8f, 0.1f);
+                int rand = Random.Range(0, DeathSounds.Count);
+                AudioManager.instance.PlaySfx(DeathSounds[rand], 0.8f, 0.1f);
             }
             StartCoroutine("Destroy");
         }
@@ -173,99 +168,109 @@ public class ObjectStatus : MonoBehaviour
 
     public void Death()
     {
-        if (!_isDead)
+        if (!isDead)
         {
-            _isDead = true;
+            isDead = true;
             StartCoroutine("Destroy");
         }
     }
 
     public void InstantlyDeath()
     {
-        if (!_isDead)
+        if (!isDead)
         {
-            _isDead = true;
+            isDead = true;
             StartCoroutine("InstantlyDestroy");
         }
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // coroutine functions
     IEnumerator Destroy()
     {
-        if (type == ObjectType.MISSILE)
+        if (Type == ObjectType.MISSILE)
         {
-            _body.simulated = false;
+            body.simulated = false;
         }
         else
         {
-            var sprite = _hpGauge.GetComponent<SpriteRenderer>();
+            var sprite = hpGauge.GetComponent<SpriteRenderer>();
             sprite.color = new Color(0, 1.0f, 0, sprite.color.a);
-            _hpGauge.localScale = Vector3.one;
-            _hpBar.SetActive(false);
+            hpGauge.localScale = Vector3.one;
+            hpBar.SetActive(false);
 
             yield return new WaitForEndOfFrame();
 
-            if (owner == PlayerStatus.PlayerType.PLAYER)
-                GameManager.instance.mPlayerObjList.Remove(gameObject);
+            if (Owner == PlayerStatus.PlayerType.PLAYER)
+                GameManager.instance.playerObjList.Remove(gameObject);
             else
-                GameManager.instance.mEnemyObjList.Remove(gameObject);
+                GameManager.instance.enemyObjList.Remove(gameObject);
         }
-        yield return new WaitForSeconds(deathTime);
+        yield return new WaitForSeconds(DeathTime);
 
         float time = 0.5f;
         while (time > 0)
         {
             time -= Time.deltaTime;
-            if (type == ObjectType.BARRIER)
+            if (Type == ObjectType.BARRIER)
             {
-                var color = _mash.material.GetColor("_TintColor");
-                _mash.material.SetColor("_TintColor", new Color(color.r, color.g, color.b, time * 2));
+                var color = mash.material.GetColor("_TintColor");
+                mash.material.SetColor("_TintColor", new Color(color.r, color.g, color.b, time * 2));
             }
             else
             {
-                for (int i = 0; i < _sprites.Count; ++i)
+                for (int i = 0; i < sprites.Count; ++i)
                 {
-                    var color = _sprites[i].color;
-                    _sprites[i].color = new Color(color.r, color.g, color.b, time * 2);
+                    var color = sprites[i].color;
+                    sprites[i].color = new Color(color.r, color.g, color.b, time * 2);
                 }
             }
             yield return new WaitForEndOfFrame();
         }
 
-        if (type == ObjectType.CASTLE)
+        if (Type == ObjectType.CASTLE)
         {
             gameObject.SetActive(false);
         }
-        owner = PlayerStatus.PlayerType.NONE;
+        Owner = PlayerStatus.PlayerType.NONE;
         ObjectManager.instance.Free(gameObject);
     }
 
     IEnumerator InstantlyDestroy()
     {
-        if (type == ObjectType.MISSILE)
+        if (Type == ObjectType.MISSILE)
         {
-            _body.simulated = false;
+            body.simulated = false;
         }
         else
         {
-            var sprite = _hpGauge.GetComponent<SpriteRenderer>();
+            var sprite = hpGauge.GetComponent<SpriteRenderer>();
             sprite.color = new Color(0, 1.0f, 0, sprite.color.a);
-            _hpGauge.localScale = Vector3.one;
-            _hpBar.SetActive(false);
+            hpGauge.localScale = Vector3.one;
+            hpBar.SetActive(false);
 
             yield return new WaitForEndOfFrame();
 
-            if (owner == PlayerStatus.PlayerType.PLAYER)
-                GameManager.instance.mPlayerObjList.Remove(gameObject);
+            if (Owner == PlayerStatus.PlayerType.PLAYER)
+                GameManager.instance.playerObjList.Remove(gameObject);
             else
-                GameManager.instance.mEnemyObjList.Remove(gameObject);
+                GameManager.instance.enemyObjList.Remove(gameObject);
         }
-        if (type == ObjectType.CASTLE)
+        if (Type == ObjectType.CASTLE)
         {
             gameObject.SetActive(false);
         }
-        owner = PlayerStatus.PlayerType.NONE;
+        Owner = PlayerStatus.PlayerType.NONE;
         ObjectManager.instance.Free(gameObject);
     }
+
+    //-----------------------------------------------------------------------------------
+    // private field
+    List<SpriteRenderer>    sprites     = new List<SpriteRenderer>();
+    MeshRenderer            mash        = null;
+    Rigidbody2D             body        = null;
+    GameObject              hpBar       = null;
+    Transform               hpGauge     = null;
+    int                     curHp       = 0;
+    bool                    isDead      = true;
 }

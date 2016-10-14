@@ -3,6 +3,8 @@ using System.Collections;
 
 public class CameraMove : MonoBehaviour
 {
+    //-----------------------------------------------------------------------------------
+    // inspector field
     public bool     IsLocked    = false;
     public float    EaseValue   = 3.0f;
 
@@ -14,14 +16,11 @@ public class CameraMove : MonoBehaviour
     public float    TopSide     = +14.0f;
     public float    BottomSide  = -2.0f;
 
-    Vector3 _deltaPos   = new Vector3();
-    Vector2 _prevPos    = new Vector2();
-    Camera  _camera     = null;
-
-
+    //-----------------------------------------------------------------------------------
+    // handler functions
     void Start()
     {
-        _camera = GetComponent<Camera>();
+        camera = GetComponent<Camera>();
     }
 
     void Update()
@@ -42,36 +41,45 @@ public class CameraMove : MonoBehaviour
 #endif
     }
 
+    //-----------------------------------------------------------------------------------
+    // public functions
+    public void Lock()
+    {
+        IsLocked = true;
+        deltaPos = Vector3.zero;
+    }
 
+    public void UnLock()
+    {
+        IsLocked = false;
+    }
 
-    public void Lock() { IsLocked = true; _deltaPos = Vector3.zero; }
-    public void UnLock() { IsLocked = false; }
     public void Shake(float shakeTime, float shakeSense)
     {
         StartCoroutine(CameraShakeProcess(shakeTime, shakeSense));
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // private functions
 #if UNITY_EDITOR
     void MoveInEditor()
     {
         if (Input.GetButtonDown("Fire1"))
         {
-            _deltaPos = Vector3.zero;
-            _prevPos = Input.mousePosition;
+            deltaPos = Vector3.zero;
+            prevPos = Input.mousePosition;
         }
         if (Input.GetButton("Fire1"))
         {
-            _deltaPos = (Input.mousePosition - new Vector3(_prevPos.x, _prevPos.y)) * (_camera.orthographicSize * 2 / _camera.pixelHeight);
-            transform.position -= _deltaPos;
-            _prevPos = Input.mousePosition;
+            deltaPos = (Input.mousePosition - new Vector3(prevPos.x, prevPos.y)) * (camera.orthographicSize * 2 / camera.pixelHeight);
+            transform.position -= deltaPos;
+            prevPos = Input.mousePosition;
             MoveBoundaryCheck();
         }
         if (Input.GetButtonUp("Fire1"))
         {
-            StartCoroutine("SmoothMove", _deltaPos);
-            _deltaPos = Vector3.zero;
+            StartCoroutine("SmoothMove", deltaPos);
+            deltaPos = Vector3.zero;
         }
     }
 
@@ -80,13 +88,13 @@ public class CameraMove : MonoBehaviour
         float value = 20.0f;
         if (Input.GetAxis("Mouse ScrollWheel") < 0.0f)
         {
-            _camera.orthographicSize += Time.deltaTime * value;
+            camera.orthographicSize += Time.deltaTime * value;
             ZoomBoundaryCheck();
             MoveBoundaryCheck();
         }
         else if (Input.GetAxis("Mouse ScrollWheel") > 0.0f)
         {
-            _camera.orthographicSize -= Time.deltaTime * value;
+            camera.orthographicSize -= Time.deltaTime * value;
             ZoomBoundaryCheck();
             MoveBoundaryCheck();
         }
@@ -99,17 +107,17 @@ public class CameraMove : MonoBehaviour
         switch (touch.phase)
         {
             case TouchPhase.Began:
-                _deltaPos = Vector3.zero;
-                _prevPos = touch.position;
+                deltaPos = Vector3.zero;
+                prevPos = touch.position;
                 break;
             case TouchPhase.Moved:
-                _deltaPos = (touch.position - _prevPos) * (_camera.orthographicSize * 2 / _camera.pixelHeight);
-                transform.position -= _deltaPos;
-                _prevPos = touch.position;
+                deltaPos = (touch.position - prevPos) * (camera.orthographicSize * 2 / camera.pixelHeight);
+                transform.position -= deltaPos;
+                prevPos = touch.position;
                 break;
             case TouchPhase.Ended:
-                StartCoroutine("SmoothMove", _deltaPos);
-                _deltaPos = Vector3.zero;
+                StartCoroutine("SmoothMove", deltaPos);
+                deltaPos = Vector3.zero;
                 break;
         }
     }
@@ -127,21 +135,21 @@ public class CameraMove : MonoBehaviour
             Vector2 prePos = nowPos - (touch2.deltaPosition - touch1.deltaPosition);
 
             float dist = (nowPos.magnitude - prePos.magnitude) * Time.deltaTime;
-            _camera.orthographicSize -= dist;
+            camera.orthographicSize -= dist;
             ZoomBoundaryCheck();
         }
         if (touch1.phase == TouchPhase.Ended)
-            _prevPos = touch2.position;
+            prevPos = touch2.position;
         else if (touch2.phase == TouchPhase.Ended)
-            _prevPos = touch1.position;
+            prevPos = touch1.position;
     }
 
     void MoveBoundaryCheck()
     {
-        float left = transform.position.x - (_camera.orthographicSize * _camera.aspect);
-        float right = transform.position.x + (_camera.orthographicSize * _camera.aspect);
-        float top = transform.position.y + (_camera.orthographicSize);
-        float bottom = transform.position.y - (_camera.orthographicSize);
+        float left = transform.position.x - (camera.orthographicSize * camera.aspect);
+        float right = transform.position.x + (camera.orthographicSize * camera.aspect);
+        float top = transform.position.y + (camera.orthographicSize);
+        float bottom = transform.position.y - (camera.orthographicSize);
 
         if (left < LeftSide)
             transform.position += new Vector3(LeftSide - left, 0.0f, 0.0f);
@@ -155,14 +163,14 @@ public class CameraMove : MonoBehaviour
 
     void ZoomBoundaryCheck()
     {
-        if (_camera.orthographicSize < MinSize)
-            _camera.orthographicSize = MinSize;
-        else if (_camera.orthographicSize > MaxSize)
-            _camera.orthographicSize = MaxSize;
+        if (camera.orthographicSize < MinSize)
+            camera.orthographicSize = MinSize;
+        else if (camera.orthographicSize > MaxSize)
+            camera.orthographicSize = MaxSize;
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // coroutine functions
     IEnumerator SmoothMove(Vector3 force)
     {
         Vector3 deltaPos = force * (EaseValue * 10);
@@ -183,7 +191,7 @@ public class CameraMove : MonoBehaviour
         while (shakeTime > 0.0f)
         {
             shakeTime -= Time.deltaTime;
-            basePos -= _deltaPos;
+            basePos -= deltaPos;
 
             transform.localPosition = basePos;
             var pos = Vector3.zero;
@@ -195,4 +203,10 @@ public class CameraMove : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
     }
+
+    //-----------------------------------------------------------------------------------
+    // private field
+    Vector3     deltaPos    = new Vector3();
+    Vector2     prevPos     = new Vector2();
+    new Camera  camera      = null;
 }

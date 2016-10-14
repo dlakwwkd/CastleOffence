@@ -4,45 +4,37 @@ using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager instance { get; private set; }
-    
-    // inspector
-    public GameObject       LabelPrefab     = null;
-    public GameObject       CastlePrefab    = null;
-    public List<ItemInfo>   BarrierList     = new List<ItemInfo>();
-    public List<ItemInfo>   TowerList       = new List<ItemInfo>();
-    public List<UnitInfo>   UnitList        = new List<UnitInfo>();
-    public List<GameObject> EnemyUnitList   = new List<GameObject>();
-    public List<GameObject> EnemyTowerList  = new List<GameObject>();
-
+    //-----------------------------------------------------------------------------------
     // property
-    public PlayerStatus     mPlayer { get; private set; }
-    public PlayerStatus     mEnemy { get; private set; }
-    public Vector2          mPlayerCastlePos { get; private set; }
-    public Vector2          mEnemyCastlePos { get; private set; }
-    public List<GameObject> mPlayerObjList { get; private set; }
-    public List<GameObject> mEnemyObjList { get; private set; }
+    public static GameManager   instance { get; private set; }
+    public PlayerStatus         player { get; private set; }
+    public PlayerStatus         enemy { get; private set; }
+    public Vector2              playerCastlePos { get; private set; }
+    public Vector2              enemyCastlePos { get; private set; }
+    public List<GameObject>     playerObjList { get; private set; }
+    public List<GameObject>     enemyObjList { get; private set; }
 
-    // private
-    CameraMove  _cameraInfo = null;
-    Camera      _nguiCam    = null;
-    UIRoot      _uiRoot     = null;
+    //-----------------------------------------------------------------------------------
+    // inspector field
+    public GameObject           LabelPrefab     = null;
+    public GameObject           CastlePrefab    = null;
+    public List<ItemInfo>       BarrierList     = new List<ItemInfo>();
+    public List<ItemInfo>       TowerList       = new List<ItemInfo>();
+    public List<UnitInfo>       UnitList        = new List<UnitInfo>();
+    public List<GameObject>     EnemyUnitList   = new List<GameObject>();
+    public List<GameObject>     EnemyTowerList  = new List<GameObject>();
 
-
+    //-----------------------------------------------------------------------------------
+    // handler functions
     void Awake()
     {
         if (instance == null)
             instance = this;
 
-        mPlayerCastlePos = Vector2.zero;
-        mEnemyCastlePos = Vector2.zero;
-        mPlayerObjList = new List<GameObject>();
-        mEnemyObjList = new List<GameObject>();
-    }
-
-    void OnDisable()
-    {
-        StopAllCoroutines();
+        playerCastlePos = Vector2.zero;
+        enemyCastlePos = Vector2.zero;
+        playerObjList = new List<GameObject>();
+        enemyObjList = new List<GameObject>();
     }
 
     void Start()
@@ -51,13 +43,18 @@ public class GameManager : MonoBehaviour
         StartGame();
     }
 
+    void OnDisable()
+    {
+        StopAllCoroutines();
+    }
 
-
+    //-----------------------------------------------------------------------------------
+    // public functions
     public void InitGame()
     {
-        _cameraInfo = Camera.main.GetComponent<CameraMove>();
-        _nguiCam = NGUITools.FindCameraForLayer(LayerMask.NameToLayer("NGUI"));
-        _uiRoot = GameObject.FindGameObjectWithTag("UIRoot").GetComponent<UIRoot>();
+        cameraInfo = Camera.main.GetComponent<CameraMove>();
+        nguiCam = NGUITools.FindCameraForLayer(LayerMask.NameToLayer("NGUI"));
+        uiRoot = GameObject.FindGameObjectWithTag("UIRoot").GetComponent<UIRoot>();
 
         ItemListSetting();
         PlayerSetting();
@@ -87,8 +84,8 @@ public class GameManager : MonoBehaviour
         StartCoroutine(UpScrollingLabelUI(uiPos, 50, text, Color.yellow, 3, 30.0f));
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // private functions
     void PlayerSetting()
     {
         var player = new GameObject();
@@ -97,14 +94,14 @@ public class GameManager : MonoBehaviour
         player.name = "Player";
         enemy.name = "Enemy";
 
-        mPlayer = player.AddComponent<PlayerStatus>();
-        mEnemy = enemy.AddComponent<PlayerStatus>();
+        this.player = player.AddComponent<PlayerStatus>();
+        this.enemy = enemy.AddComponent<PlayerStatus>();
 
-        mPlayer.mType = PlayerStatus.PlayerType.PLAYER;
-        mEnemy.mType = PlayerStatus.PlayerType.ENEMY;
+        this.player.type = PlayerStatus.PlayerType.PLAYER;
+        this.enemy.type = PlayerStatus.PlayerType.ENEMY;
 
-        mPlayer.Init(3000);
-        mEnemy.Init(3000);
+        this.player.Init(3000);
+        this.enemy.Init(3000);
 
         var ai = enemy.AddComponent<EnemyAI>();
         ai.UnitList = EnemyUnitList;
@@ -113,41 +110,41 @@ public class GameManager : MonoBehaviour
 
     void CastleSetting()
     {
-        mPlayerCastlePos = new Vector2(_cameraInfo.LeftSide + 5.0f, 2.0f);
-        mEnemyCastlePos = new Vector2(_cameraInfo.RightSide - 5.0f, 2.0f);
+        playerCastlePos = new Vector2(cameraInfo.LeftSide + 5.0f, 2.0f);
+        enemyCastlePos = new Vector2(cameraInfo.RightSide - 5.0f, 2.0f);
 
         var castleA = Instantiate(CastlePrefab) as GameObject;
-        castleA.transform.SetParent(mPlayer.transform);
-        castleA.transform.localPosition = new Vector3(mPlayerCastlePos.x, mPlayerCastlePos.y - 1.5f, 2.0f);
+        castleA.transform.SetParent(player.transform);
+        castleA.transform.localPosition = new Vector3(playerCastlePos.x, playerCastlePos.y - 1.5f, 2.0f);
         castleA.name = "PlayerCastle";
-        castleA.GetComponent<ObjectStatus>().owner = PlayerStatus.PlayerType.PLAYER;
+        castleA.GetComponent<ObjectStatus>().Owner = PlayerStatus.PlayerType.PLAYER;
 
         var castleB = Instantiate(CastlePrefab) as GameObject;
-        castleB.transform.SetParent(mEnemy.transform);
-        castleB.transform.localPosition = new Vector3(mEnemyCastlePos.x, mEnemyCastlePos.y - 1.5f, 2.0f);
+        castleB.transform.SetParent(enemy.transform);
+        castleB.transform.localPosition = new Vector3(enemyCastlePos.x, enemyCastlePos.y - 1.5f, 2.0f);
         castleB.name = "EnemyCastle";
-        castleB.GetComponent<ObjectStatus>().owner = PlayerStatus.PlayerType.ENEMY;
+        castleB.GetComponent<ObjectStatus>().Owner = PlayerStatus.PlayerType.ENEMY;
 
-        mPlayerObjList.Add(castleA);
-        mEnemyObjList.Add(castleB);
+        playerObjList.Add(castleA);
+        enemyObjList.Add(castleB);
     }
 
     void ItemListSetting()
     {
-        var barrier = _uiRoot.transform.FindChild("BarrierButton").FindChild("Container");
-        var tower = _uiRoot.transform.FindChild("TowerButton").FindChild("Container");
-        var unit = _uiRoot.transform.FindChild("UnitContainer");
+        var barrier = uiRoot.transform.FindChild("BarrierButton").FindChild("Container");
+        var tower = uiRoot.transform.FindChild("TowerButton").FindChild("Container");
+        var unit = uiRoot.transform.FindChild("UnitContainer");
         barrier.GetComponent<ContainerSetting>().SettingBrriers(BarrierList);
         tower.GetComponent<ContainerSetting>().SettingTowers(TowerList);
         unit.GetComponent<UnitSetting>().SettingUnits(UnitList);
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // coroutine functions
     IEnumerator UpScrollingLabel(Vector3 worldPos, int fontSize, string text, Color color, int depth, float speed)
     {
         var obj = ObjectManager.instance.Assign(LabelPrefab.name);
-        obj.transform.SetParent(_uiRoot.transform);
+        obj.transform.SetParent(uiRoot.transform);
         obj.transform.localPosition = Vector3.zero;
         obj.transform.localRotation = Quaternion.identity;
         obj.transform.localScale = Vector3.one;
@@ -159,14 +156,14 @@ public class GameManager : MonoBehaviour
         label.depth = depth;
 
         float time = 2.0f / speed;
-        while(time > 0.0f)
+        while (time > 0.0f)
         {
             time -= Time.deltaTime;
             worldPos += Vector3.up * speed * Time.deltaTime;
 
-            var pos = _nguiCam.ViewportToScreenPoint(Camera.main.WorldToViewportPoint(worldPos));
+            var pos = nguiCam.ViewportToScreenPoint(Camera.main.WorldToViewportPoint(worldPos));
             pos -= new Vector3(Screen.width, Screen.height) * 0.5f;
-            pos *= _uiRoot.manualHeight / Screen.height;
+            pos *= uiRoot.manualHeight / Screen.height;
             pos.z = 0.0f;
 
             label.fontSize = (int)(fontSize * (8.0f / Camera.main.orthographicSize));
@@ -183,7 +180,7 @@ public class GameManager : MonoBehaviour
     IEnumerator UpScrollingLabelUI(Vector3 uiPos, int fontSize, string text, Color color, int depth, float speed)
     {
         var obj = ObjectManager.instance.Assign(LabelPrefab.name);
-        obj.transform.SetParent(_uiRoot.transform);
+        obj.transform.SetParent(uiRoot.transform);
         obj.transform.localPosition = Vector3.zero;
         obj.transform.localRotation = Quaternion.identity;
         obj.transform.localScale = Vector3.one;
@@ -194,7 +191,7 @@ public class GameManager : MonoBehaviour
         label.color = color;
         label.depth = depth;
 
-        speed *=  (float)Screen.height / _uiRoot.manualHeight;
+        speed *=  (float)Screen.height / uiRoot.manualHeight;
         float time = 1.0f;
         while (time > 0.0f)
         {
@@ -209,4 +206,10 @@ public class GameManager : MonoBehaviour
         }
         ObjectManager.instance.Free(obj);
     }
+    
+    //-----------------------------------------------------------------------------------
+    // private field
+    CameraMove  cameraInfo  = null;
+    Camera      nguiCam     = null;
+    UIRoot      uiRoot      = null;
 }

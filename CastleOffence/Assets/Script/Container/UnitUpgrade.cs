@@ -3,31 +3,27 @@ using System.Collections;
 
 public class UnitUpgrade : MonoBehaviour
 {
-    UILabel _label  = null;
-    int     _cost   = 0;
-
-
+    //-----------------------------------------------------------------------------------
+    // handler functions
     void Start()
     {
-        _cost = 100;
+        cost = 100;
 
-        _label = transform.FindChild("Cost").GetComponent<UILabel>();
-        _label.text = _cost.ToString();
-        _label.depth = 11;
+        label = transform.FindChild("Cost").GetComponent<UILabel>();
+        label.text = cost.ToString();
+        label.depth = 11;
 
         UIEventListener.Get(gameObject).onClick += onClick;
         UIEventListener.Get(gameObject).onPress += onPress;
     }
 
-
-
     void onClick(GameObject sender)
     {
-        var player = GameManager.instance.mPlayer;
-        if (player.Purchase(_cost))
+        var player = GameManager.instance.player;
+        if (player.Purchase(cost))
         {
-            _cost += _cost * 2;
-            _label.text = _cost.ToString();
+            cost += cost * 2;
+            label.text = cost.ToString();
             AudioManager.instance.PlayPurchaseUnit();
         }
         else
@@ -41,4 +37,9 @@ public class UnitUpgrade : MonoBehaviour
         else
             Camera.main.GetComponent<CameraMove>().UnLock();
     }
+
+    //-----------------------------------------------------------------------------------
+    // private field
+    UILabel label   = null;
+    int     cost    = 0;
 }

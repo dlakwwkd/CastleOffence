@@ -2,25 +2,22 @@
 
 public class ItemButton : UIButton
 {
-    PlayerStatus    _player = null;
-    DragDropItem    _item   = null;
-    int             _cost   = 0;
-
-
+    //-----------------------------------------------------------------------------------
+    // handler functions
     protected override void OnInit()
     {
-        _player = GameManager.instance.mPlayer;
-        _item = GetComponent<DragDropItem>();
-        _cost = (_item.prefab.GetComponent<ObjectStatus>().cost * (int)(_item.xSize * _item.ySize));
+        player = GameManager.instance.player;
+        item = GetComponent<DragDropItem>();
+        cost = (item.Prefab.GetComponent<ObjectStatus>().Cost * (int)(item.XSize * item.YSize));
         tweenTarget = gameObject;
         base.OnInit();
     }
 
     protected override void OnClick()
     {
-        if(_player.Purchase(_cost))
+        if(player.Purchase(cost))
         {
-            _item.Purchase();
+            item.Purchase();
             AudioManager.instance.PlayPurchaseItem();
         }
         else
@@ -36,4 +33,10 @@ public class ItemButton : UIButton
             Camera.main.GetComponent<CameraMove>().UnLock();
         base.OnPress(isDown);
     }
+
+    //-----------------------------------------------------------------------------------
+    // private field
+    PlayerStatus    player  = null;
+    DragDropItem    item    = null;
+    int             cost    = 0;
 }

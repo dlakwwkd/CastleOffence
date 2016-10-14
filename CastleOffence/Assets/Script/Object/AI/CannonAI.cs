@@ -4,82 +4,85 @@ using System.Collections.Generic;
 
 public class CannonAI : MonoBehaviour
 {
-    public GameObject   effectObj       = null;
-    public float        explosionRange  = 0.0f;
-    public float        explosionPower  = 0.0f;
+    //-----------------------------------------------------------------------------------
+    // inspector field
+    public GameObject   EffectObj       = null;
+    public float        ExplosionRange  = 0.0f;
+    public float        ExplosionPower  = 0.0f;
 
-    ObjectStatus    _objInfo    = null;
-    Rigidbody2D     _body       = null;
-
-
+    //-----------------------------------------------------------------------------------
+    // handler functions
     void Awake()
     {
-        _objInfo = GetComponent<ObjectStatus>();
-        _body = GetComponent<Rigidbody2D>();
+        objInfo = GetComponent<ObjectStatus>();
+        body = GetComponent<Rigidbody2D>();
     }
 
     void OnEnable()
     {
-        _body.AddTorque(-1000.0f);
+        body.AddTorque(-1000.0f);
     }
-
-
 
     void OnTriggerEnter2D(Collider2D collider)
     {
-        if (_objInfo.IsDead())
+        if (objInfo.IsDead())
             return;
 
         var other = collider.gameObject;
         var otherObjInfo = other.GetComponent<ObjectStatus>();
-        if (otherObjInfo != null && otherObjInfo.owner != _objInfo.owner && !otherObjInfo.IsDead()
+        if (otherObjInfo != null && otherObjInfo.Owner != objInfo.Owner && !otherObjInfo.IsDead()
             || other.gameObject.name == "Ground")
         {
             StartCoroutine("Explosion");
-            _objInfo.InstantlyDeath();
+            objInfo.InstantlyDeath();
         }
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // coroutine functions
     IEnumerator Explosion()
     {
-        if(_objInfo.attackSounds.Count > 0)
+        if(objInfo.AttackSounds.Count > 0)
         {
-            int rand = Random.Range(0, _objInfo.attackSounds.Count);
-            AudioManager.instance.PlaySfx(_objInfo.attackSounds[rand], 1.2f);
+            int rand = Random.Range(0, objInfo.AttackSounds.Count);
+            AudioManager.instance.PlaySfx(objInfo.AttackSounds[rand], 1.2f);
         }
         List<GameObject> enemies = null;
-        if (_objInfo.owner == PlayerStatus.PlayerType.PLAYER)
-            enemies = GameManager.instance.mEnemyObjList;
+        if (objInfo.Owner == PlayerStatus.PlayerType.PLAYER)
+            enemies = GameManager.instance.enemyObjList;
         else
-            enemies = GameManager.instance.mPlayerObjList;
+            enemies = GameManager.instance.playerObjList;
 
         for(int i = 0; i < enemies.Count; ++i)
         {
             var enemy = enemies[i];
             var enemyPos = enemy.transform.position;
             var dist = Vector2.Distance(transform.position, enemyPos);
-            if (dist < explosionRange)
+            if (dist < ExplosionRange)
             {
                 var enemyStatus = enemy.GetComponent<ObjectStatus>();
-                if (enemyStatus.type == ObjectStatus.ObjectType.UNIT)
+                if (enemyStatus.Type == ObjectStatus.ObjectType.UNIT)
                 {
                     enemy.GetComponent<UnitAI>().Attacked();
                 }
-                var gap = (explosionRange - dist) / explosionRange;
+                var gap = (ExplosionRange - dist) / ExplosionRange;
                 var dir = Vector3.Normalize(enemyPos - transform.position);
-                var power = explosionPower * gap * 50.0f;
+                var power = ExplosionPower * gap * 50.0f;
                 enemy.GetComponent<Rigidbody2D>().AddForce(new Vector2(dir.x * power * 3.0f, dir.y * power));
-                enemyStatus.Damaged((int)(_objInfo.damage * gap));
+                enemyStatus.Damaged((int)(objInfo.Damage * gap));
             }
         }
         Camera.main.GetComponent<CameraMove>().Shake(1.0f, 0.2f);
 
-        var effect = ObjectManager.instance.Assign(effectObj.name);
+        var effect = ObjectManager.instance.Assign(EffectObj.name);
         effect.transform.position = transform.position;
         effect.GetComponent<ParticleSystem>().Play();
         ObjectManager.instance.FreeAfter(effect, 1.5f);
         yield return null;
     }
+
+    //-----------------------------------------------------------------------------------
+    // private field
+    ObjectStatus    objInfo = null;
+    Rigidbody2D     body    = null;
 }

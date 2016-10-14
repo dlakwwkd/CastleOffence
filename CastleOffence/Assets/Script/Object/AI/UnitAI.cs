@@ -15,72 +15,63 @@ public class UnitAI : MonoBehaviour
         DEAD,
     }
 
-    public UnitFSM      state       = UnitFSM.IDLE;
-    public float        stateTime   = 0.0f;
+    //-----------------------------------------------------------------------------------
+    // inspector field
+    public UnitFSM      State       = UnitFSM.IDLE;
+    public float        StateTime   = 0.0f;
 
-    Dictionary<UnitFSM, Action> _dicState       = new Dictionary<UnitFSM, Action>();
-    ObjectStatus                _objInfo        = null;
-    Rigidbody2D                 _body           = null;
-    Animator                    _anim           = null;
-    GameObject                  _target         = null;
-    float                       _hitDelay       = 0.5f;
-    float                       _idleDelay      = 0.1f;
-    float                       _moveDelay      = 0.3f;
-    float                       _backDelayTime  = 0.0f;
-
-
+    //-----------------------------------------------------------------------------------
+    // handler functions
     void OnDisable()
     {
         StopAllCoroutines();
-        state = UnitFSM.IDLE;
-        _backDelayTime = 0.0f;
-        _target = null;
-        GameManager.instance.mPlayerObjList.Remove(gameObject);
+        State = UnitFSM.IDLE;
+        backDelayTime = 0.0f;
+        target = null;
+        GameManager.instance.playerObjList.Remove(gameObject);
     }
 
     void Start()
     {
-        _objInfo = GetComponent<ObjectStatus>();
-        _body = GetComponent<Rigidbody2D>();
-        _anim = GetComponent<Animator>();
+        objInfo = GetComponent<ObjectStatus>();
+        body = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
         
-        _dicState[UnitFSM.IDLE]     = Idle;
-        _dicState[UnitFSM.MOVE]     = Move;
-        _dicState[UnitFSM.ATTACK]   = Attack;
-        _dicState[UnitFSM.HIT]      = Hit;
-        _dicState[UnitFSM.DEAD]     = Dead;
+        dicState[UnitFSM.IDLE]     = Idle;
+        dicState[UnitFSM.MOVE]     = Move;
+        dicState[UnitFSM.ATTACK]   = Attack;
+        dicState[UnitFSM.HIT]      = Hit;
+        dicState[UnitFSM.DEAD]     = Dead;
     }
 
     void Update()
     {
-        if (_backDelayTime > 0)
-            _backDelayTime -= Time.deltaTime;
+        if (backDelayTime > 0)
+            backDelayTime -= Time.deltaTime;
 
-        _dicState[state]();
+        dicState[State]();
     }
-
-
 
     void Idle()
     {
-        stateTime += Time.deltaTime;
-        if (stateTime > _idleDelay)
+        StateTime += Time.deltaTime;
+        if (StateTime > idleDelay)
         {
-            stateTime = 0.0f;
-            if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
+            StateTime = 0.0f;
+            if (target && !target.GetComponent<ObjectStatus>().IsDead())
             {
                 LookEnemy();
-                var dist = Vector2.Distance(_target.transform.position, transform.position);
-                if (dist < _objInfo.attackRange)
+                var dist = Vector2.Distance(target.transform.position, transform.position);
+                if (dist < objInfo.AttackRange)
                 {
-                    stateTime = -_backDelayTime;
-                    state = UnitFSM.ATTACK;
-                    StartCoroutine("AttackDelay", _backDelayTime);
+                    StateTime = -backDelayTime;
+                    State = UnitFSM.ATTACK;
+                    StartCoroutine("AttackDelay", backDelayTime);
                 }
                 else
                 {
-                    state = UnitFSM.MOVE;
-                    _anim.SetTrigger("move");
+                    State = UnitFSM.MOVE;
+                    anim.SetTrigger("move");
                 }
             }
             else
@@ -92,78 +83,78 @@ public class UnitAI : MonoBehaviour
 
     void Move()
     {
-        if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
+        if (target && !target.GetComponent<ObjectStatus>().IsDead())
         {
-            stateTime += Time.deltaTime;
-            if (stateTime > _moveDelay)
+            StateTime += Time.deltaTime;
+            if (StateTime > moveDelay)
             {
-                stateTime = 0.0f;
+                StateTime = 0.0f;
                 SearchEnemy();
                 LookEnemy();
-                var dist = Vector2.Distance(_target.transform.position, transform.position);
-                if (dist < _objInfo.attackRange)
+                var dist = Vector2.Distance(target.transform.position, transform.position);
+                if (dist < objInfo.AttackRange)
                 {
-                    stateTime = -_backDelayTime;
-                    state = UnitFSM.ATTACK;
-                    StartCoroutine("AttackDelay", _backDelayTime);
+                    StateTime = -backDelayTime;
+                    State = UnitFSM.ATTACK;
+                    StartCoroutine("AttackDelay", backDelayTime);
                     return;
                 }
-                if (_anim.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.walk") == false)
+                if (anim.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.walk") == false)
                 {
-                    _anim.SetTrigger("move");
+                    anim.SetTrigger("move");
                 }
-                float speed = _objInfo.moveSpeed * (float)_objInfo.dir;
-                _body.velocity = new Vector2(speed, _body.velocity.y);
+                float speed = objInfo.MoveSpeed * (float)objInfo.Dir;
+                body.velocity = new Vector2(speed, body.velocity.y);
             }
         }
         else
         {
-            stateTime = UnityEngine.Random.Range(-0.1f, 0.1f);
-            state = UnitFSM.IDLE;
-            _anim.SetTrigger("idle");
-            _target = null;
+            StateTime = UnityEngine.Random.Range(-0.1f, 0.1f);
+            State = UnitFSM.IDLE;
+            anim.SetTrigger("idle");
+            target = null;
         }
     }
 
     void Attack()
     {
-        if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
+        if (target && !target.GetComponent<ObjectStatus>().IsDead())
         {
-            var dist = Vector2.Distance(_target.transform.position, transform.position);
-            if (dist > _objInfo.attackRange)
+            var dist = Vector2.Distance(target.transform.position, transform.position);
+            if (dist > objInfo.AttackRange)
             {
                 StopCoroutine("AttackDelay");
-                stateTime = 0.0f;
-                state = UnitFSM.IDLE;
-                _anim.SetTrigger("idle");
+                StateTime = 0.0f;
+                State = UnitFSM.IDLE;
+                anim.SetTrigger("idle");
                 return;
             }
-            stateTime += Time.deltaTime;
-            if (stateTime > _objInfo.attackFrontDelay)
+            StateTime += Time.deltaTime;
+            if (StateTime > objInfo.AttackFrontDelay)
             {
                 LookEnemy();
                 AttackProcess();
-                _backDelayTime = _objInfo.attackBackDelay + UnityEngine.Random.Range(0.0f, 0.2f);
-                stateTime = -(_backDelayTime);
-                StartCoroutine("AttackDelay", _backDelayTime);
+                backDelayTime = objInfo.AttackBackDelay + UnityEngine.Random.Range(0.0f, 0.2f);
+                StateTime = -(backDelayTime);
+                StartCoroutine("AttackDelay", backDelayTime);
             }
         }
         else
         {
-            stateTime = UnityEngine.Random.Range(-0.1f, 0.1f);
-            state = UnitFSM.IDLE;
-            _anim.SetTrigger("idle");
-            _target = null;
+            StateTime = UnityEngine.Random.Range(-0.1f, 0.1f);
+            State = UnitFSM.IDLE;
+            anim.SetTrigger("idle");
+            target = null;
         }
     }
 
     void Hit()
     {
-        stateTime += Time.deltaTime;
-        if (stateTime > _hitDelay)
+        StateTime += Time.deltaTime;
+        if (StateTime > hitDelay)
         {
-            stateTime = UnityEngine.Random.Range(-0.1f, 0.1f);
-            state = UnitFSM.IDLE;
+            StateTime = UnityEngine.Random.Range(-0.1f, 0.1f);
+            State = UnitFSM.IDLE;
         }
     }
 
@@ -171,70 +162,70 @@ public class UnitAI : MonoBehaviour
     {
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // public functions
     public void KnockBack()
     {
-        _body.velocity = new Vector2(-2.0f * (float)_objInfo.dir, _body.velocity.y);
+        body.velocity = new Vector2(-2.0f * (float)objInfo.Dir, body.velocity.y);
     }
 
     public void Attacked()
     {
         StopCoroutine("AttackDelay");
-        _body.velocity = Vector2.zero;
-        stateTime = 0.0f;
-        state = UnitFSM.HIT;
-        _anim.SetTrigger("hit");
+        body.velocity = Vector2.zero;
+        StateTime = 0.0f;
+        State = UnitFSM.HIT;
+        anim.SetTrigger("hit");
     }
 
     public void Death()
     {
         StopCoroutine("AttackDelay");
-        stateTime = 0.0f;
-        state = UnitFSM.DEAD;
-        _anim.SetTrigger("death");
+        StateTime = 0.0f;
+        State = UnitFSM.DEAD;
+        anim.SetTrigger("death");
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // private functions
     void LookEnemy()
     {
         var dir = ObjectStatus.Direction.RIGHT;
-        var displacement = _target.transform.position.x - transform.position.x;
+        var displacement = target.transform.position.x - transform.position.x;
         if (displacement < 0)
             dir = ObjectStatus.Direction.LEFT;
 
-        _objInfo.ChangeDir(dir);
+        objInfo.ChangeDir(dir);
     }
 
     void AttackProcess()
     {
-        if (_objInfo.attackSounds.Count > 0)
+        if (objInfo.AttackSounds.Count > 0)
         {
-            int rand = UnityEngine.Random.Range(0, _objInfo.attackSounds.Count);
-            AudioManager.instance.PlaySfx(_objInfo.attackSounds[rand], 3.0f);
+            int rand = UnityEngine.Random.Range(0, objInfo.AttackSounds.Count);
+            AudioManager.instance.PlaySfx(objInfo.AttackSounds[rand], 3.0f);
         }
-        var targetInfo = _target.GetComponent<ObjectStatus>();
-        if (targetInfo.type == ObjectStatus.ObjectType.UNIT)
+        var targetInfo = target.GetComponent<ObjectStatus>();
+        if (targetInfo.Type == ObjectStatus.ObjectType.UNIT)
         {
-            var ai = _target.GetComponent<UnitAI>();
+            var ai = target.GetComponent<UnitAI>();
             ai.Attacked();
             ai.KnockBack();
         }
         else
         {
-            var power = _objInfo.damage * 10;
-            var dir = Vector3.Normalize(_target.transform.position - transform.position);
-            _target.GetComponent<Rigidbody2D>().AddForce(new Vector2(dir.x * power * 2, dir.y * power));
+            var power = objInfo.Damage * 10;
+            var dir = Vector3.Normalize(target.transform.position - transform.position);
+            target.GetComponent<Rigidbody2D>().AddForce(new Vector2(dir.x * power * 2, dir.y * power));
         }
-        targetInfo.Damaged(_objInfo.damage);
+        targetInfo.Damaged(objInfo.Damage);
     }
 
     void SearchEnemy()
     {
-        var enemyList = GameManager.instance.mEnemyObjList;
-        if (_objInfo.owner == PlayerStatus.PlayerType.ENEMY)
-            enemyList = GameManager.instance.mPlayerObjList;
+        var enemyList = GameManager.instance.enemyObjList;
+        if (objInfo.Owner == PlayerStatus.PlayerType.ENEMY)
+            enemyList = GameManager.instance.playerObjList;
 
         var closeEnemyDist = float.MaxValue;
         for (int i = 0; i < enemyList.Count; ++i)
@@ -244,20 +235,32 @@ public class UnitAI : MonoBehaviour
             if (dist < closeEnemyDist)
             {
                 closeEnemyDist = dist;
-                _target = enemy;
+                target = enemy;
             }
         }
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // coroutine functions
     IEnumerator AttackDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
 
-        if (state == UnitFSM.ATTACK)
+        if (State == UnitFSM.ATTACK)
         {
-            _anim.SetTrigger("attack");
+            anim.SetTrigger("attack");
         }
     }
+
+    //-----------------------------------------------------------------------------------
+    // private field
+    Dictionary<UnitFSM, Action> dicState        = new Dictionary<UnitFSM, Action>();
+    ObjectStatus                objInfo         = null;
+    Rigidbody2D                 body            = null;
+    Animator                    anim            = null;
+    GameObject                  target          = null;
+    float                       hitDelay        = 0.5f;
+    float                       idleDelay       = 0.1f;
+    float                       moveDelay       = 0.3f;
+    float                       backDelayTime   = 0.0f;
 }

@@ -3,43 +3,36 @@ using System.Collections;
 
 public class UnitItemInfo : MonoBehaviour
 {
-    public GameObject prefab        = null;
-    public GameObject coolTimeBox   = null;
+    //-----------------------------------------------------------------------------------
+    // inspector field
+    public GameObject Prefab        = null;
+    public GameObject CoolTimeBox   = null;
 
-    ObjectStatus    _unitInfo   = null;
-    PlayerStatus    _player     = null;
-    Vector2         _createPos  = Vector2.zero;
-    float           _coolTime   = 0.0f;
-    int             _cost       = 0;
-    bool            _isOn       = true;
-
-
-
+    //-----------------------------------------------------------------------------------
+    // handler functions
     void Start()
     {
-        _unitInfo = prefab.GetComponent<ObjectStatus>();
-        _player = GameManager.instance.mPlayer;
-        _createPos = GameManager.instance.mPlayerCastlePos;
-        _coolTime = _unitInfo.createTime;
-        _cost = _unitInfo.cost;
+        unitInfo = Prefab.GetComponent<ObjectStatus>();
+        player = GameManager.instance.player;
+        createPos = GameManager.instance.playerCastlePos;
+        coolTime = unitInfo.CreateTime;
+        cost = unitInfo.Cost;
 
         var label = transform.FindChild("Cost").GetComponent<UILabel>();
-        label.text = _cost.ToString();
+        label.text = cost.ToString();
         label.depth = 11;
 
         UIEventListener.Get(gameObject).onClick += onClick;
         UIEventListener.Get(gameObject).onPress += onPress;
     }
 
-
-
     void onClick(GameObject sender)
     {
-        if (_isOn)
+        if (isOn)
         {
-            if (_player.Purchase(_cost))
+            if (player.Purchase(cost))
             {
-                _isOn = false;
+                isOn = false;
                 ProduceUnit();
                 StartCoroutine("CoolTimeProcess");
                 AudioManager.instance.PlayPurchaseUnit();
@@ -59,26 +52,26 @@ public class UnitItemInfo : MonoBehaviour
             Camera.main.GetComponent<CameraMove>().UnLock();
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // private functions
     void ProduceUnit()
     {
-        var unit = ObjectManager.instance.Assign(prefab.name);
-        unit.transform.position = _createPos;
+        var unit = ObjectManager.instance.Assign(Prefab.name);
+        unit.transform.position = createPos;
         unit.transform.localRotation = Quaternion.identity;
 
         var status = unit.GetComponent<ObjectStatus>();
-        status.owner = PlayerStatus.PlayerType.PLAYER;
+        status.Owner = PlayerStatus.PlayerType.PLAYER;
         status.ChangeDir(ObjectStatus.Direction.RIGHT);
 
-        GameManager.instance.mPlayerObjList.Add(unit);
+        GameManager.instance.playerObjList.Add(unit);
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // coroutine functions
     IEnumerator CoolTimeProcess()
     {
-        var box = Instantiate(coolTimeBox) as GameObject;
+        var box = Instantiate(CoolTimeBox) as GameObject;
         box.transform.SetParent(transform);
         box.transform.localPosition = Vector3.zero;
         box.transform.localRotation = Quaternion.identity;
@@ -88,14 +81,23 @@ public class UnitItemInfo : MonoBehaviour
         texture.alpha = 0.8f;
         texture.depth = 10;
 
-        while (_coolTime > 0.1f)
+        while (coolTime > 0.1f)
         {
-            _coolTime -= Time.deltaTime;
-            texture.fillAmount = _coolTime / _unitInfo.createTime;
+            coolTime -= Time.deltaTime;
+            texture.fillAmount = coolTime / unitInfo.CreateTime;
             yield return new WaitForEndOfFrame();
         }
-        _coolTime = _unitInfo.createTime;
-        _isOn = true;
+        coolTime = unitInfo.CreateTime;
+        isOn = true;
         Destroy(box);
     }
+    
+    //-----------------------------------------------------------------------------------
+    // private field
+    ObjectStatus    unitInfo    = null;
+    PlayerStatus    player      = null;
+    Vector2         createPos   = Vector2.zero;
+    float           coolTime    = 0.0f;
+    int             cost        = 0;
+    bool            isOn        = true;
 }

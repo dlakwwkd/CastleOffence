@@ -12,15 +12,14 @@ public class TowerAI : MonoBehaviour
         DEAD,
     }
 
-    public GameObject   missileObj  = null;
-    public TowerFSM     state       = TowerFSM.IDLE;
-    public float        stateTime   = 0.0f;
+    //-----------------------------------------------------------------------------------
+    // inspector field
+    public GameObject   MissileObj  = null;
+    public TowerFSM     State       = TowerFSM.IDLE;
+    public float        StateTime   = 0.0f;
 
-    Dictionary<TowerFSM, Action>    _dicState   = new Dictionary<TowerFSM, Action>();
-    ObjectStatus                    _objInfo    = null;
-    GameObject                      _target     = null;
-
-
+    //-----------------------------------------------------------------------------------
+    // handler functions
     void OnEnable()
     {
         StartCoroutine("SearchEnemy");
@@ -29,63 +28,61 @@ public class TowerAI : MonoBehaviour
     void OnDisable()
     {
         StopAllCoroutines();
-        state = TowerFSM.IDLE;
-        GameManager.instance.mPlayerObjList.Remove(gameObject);
+        State = TowerFSM.IDLE;
+        GameManager.instance.playerObjList.Remove(gameObject);
     }
 
     void Start()
     {
-        _objInfo = GetComponent<ObjectStatus>();
+        objInfo = GetComponent<ObjectStatus>();
 
-        _dicState[TowerFSM.IDLE]    = Idle;
-        _dicState[TowerFSM.ATTACK]  = Attack;
-        _dicState[TowerFSM.DEAD]    = Dead;
+        dicState[TowerFSM.IDLE]    = Idle;
+        dicState[TowerFSM.ATTACK]  = Attack;
+        dicState[TowerFSM.DEAD]    = Dead;
     }
 
     void Update()
     {
-        _dicState[state]();
+        dicState[State]();
     }
-
-
 
     void Idle()
     {
-        if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
+        if (target && !target.GetComponent<ObjectStatus>().IsDead())
         {
             LookEnemy();
-            var dist = Vector2.Distance(_target.transform.position, transform.position);
-            if (dist < _objInfo.attackRange)
+            var dist = Vector2.Distance(target.transform.position, transform.position);
+            if (dist < objInfo.AttackRange)
             {
-                state = TowerFSM.ATTACK;
+                State = TowerFSM.ATTACK;
             }
         }
         else
-            _target = null;
+            target = null;
     }
 
     void Attack()
     {
-        if (_target && !_target.GetComponent<ObjectStatus>().IsDead())
+        if (target && !target.GetComponent<ObjectStatus>().IsDead())
         {
-            var dist = Vector2.Distance(_target.transform.position, transform.position);
-            if (dist > _objInfo.attackRange)
+            var dist = Vector2.Distance(target.transform.position, transform.position);
+            if (dist > objInfo.AttackRange)
             {
-                state = TowerFSM.IDLE;
+                State = TowerFSM.IDLE;
                 return;
             }
-            stateTime += Time.deltaTime;
-            if (stateTime > _objInfo.attackFrontDelay)
+            StateTime += Time.deltaTime;
+            if (StateTime > objInfo.AttackFrontDelay)
             {
                 LookEnemy();
                 AttackProcess();
-                stateTime = -(_objInfo.attackBackDelay + UnityEngine.Random.Range(0.0f, 0.2f));
+                StateTime = -(objInfo.AttackBackDelay + UnityEngine.Random.Range(0.0f, 0.2f));
             }
         }
         else
         {
-            state = TowerFSM.IDLE;
-            _target = null;
+            State = TowerFSM.IDLE;
+            target = null;
         }
     }
 
@@ -93,49 +90,49 @@ public class TowerAI : MonoBehaviour
     {
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // public functions
     public void Death()
     {
-        state = TowerFSM.DEAD;
+        State = TowerFSM.DEAD;
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // private functions
     void LookEnemy()
     {
-        if (_objInfo.type == ObjectStatus.ObjectType.CASTLE)
+        if (objInfo.Type == ObjectStatus.ObjectType.CASTLE)
             return;
 
         var dir = ObjectStatus.Direction.RIGHT;
-        var displacement = _target.transform.position.x - transform.position.x;
+        var displacement = target.transform.position.x - transform.position.x;
         if (displacement < 0)
             dir = ObjectStatus.Direction.LEFT;
 
-        _objInfo.ChangeDir(dir);
+        objInfo.ChangeDir(dir);
     }
 
     void AttackProcess()
     {
-        if (_objInfo.attackSounds.Count > 0)
+        if (objInfo.AttackSounds.Count > 0)
         {
-            int rand = UnityEngine.Random.Range(0, _objInfo.attackSounds.Count);
-            AudioManager.instance.PlaySfx(_objInfo.attackSounds[rand], 1.5f);
+            int rand = UnityEngine.Random.Range(0, objInfo.AttackSounds.Count);
+            AudioManager.instance.PlaySfx(objInfo.AttackSounds[rand], 1.5f);
         }
         var pivotGap = 2.0f;
-        if (_objInfo.type == ObjectStatus.ObjectType.CASTLE)
+        if (objInfo.Type == ObjectStatus.ObjectType.CASTLE)
             pivotGap += 3.0f;
 
-        var missile = ObjectManager.instance.Assign(missileObj.name);
+        var missile = ObjectManager.instance.Assign(MissileObj.name);
         missile.transform.localPosition = transform.localPosition + Vector3.up * pivotGap;
 
         var info = missile.GetComponent<ObjectStatus>();
-        info.owner = _objInfo.owner;
-        info.damage = _objInfo.damage;
+        info.Owner = objInfo.Owner;
+        info.Damage = objInfo.Damage;
 
         var forceRatio = 25.0f;
         var forceGap = UnityEngine.Random.Range(450.0f, 550.0f) - pivotGap * forceRatio;
-        var displacement = _target.transform.localPosition - transform.localPosition;
+        var displacement = target.transform.localPosition - transform.localPosition;
 
         var fireForce = new Vector2(displacement.x * forceRatio, displacement.y * forceRatio + forceGap);
         var body = missile.GetComponent<Rigidbody2D>();
@@ -148,17 +145,17 @@ public class TowerAI : MonoBehaviour
         //         missile.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, angle));
     }
 
-
-
+    //-----------------------------------------------------------------------------------
+    // coroutine functions
     IEnumerator SearchEnemy()
     {
         while (true)
         {
             yield return new WaitForSeconds(0.2f);
 
-            var enemyList = GameManager.instance.mEnemyObjList;
-            if (_objInfo.owner == PlayerStatus.PlayerType.ENEMY)
-                enemyList = GameManager.instance.mPlayerObjList;
+            var enemyList = GameManager.instance.enemyObjList;
+            if (objInfo.Owner == PlayerStatus.PlayerType.ENEMY)
+                enemyList = GameManager.instance.playerObjList;
 
             var unitPos = transform.localPosition.x;
             var closeEnemyDist = float.MaxValue;
@@ -169,9 +166,15 @@ public class TowerAI : MonoBehaviour
                 if (dist < closeEnemyDist)
                 {
                     closeEnemyDist = dist;
-                    _target = enemyList[i];
+                    target = enemyList[i];
                 }
             }
         }
     }
+
+    //-----------------------------------------------------------------------------------
+    // private field
+    Dictionary<TowerFSM, Action>    dicState    = new Dictionary<TowerFSM, Action>();
+    ObjectStatus                    objInfo     = null;
+    GameObject                      target      = null;
 }
